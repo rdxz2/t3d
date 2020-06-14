@@ -1,0 +1,13 @@
+.card-login {
+  position: absolute !important;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+}
+
+@media (max-width: 767px) {
+  .card-login {
+    max-width: 90vw;
+  }
+}

@@ -1,0 +1,9 @@
+.page-register {
+  padding: 0 40vw 0 3vw;
+}
+
+@media (max-width: 767px) {
+  .page-register {
+    padding: 24px;
+  }
+}
