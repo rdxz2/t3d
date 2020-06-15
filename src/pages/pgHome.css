@@ -7,6 +7,11 @@
   padding-bottom: 20px;
 }
 
+.recent-project-card:hover {
+  background-color: #f8f0ff;
+  cursor: pointer;
+}
+
 /* project create */
 #recent-project-card-create > .ant-card-body {
   height: 100%;
@@ -18,6 +23,7 @@
   min-width: 250px;
   /* project card: spacing between card  */
   margin: 0 16px;
+  transition: 0.3s;
 }
 
 /* project card: desription */

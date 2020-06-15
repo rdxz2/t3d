@@ -1,16 +1,15 @@
 import './lay.css';
 
 import { LogoutOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
-import { Badge, Button, Drawer, Layout, PageHeader, Popover, Divider } from 'antd';
+import { Badge, Button, Divider, Drawer, Layout, PageHeader, Popover } from 'antd';
 import React from 'react';
-import { useHistory, Redirect } from 'react-router';
+import { Redirect, useHistory } from 'react-router';
 
 import CmpPrivateRoute from '../components/cmpPrivateRoute';
 import CmpRunningTime from '../components/cmpRunningTime';
 import HTTPMETHOD from '../constants/HTTPMETHOD';
 import PAGE from '../constants/PAGE';
 import CtxApi from '../contexts/ctxApi';
-import PgHome from '../pages/pgHome';
 import { setDocumentTitle } from '../utilities/utlWindow';
 import LayDrawerNotification from './layDrawerNotification';
 import LayMiniProfile from './layMiniProfile';
@@ -59,13 +58,13 @@ const Lay = () => {
   const handleDrawerNotificationClose = () => isDrawerNotificationOpenSet(false);
 
   // change page title
-  const handleChangeActivePage = (newTitle) => {
+  const handleChangeActivePage = React.useCallback((newTitle) => {
     // change page header title
     currentActivePageSet(newTitle);
 
     // change tab title
     setDocumentTitle(newTitle);
-  };
+  }, []);
 
   // log out
   const handleLogOut = () => {

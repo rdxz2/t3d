@@ -1,7 +1,7 @@
+import { Avatar } from 'antd';
 import React from 'react';
+
 import CmpDetail from '../components/cmpDetail';
-import { Avatar, Row } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
 
 const LayMiniProfile = ({ profile, nameInitials }) => {
   // START -- CONTEXTS

@@ -2,9 +2,7 @@ import './pgHome.css';
 
 import { Col, Row, Space } from 'antd';
 import React from 'react';
-import { useHistory } from 'react-router';
 
-import CtxApi from '../contexts/ctxApi';
 import HomeCalendar from './pgHome/homeCalendar';
 import HomeProjects from './pgHome/homeProjects';
 import HomeRecentActivities from './pgHome/homeRecentActivities';
@@ -12,15 +10,9 @@ import HomeRecentActivities from './pgHome/homeRecentActivities';
 const PgHome = ({ match, handleChangeActivePage }) => {
   // START -- CONTEXTS
 
-  // api
-  const { svsT3dapi } = React.useContext(CtxApi);
-
   // END -- CONTEXTS
 
   // START -- OTHERS
-
-  // history
-  const history = useHistory();
 
   // END -- OTHERS
 

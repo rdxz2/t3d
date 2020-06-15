@@ -1,11 +1,10 @@
 import { message } from 'antd';
 
+import HTTPMETHOD from '../constants/HTTPMETHOD';
 import HTTPSTATUS from '../constants/HTTPSTATUS';
 import JWTKEY from '../constants/JWTKEY';
 import { getJwt, getJwtInfo, isJwtExpired, removeJwt, setJwt } from '../utilities/utlJwt';
 import { sendHttpRequest } from './svsBase';
-import HTTPMETHOD from '../constants/HTTPMETHOD';
-import { convertObjectToQueryString } from '../utilities/utlType';
 
 class SvsT3dapi {
   // constructor
@@ -61,10 +60,10 @@ class SvsT3dapi {
   };
 
   // send request for dropdown
-  sendRequestSelectList = async (endpoint, { show = 10, search = '' } = {}) => {
+  sendRequestSelectList = async (endpoint, { show = 10, search = '', requireds = {}, alreadies = [] } = {}) => {
     try {
       // send request
-      const response = await this.sendRequest(`api/selectlist/${endpoint}${convertObjectToQueryString({ show, search })}`, HTTPMETHOD.GET);
+      const response = await this.sendRequest(`api/selectlist/${endpoint}`, HTTPMETHOD.POST, { show, search, requireds, alreadies });
 
       return response;
     } catch (error) {

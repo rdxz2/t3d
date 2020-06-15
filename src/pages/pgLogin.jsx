@@ -5,7 +5,7 @@ import React from 'react';
 
 import packageJson from '../../package.json';
 import { setDocumentTitle } from '../utilities/utlWindow';
-import FrLogin from './pgLogin/frLogin';
+import LoginForm from './pgLogin/loginForm';
 import { useHistory } from 'react-router';
 
 const PgLogin = () => {
@@ -48,7 +48,7 @@ const PgLogin = () => {
         <p style={{ color: 'grey', fontSize: 12, fontStyle: 'italic', marginBottom: 0 }}>v{packageJson.version}</p>
       </div>
       {/* login form */}
-      <FrLogin></FrLogin>
+      <LoginForm></LoginForm>
       {/* divider */}
       <Divider type='horizontal' dashed style={{ marginTop: 5, marginBottom: 5, width: '50%' }}>
         or

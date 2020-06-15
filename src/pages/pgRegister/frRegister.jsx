@@ -68,13 +68,13 @@ const FrRegister = () => {
   React.useEffect(() => {
     // populate select list: department
     svsT3dapi
-      .sendRequestSelectList('department')
+      .sendRequestSelectList('departmentRegister')
       .then((response) => selectDepartmentSet({ isLoading: false, data: response.data }))
       .catch((error) => selectDepartmentSet({ isLoading: false }));
 
     // populate select list: position
     svsT3dapi
-      .sendRequestSelectList('position')
+      .sendRequestSelectList('positionRegister')
       .then((response) => selectPositionSet({ isLoading: false, data: response.data }))
       .catch((error) => selectPositionSet({ isLoading: false }));
   }, [svsT3dapi]);

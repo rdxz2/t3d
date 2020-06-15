@@ -1,6 +1,6 @@
 import React from 'react';
+
 import CtxApi from '../../contexts/ctxApi';
-import { useHistory } from 'react-router';
 
 const ProjectActivities = ({ projectCode }) => {
   // START -- CONTEXTS
@@ -11,9 +11,6 @@ const ProjectActivities = ({ projectCode }) => {
   // END -- CONTEXTS
 
   // START -- OTHERS
-
-  // history
-  const history = useHistory();
 
   // END -- OTHERS
 
@@ -30,9 +27,23 @@ const ProjectActivities = ({ projectCode }) => {
 
   // START -- EFFECTS
 
+  // prepare initial data
+  React.useEffect(() => {
+    svsT3dapi
+      .sendRequest('api/user/recentactivities')
+      .then((response) => activitiesSet(response.data))
+      .catch((error) => ({}));
+  }, [svsT3dapi]);
+
   // END -- EFFECTS
 
-  return <div>ProjectActivities</div>;
+  return (
+    <>
+      {activities.map((activity, activityIndex) => (
+        <div>ac</div>
+      ))}
+    </>
+  );
 };
 
 export default ProjectActivities;

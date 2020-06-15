@@ -1,24 +1,16 @@
+import { EditOutlined, EllipsisOutlined, BarcodeOutlined, TeamOutlined } from '@ant-design/icons';
+import { Button, Input, Select, Form } from 'antd';
 import React from 'react';
-import CtxApi from '../../../contexts/ctxApi';
-import { useHistory } from 'react-router';
-import { Form, Input, Button, Select } from 'antd';
-import FORMLAYOUT from '../../../constants/FORMLAYOUT';
-import COLOR from '../../../constants/COLOR';
-import { EllipsisOutlined, SaveOutlined, BarcodeOutlined, TeamOutlined } from '@ant-design/icons';
-import HTTPMETHOD from '../../../constants/HTTPMETHOD';
-import INPUTSELECT from '../../../constants/INPUTSELECT';
 import _ from 'lodash';
+import COLOR from '../../../constants/COLOR';
+import FORMLAYOUT from '../../../constants/FORMLAYOUT';
+import HTTPMETHOD from '../../../constants/HTTPMETHOD';
+import CtxApi from '../../../contexts/ctxApi';
+import INPUTSELECT from '../../../constants/INPUTSELECT';
 
 const PROJECTCODE_MAXCHAR = 5;
 
-const initialFormValue = {
-  name: '',
-  code: '',
-  description: '',
-  collaborators: [],
-};
-
-const FrProjectCreate = ({ handleCloseDrawer, handleCloseDrawerWithCallback }) => {
+const ProjectEdit = ({ match, handleCloseDrawerWithCallback }) => {
   // START -- CONTEXTS
 
   // api
@@ -28,9 +20,6 @@ const FrProjectCreate = ({ handleCloseDrawer, handleCloseDrawerWithCallback }) =
 
   // START -- OTHERS
 
-  // history
-  const history = useHistory();
-
   // form control
   const [form] = Form.useForm();
 
@@ -38,9 +27,8 @@ const FrProjectCreate = ({ handleCloseDrawer, handleCloseDrawerWithCallback }) =
 
   // START -- STATES
 
-  // select list
+  // select list: collaborators
   const [selectCollaborator, selectCollaboratorSet] = React.useState({ isLoading: true, data: [] });
-  const [selectCollaboratorSelected, selectCollaboratorSelectedSet] = React.useState([]);
 
   // submitting state
   const [isSubmitting, isSubmittingSet] = React.useState(false);
@@ -52,19 +40,15 @@ const FrProjectCreate = ({ handleCloseDrawer, handleCloseDrawerWithCallback }) =
   // make project code uppercase
   const handleConvertToUppercase = (event) => form.setFieldsValue({ code: event.target.value.toUpperCase() });
 
-  // select collaborators on change
-  const handleSelectCollaboratorsOnChange = (selectedCollaborators) => selectCollaboratorSelectedSet(selectedCollaborators);
-
-  // submit: project create
+  // submit: edit project
   const handleSubmit = async (values) => {
     // submitting...
     isSubmittingSet(true);
 
     try {
       // send request
-      const response = await svsT3dapi.sendRequest('api/project', HTTPMETHOD.POST, values);
+      const response = await svsT3dapi.sendRequest(`api/project/`, HTTPMETHOD.PATCH);
 
-      // close drawer and supply callback function parameters
       handleCloseDrawerWithCallback(response);
     } catch (error) {
       // not submitting...
@@ -78,20 +62,28 @@ const FrProjectCreate = ({ handleCloseDrawer, handleCloseDrawerWithCallback }) =
 
   // prepare initial data
   React.useEffect(() => {
-    // populate select list: collaborators
+    // get initial data
     svsT3dapi
-      .sendRequestSelectList('user')
-      .then((response) => selectCollaboratorSet({ isLoading: false, data: response.data }))
-      .catch((error) => selectCollaboratorSet({ isLoading: false }));
-  }, [svsT3dapi]);
+      .sendRequest(`api/project/edit/${match.params.projectCode}`, HTTPMETHOD.GET)
+      .then((response) => {
+        // set initial data
+        // initialDataSet(response.data);
+
+        form.setFieldsValue(response.data);
+
+        // populate select list: collaborators
+        svsT3dapi
+          .sendRequestSelectList('user')
+          .then((response) => selectCollaboratorSet({ isLoading: false, data: response.data }))
+          .catch((error) => selectCollaboratorSet({ isLoading: false }));
+      })
+      .catch((error) => {});
+  }, [form, match.params.projectCode, svsT3dapi]);
 
   // END -- EFFECTS
 
-  // unselected collaborators
-  // const selectCollaboratorUnselected = selectCollaborator.data.filter((collaborator) => !selectCollaboratorSelected.includes(collaborator.value));
-
   return (
-    <Form {...FORMLAYOUT.sameRow.body} form={form} initialValues={initialFormValue} onFinish={handleSubmit}>
+    <Form {...FORMLAYOUT.sameRow.body} form={form} onFinish={handleSubmit}>
       {/* name */}
       <Form.Item hasFeedback label='Name' name='name' rules={[{ required: true, whitespace: true, message: 'project name is required' }]}>
         <Input autoFocus placeholder='project name' prefix={<EllipsisOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></EllipsisOutlined>}></Input>
@@ -119,7 +111,6 @@ const FrProjectCreate = ({ handleCloseDrawer, handleCloseDrawerWithCallback }) =
           notFoundContent='collaborator not found'
           placeholder='- select project collaborators -'
           loading={selectCollaborator.isLoading}
-          onChange={handleSelectCollaboratorsOnChange}
           suffixIcon={<TeamOutlined></TeamOutlined>}
           onSearch={_.debounce(async (searchString) => {
             // get collaborator selectlist data
@@ -135,11 +126,9 @@ const FrProjectCreate = ({ handleCloseDrawer, handleCloseDrawerWithCallback }) =
         </Select>
       </Form.Item>
       {/* submit button */}
-      <Button block type='primary' htmlType='submit' loading={isSubmitting} icon={<SaveOutlined></SaveOutlined>}>
-        Create
-      </Button>
+      <Button block htmlType='submit' type='primary' loading={isSubmitting} icon={<EditOutlined></EditOutlined>}></Button>
     </Form>
   );
 };
 
-export default FrProjectCreate;
+export default ProjectEdit;

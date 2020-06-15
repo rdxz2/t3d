@@ -1,10 +1,14 @@
-import React from 'react';
-import CtxApi from '../../contexts/ctxApi';
-import { useHistory } from 'react-router';
-import HTTPMETHOD from '../../constants/HTTPMETHOD';
-import { Typography, Row, Col, Input } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { Button, Col, Input, Row, Select, Typography } from 'antd';
 import _ from 'lodash';
+import React from 'react';
+import { useHistory } from 'react-router';
+
+import HTTPMETHOD from '../../constants/HTTPMETHOD';
 import INPUTSELECT from '../../constants/INPUTSELECT';
+import CtxApi from '../../contexts/ctxApi';
+import ToDoCreate from './projectToDos/toDoCreate';
+
 const ProjectToDos = ({ projectCode }) => {
   // START -- CONTEXTS
 
@@ -25,6 +29,9 @@ const ProjectToDos = ({ projectCode }) => {
   // to dos
   const [toDos, toDosSet] = React.useState([]);
 
+  // creating state
+  const [isCreatingToDo, isCreatingToDoSet] = React.useState(false);
+
   // END -- STATES
 
   // START -- FUNCTIONS
@@ -40,7 +47,10 @@ const ProjectToDos = ({ projectCode }) => {
 
   // prepare initial data
   React.useEffect(() => {
-    svsT3dapi.sendRequest(`api/project/todos/${projectCode}`, HTTPMETHOD.GET);
+    svsT3dapi
+      .sendRequest(`api/todo/${projectCode}`, HTTPMETHOD.GET)
+      .then((response) => console.log('TODO', response))
+      .catch((error) => {});
   }, [projectCode, svsT3dapi]);
 
   // END -- EFFECTS
@@ -53,11 +63,21 @@ const ProjectToDos = ({ projectCode }) => {
       <Row>
         {/* search bar */}
         <Col span={16}>
-          <Input name='search' placeholder='search to dos' onBlur={_.debounce(handleSearchToDos, INPUTSELECT.SEARCH_DELAY)}></Input>
+          <Input name='searchToDo' placeholder='search to dos' onBlur={_.debounce(handleSearchToDos, INPUTSELECT.SEARCH_DELAY)}></Input>
         </Col>
         {/* filter bar */}
-        <Col span={8}>filter bar</Col>
+        <Col span={8}>
+          <Select name=''></Select>
+        </Col>
       </Row>
+      {/* add to do */}
+      {isCreatingToDo ? (
+        // create to do form
+        <ToDoCreate></ToDoCreate>
+      ) : (
+        // add button
+        <Button block type='primary' icon={<PlusOutlined></PlusOutlined>}></Button>
+      )}
       {/* to do list */}
       {toDos.map((toDo, toDoIndex) => console.log('to do', toDoIndex))}
     </>

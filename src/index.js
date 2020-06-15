@@ -1,5 +1,4 @@
-import 'antd/dist/antd.less'; // uncomment for light theme
-// import 'antd/dist/antd.dark.less'; // uncomment for dark theme
+import 'antd/dist/antd.less';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import dotenv from 'dotenv';
@@ -12,9 +11,8 @@ import * as serviceWorker from './serviceWorker';
 // get configuration file
 dotenv.config();
 
+// render the rest of application in root element
 ReactDOM.render(<App></App>, document.getElementById('root'));
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
+// do not user service worker
 serviceWorker.unregister();

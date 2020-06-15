@@ -7,7 +7,7 @@ import COLOR from '../../constants/COLOR';
 import FORMLAYOUT from '../../constants/FORMLAYOUT';
 import CtxApi from '../../contexts/ctxApi';
 
-const FrLogin = () => {
+const LoginForm = () => {
   // START -- CONTEXTS
 
   // api
@@ -76,11 +76,9 @@ const FrLogin = () => {
         <Input.Password placeholder='your password' prefix={<LockOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></LockOutlined>}></Input.Password>
       </Form.Item>
       {/* submit */}
-      <Button block type='primary' htmlType='submit' loading={isSubmitting} icon={<LoginOutlined></LoginOutlined>}>
-        Log in
-      </Button>
+      <Button block type='primary' htmlType='submit' loading={isSubmitting} icon={<LoginOutlined></LoginOutlined>}></Button>
     </Form>
   );
 };
 
-export default FrLogin;
+export default LoginForm;

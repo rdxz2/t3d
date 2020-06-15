@@ -1,7 +1,8 @@
-import React from 'react';
-import CtxApi from '../../contexts/ctxApi';
-import { useHistory } from 'react-router';
 import { Calendar, Typography } from 'antd';
+import React from 'react';
+
+import HTTPMETHOD from '../../constants/HTTPMETHOD';
+import CtxApi from '../../contexts/ctxApi';
 
 const HomeCalendar = () => {
   // START -- CONTEXTS
@@ -13,9 +14,6 @@ const HomeCalendar = () => {
 
   // START -- OTHERS
 
-  // history
-  const history = useHistory();
-
   // END -- OTHERS
 
   // START -- STATES
@@ -25,20 +23,21 @@ const HomeCalendar = () => {
   // START -- FUNCTIONS
 
   // render date cell
-  // will show activities in that date
   const renderDateCell = (value) => {
     // console.log('render date cell', value);
-  };
-
-  // render month cell
-  // will show how many activities in that month
-  const renderMonthCell = (value) => {
-    console.log('render month cell', value);
   };
 
   // END -- FUNCTIONS
 
   // START -- EFFECTS
+
+  // prepare initial data
+  React.useEffect(() => {
+    svsT3dapi
+      .sendRequest('api/user/schedule', HTTPMETHOD.GET)
+      .then((response) => ({}))
+      .catch((error) => ({}));
+  }, [svsT3dapi]);
 
   // END -- EFFECTS
 

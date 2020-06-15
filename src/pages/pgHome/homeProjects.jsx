@@ -1,15 +1,16 @@
+import { ClockCircleOutlined, EllipsisOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Card, Input, Space, Typography } from 'antd';
 import React from 'react';
-import CtxApi from '../../contexts/ctxApi';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useHistory } from 'react-router';
 import { Route } from 'react-router-dom';
-import { Typography, Card, Drawer, Button, Col, Row, Input } from 'antd';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import FrProjectCreate from './homeProjects/frProjectCreate';
+
 import CmpDrawer from '../../components/cmpDrawer';
-import { PlusOutlined, SettingOutlined, EllipsisOutlined, UserOutlined, ClockCircleOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import HTTPMETHOD from '../../constants/HTTPMETHOD';
-import { convertIsoDateToMoment } from '../../utilities/utlType';
 import TIMEFORMAT from '../../constants/TIMEFORMAT';
+import CtxApi from '../../contexts/ctxApi';
+import { convertIsoDateToMoment } from '../../utilities/utlType';
+import ProjectCreate from './homeProjects/projectCreate';
 
 const HomeProjects = ({ match }) => {
   // START -- CONTEXTS
@@ -36,15 +37,14 @@ const HomeProjects = ({ match }) => {
   // START -- FUNCTIONS
 
   // open drawer: project create
-  const handleOpenDrawerProjetCreate = () => history.push(`${match.path}/createproject`);
+  const handleOpenDrawerProjectCreate = () => history.push(`${match.path}/createproject`);
 
   // navigate: project
   const handleNavigateToProject = (projectCode) => history.push(`/project/${projectCode}`);
 
   // project created
-  const handleProjectCreated = (response) => {
-    console.log('created', response);
-    // add created project
+  // add created project to project list
+  const handleProjectCreated = (response) =>
     recentProject.unshift({
       name: response.data.name,
       code: response.data.code,
@@ -52,7 +52,6 @@ const HomeProjects = ({ match }) => {
       description: response.data.description,
       last_accessed: response.data.last_accessed,
     });
-  };
 
   // // horizontal mouse scroll on a container
   // const handleHorizontalScroll = (event) => {
@@ -82,23 +81,20 @@ const HomeProjects = ({ match }) => {
   // END -- EFFECTS
 
   return (
-    <>
+    <Space direction='vertical' style={{ width: '100%' }}>
       {/* title */}
-      <Row>
-        <Col span={18}>
-          <Typography.Title level={3} style={{ paddingLeft: 16 }}>
-            Projects
-          </Typography.Title>
-        </Col>
-        <Col span={6} style={{ paddingRight: 16 }}>
-          <Input name='filterproject' placeholder={'search project'} onBlur={() => {}}></Input>
-        </Col>
-      </Row>
+      <Typography.Title level={3} style={{ paddingLeft: 16, marginBottom: 0 }}>
+        Projects
+      </Typography.Title>
+      {/* search bar */}
+      <div style={{ width: 266, paddingLeft: 16 }}>
+        <Input name='searchProject' placeholder={'search project'} onBlur={() => {}}></Input>
+      </div>
       {/* project list */}
       <PerfectScrollbar id='recent-projects' /**onWheel={handleHorizontalScroll} */>
         {/* render create project card */}
         <Card id='recent-project-card-create' className='recent-project-card' bordered={false}>
-          <Button type='primary' size='large' icon={<PlusOutlined></PlusOutlined>} onClick={handleOpenDrawerProjetCreate} style={{ width: '100%', height: '100%' }}></Button>
+          <Button type='primary' size='large' icon={<PlusOutlined></PlusOutlined>} onClick={handleOpenDrawerProjectCreate} style={{ width: '100%', height: '100%' }}></Button>
         </Card>
         {/* render other projects */}
         {recentProject.map((project, projectIndex) => (
@@ -107,8 +103,10 @@ const HomeProjects = ({ match }) => {
             key={projectIndex}
             size='small'
             title={`[${project.code}] ${project.name}`}
-            extra={<Button type='link' icon={<SettingOutlined></SettingOutlined>}></Button>}
-            actions={[<Button block type='primary' icon={<ArrowRightOutlined></ArrowRightOutlined>} onClick={() => handleNavigateToProject(project.code)}></Button>]}>
+            // extra={project.is_owning ? <Button type='link' icon={<SettingOutlined></SettingOutlined>} onClick={() => handleOpenDrawerProjectEdit(project.code)}></Button> : false}
+            onClick={() => handleNavigateToProject(project.code)}
+            // actions={[<Button block type='primary' icon={<ArrowRightOutlined></ArrowRightOutlined>} onClick={}></Button>]}
+          >
             <p>
               <EllipsisOutlined></EllipsisOutlined> {project.description}
             </p>
@@ -127,11 +125,10 @@ const HomeProjects = ({ match }) => {
         path={`${match.path}/createproject`}
         render={({ match: _match }) => (
           <CmpDrawer title='Create project' width={500} history={history} drawerCloseCallback={handleProjectCreated}>
-            <FrProjectCreate match={_match}></FrProjectCreate>
+            <ProjectCreate match={_match}></ProjectCreate>
           </CmpDrawer>
         )}></Route>
-      {/* edit project */}
-    </>
+    </Space>
   );
 };
 

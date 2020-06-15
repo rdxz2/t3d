@@ -1,20 +1,13 @@
-import React from 'react';
-import CtxApi from '../../contexts/ctxApi';
-import { useHistory } from 'react-router';
-import { Timeline, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import { Timeline, Typography } from 'antd';
+import React from 'react';
+
 const HomeRecentActivities = () => {
   // START -- CONTEXTS
-
-  // api
-  const { svsT3dapi } = React.useContext(CtxApi);
 
   // END -- CONTEXTS
 
   // START -- OTHERS
-
-  // history
-  const history = useHistory();
 
   // END -- OTHERS
 
