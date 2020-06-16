@@ -1,7 +1,7 @@
 const HTTPMETHOD = {
   POST: 'post',
   GET: 'get',
-  UPDATE: 'update',
+  PUT: 'put',
   PATCH: 'patch',
   DELETE: 'delete',
 };

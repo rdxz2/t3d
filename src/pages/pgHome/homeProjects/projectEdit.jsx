@@ -47,7 +47,7 @@ const ProjectEdit = ({ match, handleCloseDrawerWithCallback }) => {
 
     try {
       // send request
-      const response = await svsT3dapi.sendRequest(`api/project/`, HTTPMETHOD.PATCH);
+      const response = await svsT3dapi.sendRequest(`api/project/${match.params.projectCode}`, HTTPMETHOD.PUT, values);
 
       handleCloseDrawerWithCallback(response);
     } catch (error) {

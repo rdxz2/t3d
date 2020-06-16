@@ -49,7 +49,7 @@ const ProjectToDos = ({ projectCode }) => {
   React.useEffect(() => {
     svsT3dapi
       .sendRequest(`api/todo/${projectCode}`, HTTPMETHOD.GET)
-      .then((response) => console.log('TODO', response))
+      .then((response) => toDosSet(response.data))
       .catch((error) => {});
   }, [projectCode, svsT3dapi]);
 

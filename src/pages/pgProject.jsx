@@ -72,7 +72,6 @@ const PgProject = ({ match, handleChangeActivePage }) => {
 
   // prepare initial data
   React.useEffect(() => {
-    console.log(handleChangeActivePage, match.params.projectCode, svsT3dapi);
     svsT3dapi
       .sendRequest(`api/project/${match.params.projectCode}`, HTTPMETHOD.GET)
       .then((response) => {

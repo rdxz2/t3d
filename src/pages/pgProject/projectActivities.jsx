@@ -1,6 +1,7 @@
 import React from 'react';
 
 import CtxApi from '../../contexts/ctxApi';
+import HTTPMETHOD from '../../constants/HTTPMETHOD';
 
 const ProjectActivities = ({ projectCode }) => {
   // START -- CONTEXTS
@@ -30,10 +31,10 @@ const ProjectActivities = ({ projectCode }) => {
   // prepare initial data
   React.useEffect(() => {
     svsT3dapi
-      .sendRequest('api/user/recentactivities')
+      .sendRequest(`api/project/activities/${projectCode}`, HTTPMETHOD.GET)
       .then((response) => activitiesSet(response.data))
       .catch((error) => ({}));
-  }, [svsT3dapi]);
+  }, [projectCode, svsT3dapi]);
 
   // END -- EFFECTS
 

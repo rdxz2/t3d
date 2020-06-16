@@ -111,7 +111,7 @@ const HomeProjects = ({ match }) => {
               <EllipsisOutlined></EllipsisOutlined> {project.description}
             </p>
             <p>
-              <UserOutlined></UserOutlined> {project.author}
+              <UserOutlined></UserOutlined> {project.is_owning ? <b>{project.author}</b> : project.author}
             </p>
             <p>
               <ClockCircleOutlined></ClockCircleOutlined> {convertIsoDateToMoment(project.last_accessed, TIMEFORMAT.DDMMYYHHMMSS_BACKSLASH)}
