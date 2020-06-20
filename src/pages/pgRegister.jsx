@@ -3,7 +3,7 @@ import './pgRegister.css';
 import { Divider } from 'antd';
 import React from 'react';
 
-import FrRegister from './pgRegister/frRegister';
+import RegisterForm from './pgRegister/registerForm';
 
 const PgRegister = () => {
   // START -- CONTEXTS
@@ -31,7 +31,7 @@ const PgRegister = () => {
       {/* divider */}
       <Divider type='horizontal'>Register to t3d{process.env.REACT_APP_ENVIRONMENT}</Divider>
       {/* register form */}
-      <FrRegister></FrRegister>
+      <RegisterForm></RegisterForm>
     </div>
   );
 };

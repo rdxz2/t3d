@@ -4,13 +4,19 @@ import SvsT3dapi from '../services/svsT3dapi';
 
 const CtxApi = React.createContext({
   svsT3dapi: {
+    // http request functionality
     sendRequest: async (endpoint = '', httpmethod = '', data = {}, { additionalHeaders = {}, jwtKey = '' } = {}) => ({ version: 'v', data: {} }),
     sendRequestSelectList: async (endpoint = '', { show = 0, search = '' } = {}) => ({ version: 'v', data: {} }),
+    // jwt functionality
     setApiJwt: (jwt) => null,
     getApiJwt: () => '',
     removeApiJwt: () => null,
     getApiJwtInfo: () => {},
     isApiJwtExpired: () => false,
+    // refresh token functionality
+    setApiRefreshToken: (refreshToken) => null,
+    getApiRefreshToken: () => '',
+    removeApiRefreshToken: () => null,
   },
 });
 
@@ -31,6 +37,18 @@ export const CtxPvdApi = ({ children }) => {
   // END -- STATES
 
   // START -- FUNCTIONS
+
+  // send request middleware
+  const sendRequest = async (endpoint, method, body = {}, additionalData) => {
+    try {
+      // send http request
+      const response = svsT3dapi.sendRequest(endpoint, method, body, additionalData);
+
+      return response;
+    } catch (error) {
+      console.log('ERRRR', error);
+    }
+  };
 
   // END -- FUNCTIONS
 
@@ -54,7 +72,7 @@ export const CtxPvdApi = ({ children }) => {
 
   // END -- EFFECTS
 
-  return <CtxApi.Provider value={{ svsT3dapi }}>{children}</CtxApi.Provider>;
+  return <CtxApi.Provider value={{ svsT3dapi, sendRequest }}>{children}</CtxApi.Provider>;
 };
 
 export default CtxApi;

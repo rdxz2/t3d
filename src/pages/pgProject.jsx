@@ -1,13 +1,15 @@
+import { EditOutlined } from '@ant-design/icons';
+import { Button, Col, Row, Typography } from 'antd';
 import React from 'react';
-import { useHistory, Route } from 'react-router-dom';
-import CtxApi from '../contexts/ctxApi';
-import HTTPMETHOD from '../constants/HTTPMETHOD';
-import { Typography, Row, Col, Button } from 'antd';
-import ProjectToDos from './pgProject/projectToDos';
-import ProjectActivities from './pgProject/projectActivities';
+import { Route, useHistory } from 'react-router-dom';
+
 import CmpDrawer from '../components/cmpDrawer';
+import HTTPMETHOD from '../constants/HTTPMETHOD';
+import CtxApi from '../contexts/ctxApi';
 import ProjectEdit from './pgHome/homeProjects/projectEdit';
-import { SettingOutlined } from '@ant-design/icons';
+import ProjectActivities from './pgProject/projectActivities';
+import ProjectToDos from './pgProject/projectToDos';
+import PADDING from '../constants/PADDING';
 
 const PgProject = ({ match, handleChangeActivePage }) => {
   // START -- CONTEXTS
@@ -89,23 +91,23 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   return (
     <>
       {/* project name */}
-      <Typography.Title level={2} style={{ marginBottom: 0 }}>
+      <Typography.Title level={2} style={{ ...PADDING.LEFT_RIGHT() }}>
         {project.name}
-        <Button type='link' icon={<SettingOutlined></SettingOutlined>} onClick={() => handleOpenDrawerProjectEdit(match.params.projectCode)}></Button>
+        <Button type='link' icon={project.is_owning ? <EditOutlined></EditOutlined> : null} onClick={() => handleOpenDrawerProjectEdit(match.params.projectCode)}></Button>
       </Typography.Title>
-      <Typography.Text>{match.params.projectCode}</Typography.Text>
       {/* row */}
-      <Row>
-        {/* to do list */}
-        <Col span={16}>
-          <ProjectToDos projectCode={match.params.projectCode}></ProjectToDos>
-        </Col>
-        {/* activities */}
-        <Col span={8}>
-          <ProjectActivities projectCode={match.params.projectCode}></ProjectActivities>
-        </Col>
-      </Row>
-
+      <section style={{ ...PADDING.LEFT_RIGHT() }}>
+        <Row gutter={16}>
+          {/* to do list */}
+          <Col span={16}>
+            <ProjectToDos projectCode={match.params.projectCode}></ProjectToDos>
+          </Col>
+          {/* activities */}
+          <Col span={8}>
+            <ProjectActivities projectCode={match.params.projectCode}></ProjectActivities>
+          </Col>
+        </Row>
+      </section>
       {/* routes */}
       {/* edit project */}
       <Route

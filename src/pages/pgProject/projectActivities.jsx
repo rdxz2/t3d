@@ -2,6 +2,8 @@ import React from 'react';
 
 import CtxApi from '../../contexts/ctxApi';
 import HTTPMETHOD from '../../constants/HTTPMETHOD';
+import { Typography, Timeline } from 'antd';
+import { UserOutlined } from '@ant-design/icons';
 
 const ProjectActivities = ({ projectCode }) => {
   // START -- CONTEXTS
@@ -40,9 +42,28 @@ const ProjectActivities = ({ projectCode }) => {
 
   return (
     <>
-      {activities.map((activity, activityIndex) => (
+      {/* title */}
+      {/* <Typography.Title level={3}>Project activities</Typography.Title> */}
+      {/* activities */}
+      {/* {activities.map((activity, activityIndex) => (
         <div>ac</div>
-      ))}
+      ))} */}
+
+      <Typography.Title level={3}>Recent Activities</Typography.Title>
+      <Timeline mode='left'>
+        <Timeline.Item color='green'>a</Timeline.Item>
+        <Timeline.Item color='green'>b</Timeline.Item>
+        <Timeline.Item>
+          <p>1</p>
+          <p>2</p>
+          <p>3</p>
+        </Timeline.Item>
+        <Timeline.Item color='red' dot={<UserOutlined></UserOutlined>}>
+          Content
+        </Timeline.Item>
+        <Timeline.Item>Content</Timeline.Item>
+        <Timeline.Item color='gray'>Content</Timeline.Item>
+      </Timeline>
     </>
   );
 };

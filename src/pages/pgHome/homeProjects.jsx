@@ -1,5 +1,8 @@
+import './homeProjects.css';
+
 import { ClockCircleOutlined, EllipsisOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, Input, Space, Typography } from 'antd';
+import _ from 'lodash';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useHistory } from 'react-router';
@@ -7,6 +10,8 @@ import { Route } from 'react-router-dom';
 
 import CmpDrawer from '../../components/cmpDrawer';
 import HTTPMETHOD from '../../constants/HTTPMETHOD';
+import INPUTSELECT from '../../constants/INPUTSELECT';
+import PADDING from '../../constants/PADDING';
 import TIMEFORMAT from '../../constants/TIMEFORMAT';
 import CtxApi from '../../contexts/ctxApi';
 import { convertIsoDateToMoment } from '../../utilities/utlType';
@@ -42,15 +47,24 @@ const HomeProjects = ({ match }) => {
   // navigate: project
   const handleNavigateToProject = (projectCode) => history.push(`/project/${projectCode}`);
 
+  // search project
+  const handleSearchProject = async (event) => {};
+
   // project created
-  // add created project to project list
   const handleProjectCreated = (response) =>
-    recentProject.unshift({
-      name: response.data.name,
-      code: response.data.code,
-      author: response.data.author,
-      description: response.data.description,
-      last_accessed: response.data.last_accessed,
+    recentProjectsSet((_recentProjects) => {
+      // add created project to the first element
+      _recentProjects.unshift({
+        name: response.data.name,
+        code: response.data.code,
+        author: response.data.author,
+        description: response.data.description,
+        last_accessed: response.data.last_accessed,
+        is_owning: response.data.is_owning,
+      });
+
+      // set state
+      return [..._recentProjects];
     });
 
   // // horizontal mouse scroll on a container
@@ -83,12 +97,12 @@ const HomeProjects = ({ match }) => {
   return (
     <Space direction='vertical' style={{ width: '100%' }}>
       {/* title */}
-      <Typography.Title level={3} style={{ paddingLeft: 16, marginBottom: 0 }}>
+      <Typography.Title level={3} style={{ ...PADDING.LEFT_RIGHT(), marginBottom: 0 }}>
         Projects
       </Typography.Title>
       {/* search bar */}
       <div style={{ width: 266, paddingLeft: 16 }}>
-        <Input name='searchProject' placeholder={'search project'} onBlur={() => {}}></Input>
+        <Input name='searchProject' placeholder='search project' onChange={_.debounce(handleSearchProject, INPUTSELECT.SEARCH_DELAY)}></Input>
       </div>
       {/* project list */}
       <PerfectScrollbar id='recent-projects' /**onWheel={handleHorizontalScroll} */>

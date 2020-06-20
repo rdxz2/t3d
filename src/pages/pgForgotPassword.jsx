@@ -1,5 +1,5 @@
 import React from 'react';
-import FrForgotPassword from './pgForgotPassword/frForgotPassword';
+import ForgotPasswordForm from './pgForgotPassword/forgotPasswordForm';
 import { Layout } from 'antd';
 
 const PgForgotPassword = () => {
@@ -25,7 +25,7 @@ const PgForgotPassword = () => {
 
   return (
     <Layout style={{ padding: 50 }}>
-      <FrForgotPassword></FrForgotPassword>
+      <ForgotPasswordForm></ForgotPasswordForm>
     </Layout>
   );
 };

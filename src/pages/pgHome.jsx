@@ -6,6 +6,7 @@ import React from 'react';
 import HomeCalendar from './pgHome/homeCalendar';
 import HomeProjects from './pgHome/homeProjects';
 import HomeRecentActivities from './pgHome/homeRecentActivities';
+import PADDING from '../constants/PADDING';
 
 const PgHome = ({ match, handleChangeActivePage }) => {
   // START -- CONTEXTS
@@ -38,16 +39,18 @@ const PgHome = ({ match, handleChangeActivePage }) => {
       {/* project */}
       <HomeProjects match={match}></HomeProjects>
       {/* calendar & activities */}
-      <Row style={{ paddingLeft: 16, paddingRight: 16 }}>
-        {/* recent activities */}
-        <Col span={8}>
-          <HomeRecentActivities></HomeRecentActivities>
-        </Col>
-        {/* calendar */}
-        <Col span={16}>
-          <HomeCalendar></HomeCalendar>
-        </Col>
-      </Row>
+      <section style={{ ...PADDING.LEFT_RIGHT() }}>
+        <Row gutter={16}>
+          {/* recent activities */}
+          <Col span={8}>
+            <HomeRecentActivities></HomeRecentActivities>
+          </Col>
+          {/* calendar */}
+          <Col span={16}>
+            <HomeCalendar></HomeCalendar>
+          </Col>
+        </Row>
+      </section>
       {/* dummy */}
       <div>dummy</div>
       <div>dummy</div>

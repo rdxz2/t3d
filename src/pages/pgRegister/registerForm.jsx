@@ -9,7 +9,7 @@ import FORMLAYOUT from '../../constants/FORMLAYOUT';
 import INPUTSELECT from '../../constants/INPUTSELECT';
 import CtxApi from '../../contexts/ctxApi';
 
-const FrRegister = () => {
+const RegisterForm = () => {
   // START -- CONTEXTS
 
   // api
@@ -112,7 +112,7 @@ const FrRegister = () => {
           { min: 5, message: 'min. password length is 5 character' },
           { max: 100, message: 'max. password length is 100 character' },
         ]}>
-        <Input autoFocus placeholder='your password' type='password' prefix={<LockOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></LockOutlined>}></Input>
+        <Input.Password autoFocus placeholder='your password' prefix={<LockOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></LockOutlined>}></Input.Password>
       </Form.Item>
       {/* confirm password */}
       <Form.Item
@@ -129,7 +129,7 @@ const FrRegister = () => {
             },
           }),
         ]}>
-        <Input autoFocus placeholder='confirm your password' type='password' prefix={<LockOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></LockOutlined>}></Input>
+        <Input.Password autoFocus placeholder='confirm your password' prefix={<LockOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></LockOutlined>}></Input.Password>
       </Form.Item>
       {/* department */}
       <Form.Item hasFeedback label='Department' name='department' rules={[{ required: true, whitespace: true, message: 'select department' }]}>
@@ -194,4 +194,4 @@ const FrRegister = () => {
   );
 };
 
-export default FrRegister;
+export default RegisterForm;

@@ -43,6 +43,9 @@ const LoginForm = () => {
       // set jwt to local storage
       svsT3dapi.setApiJwt(response.data.token);
 
+      // set refresh token to local storage
+      svsT3dapi.setApiRefreshToken(response.data.refreshToken);
+
       // display message
       message.success(`log in success, welcome ${response.data.name}`);
 

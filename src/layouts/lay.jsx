@@ -68,8 +68,11 @@ const Lay = () => {
 
   // log out
   const handleLogOut = () => {
-    // remove token
+    // remove jwt from local storage
     svsT3dapi.removeApiJwt();
+
+    // remove refresh token from local storage
+    svsT3dapi.removeApiRefreshToken();
 
     // redirect to login page
     history.replace('/login');

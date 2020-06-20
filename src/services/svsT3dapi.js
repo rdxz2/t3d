@@ -14,7 +14,7 @@ class SvsT3dapi {
   }
 
   // send normal request
-  sendRequest = async (endpoint, method, body = {}, { additionalHeaders = {}, jwtKey = JWTKEY.T3DAPI } = {}) => {
+  sendRequest = async (endpoint, method, body = {}, { additionalHeaders = {}, jwtKey = JWTKEY.T3DAPI, retryCount = 0 } = {}) => {
     try {
       // send request
       const response = await sendHttpRequest(`${this._domain}/${endpoint}`, method, body, { additionalHeaders, jwtKey });
@@ -33,6 +33,26 @@ class SvsT3dapi {
           break;
         // unauthorized
         case HTTPSTATUS.UNAUTHORIZED:
+          // just don't do anything if we already retrying the same request with
+          if (++retryCount <= 1) {
+            // get refresh token from local storage
+            const refreshToken = this.getApiRefreshToken();
+
+            // request for new token (via refresh token)
+            const responseNewToken = await this.sendRequest('api/authentication/refresh', HTTPMETHOD.POST, { refreshToken: refreshToken }, { retryCount });
+
+            // set the newly obtained jwt
+            this.setApiJwt(responseNewToken.data.token);
+
+            // set the newly obtained refresh token
+            this.setApiRefreshToken(responseNewToken.data.refreshToken);
+
+            try {
+              // resend this request
+              return await this.sendRequest(endpoint, method, body, { additionalHeaders, jwtKey, retryCount });
+            } catch {}
+          }
+
           // remove token from local storage
           this.removeApiJwt();
 
@@ -71,6 +91,8 @@ class SvsT3dapi {
     }
   };
 
+  // START -- API JWT FUNCTIONALITY
+
   // set jwt for this api
   setApiJwt = (jwt) => setJwt(JWTKEY.T3DAPI, jwt);
 
@@ -85,6 +107,21 @@ class SvsT3dapi {
 
   // check if api jwt is expired
   isApiJwtExpired = () => isJwtExpired(JWTKEY.T3DAPI);
+
+  // END -- API JWT FUNCTIONALITY
+
+  // START -- API REFRESH TOKEN FUNCTIONALITY
+
+  // set refresh token for this api
+  setApiRefreshToken = (refreshToken) => setJwt(JWTKEY.T3DAPI_REFRESHTOKEN, refreshToken);
+
+  // get refresh token for this api
+  getApiRefreshToken = () => getJwt(JWTKEY.T3DAPI_REFRESHTOKEN);
+
+  // remove refresh token for this api
+  removeApiRefreshToken = () => removeJwt(JWTKEY.T3DAPI_REFRESHTOKEN);
+
+  // END -- API REFRESH TOKEN FUNCTIONALITY
 }
 
 export default SvsT3dapi;

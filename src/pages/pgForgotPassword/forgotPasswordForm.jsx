@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FrForgotPassword = () => {
+const ForgotPasswordForm = () => {
   // START -- CONTEXTS
 
   // END -- CONTEXTS
@@ -24,4 +24,4 @@ const FrForgotPassword = () => {
   return <div>For</div>;
 };
 
-export default FrForgotPassword;
+export default ForgotPasswordForm;
