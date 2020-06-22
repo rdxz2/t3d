@@ -41,7 +41,7 @@ const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
 
     try {
       // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/complete/${toDo._id}?is_completed=${event.target.checked}`, HTTPMETHOD.GET);
+      const response = await svsT3dapi.sendRequest(`api/todo/complete/${toDo.id}?is_completed=${event.target.checked}`, HTTPMETHOD.GET);
 
       // show error message if response is not the same as expected important state
       if (event.target.checked !== response.data.is_completed) return message.error('data error');
@@ -75,7 +75,7 @@ const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
 
     try {
       // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/important/${toDo._id}?is_important=${isImportantToggled}`, HTTPMETHOD.GET);
+      const response = await svsT3dapi.sendRequest(`api/todo/important/${toDo.id}?is_important=${isImportantToggled}`, HTTPMETHOD.GET);
 
       // show error message if response is not the same as expected important state
       if (isImportantToggled !== response.data.is_important) return message.error('data error');
@@ -96,7 +96,7 @@ const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
 
   // END -- EFFECTS
 
-  const selecOptionToDoPriority = SELECTOPTION.TODO_PRIORITY[toDo.priority];
+  const selectOptionToDoPriority = SELECTOPTION.TODO_PRIORITY[toDo.priority];
 
   return (
     <Space style={{ width: '100%' }}>
@@ -105,9 +105,9 @@ const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
       {/* important flag */}
       <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleToDoImportant}></StarTwoTone>
       {/* priority tag (only if priority is not normal (4)) */}
-      {toDo.priority !== 4 && <Tag color={selecOptionToDoPriority.tagColor}>{selecOptionToDoPriority.text}</Tag>}
+      {toDo.priority !== 4 && selectOptionToDoPriority && <Tag color={selectOptionToDoPriority.tagColor}>{selectOptionToDoPriority.text}</Tag>}
       {/* description */}
-      <span className='todo-description' onClick={() => handleModalToDoOpen(toDo._id)}>
+      <span className='todo-description' onClick={() => handleModalToDoOpen(toDo.id)}>
         {toDo.description}
       </span>
     </Space>

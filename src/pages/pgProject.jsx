@@ -122,7 +122,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   const handlePriorityChanged = (toDoId, priority) =>
     toDosSet((_toDos) => {
       // get updated to do
-      const updatedToDo = _toDos.find((toDo) => toDo._id === toDoId);
+      const updatedToDo = _toDos.find((toDo) => toDo.id === toDoId);
 
       // update to do
       updatedToDo.priority = priority;
@@ -155,31 +155,34 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   React.useEffect(() => {
     // prepare initial data
     prepareInitialData();
+  }, [prepareInitialData]);
 
-    // get user name form jwt
+  // on user joined subscriber
+  React.useEffect(() => {
+    // subscribe to server emits
+    strmProject.registerJoined(handleCollaboratorJoined);
+    strmProject.registerLeaved(handleCollaboratorLeaved);
+
+    // get user name from jwt
     const userInfo = svsT3dapi.getApiJwtInfo();
 
-    // join project room
+    // broadcast: joining project room
     strmProject.emitJoin({ projectCode: match.params.projectCode, name: userInfo.name }, (error, data) => {
       if (error) message.error(`error joining project room: ${error}`);
 
       // set online collaborators
       onlineCollaboratorsSet(data);
     });
-  }, [match.params.projectCode, prepareInitialData, strmProject, svsT3dapi]);
-
-  // on user joined subscriber
-  React.useEffect(() => {
-    strmProject.registerJoined(handleCollaboratorJoined);
-    strmProject.registerLeaved(handleCollaboratorLeaved);
 
     return () => {
+      // unsubscribe to server emits
       strmProject.unregisterJoined();
       strmProject.unregisterLeaved();
 
+      // broadcast: leaving the project room
       strmProject.emitLeave(match.params.projectCode, () => {});
     };
-  }, [match.params.projectCode, strmProject]);
+  }, [match.params.projectCode, strmProject, svsT3dapi]);
 
   // END -- EFFECTS
 

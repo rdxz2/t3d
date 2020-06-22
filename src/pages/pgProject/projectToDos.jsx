@@ -53,27 +53,61 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
     }
   }, INPUTSELECT.SEARCH_DELAY);
 
+  // add created to do to the first element
+  const unshiftToDos = React.useCallback(
+    (id, description, priority) =>
+      toDosSet((_toDos) => {
+        _toDos.unshift({
+          id,
+          description,
+          priority,
+        });
+
+        // set state
+        return [..._toDos];
+      }),
+    [toDosSet]
+  );
+
   // to do created
   const handleToDoCreated = (response) => {
     // send streamer message
-    strmProject.emitToDoCreated({ projectCode, description: response.data.description });
+    strmProject.emitToDoCreating({ projectCode, id: response.data.id, description: response.data.description, priority: response.data.priority }, () => {});
 
-    // set to dos
-    toDosSet((_toDos) => {
-      // add created to do to the first element
-      _toDos.unshift({
-        _id: response.data._id,
-        description: response.data.description,
-      });
+    // unshift to do
+    unshiftToDos(response.data.id, response.data.description, response.data.priority);
 
-      // set state
-      return [..._toDos];
-    });
+    // // set to dos
+    // toDosSet((_toDos) => {
+    //   // add created to do to the first element
+    //   _toDos.unshift({
+    //     id: response.data.id,
+    //     description: response.data.description,
+    //   });
+
+    //   // set state
+    //   return [..._toDos];
+    // });
   };
+
+  // to do created (socket)
+  const handleToDoCreatedEmit = React.useCallback(
+    // unshift to do
+    (response) => unshiftToDos(response.id, response.description, response.priority),
+    [unshiftToDos]
+  );
 
   // END -- FUNCTIONS
 
   // START -- EFFECTS
+
+  React.useEffect(() => {
+    strmProject.registerToDoCreated(handleToDoCreatedEmit);
+
+    return () => {
+      strmProject.unregisterToDoCreated();
+    };
+  }, [handleToDoCreatedEmit, strmProject]);
 
   // END -- EFFECTS
 

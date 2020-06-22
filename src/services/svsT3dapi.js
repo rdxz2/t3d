@@ -14,10 +14,10 @@ class SvsT3dapi {
   }
 
   // main request sender
-  sendRequest = async (endpoint, method, body = {}, { additionalHeaders = {}, jwtKey = JWTKEY.T3DAPI } = {}) => {
+  sendRequest = async (endpoint, method, body = {}, { additionalHeaders = {}, jwtKey = JWTKEY.T3DAPI, isLoggingIn = false } = {}) => {
     try {
       // if current jwt is expired then request for new jwt
-      if (this.isApiJwtExpired()) {
+      if (this.isApiJwtExpired() && !isLoggingIn) {
         // get refresh token from local storage
         const refreshToken = this.getApiRefreshToken();
 
@@ -45,11 +45,11 @@ class SvsT3dapi {
           break;
         // unauthorized
         case HTTPSTATUS.UNAUTHORIZED:
-          // remove token from local storage
-          this.removeApiJwt();
+          // // remove token from local storage
+          // this.removeApiJwt();
 
-          // remove refresh token from local storage
-          this.removeApiRefreshToken();
+          // // remove refresh token from local storage
+          // this.removeApiRefreshToken();
 
           alert('REDIRECTING');
 

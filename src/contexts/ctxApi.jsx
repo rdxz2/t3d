@@ -6,7 +6,7 @@ import StrmProject from '../streamers/strmProject';
 const CtxApi = React.createContext({
   svsT3dapi: {
     // http request functionality
-    sendRequest: async (endpoint = '', httpmethod = '', data = {}, { additionalHeaders = {}, jwtKey = '' } = {}) => ({ version: 'v', data: {} }),
+    sendRequest: async (endpoint = '', httpmethod = '', data = {}, { additionalHeaders = {}, jwtKey = '', isLoggingIn = false } = {}) => ({ version: 'v', data: {} }),
     sendRequestSelectList: async (endpoint = '', { show = 0, search = '' } = {}) => ({ version: 'v', data: {} }),
     // jwt functionality
     setApiJwt: (jwt) => null,
@@ -24,9 +24,11 @@ const CtxApi = React.createContext({
     unregisterJoined: () => null,
     registerLeaved: (onLeaved = () => {}) => null,
     unregisterLeaved: () => null,
+    registerToDoCreated: (onToDoCreated = () => {}) => null,
+    unregisterToDoCreated: () => null,
     emitJoin: (data = { projectCode: '', name: '' }, callback = (error, data) => {}) => null,
     emitLeave: (projectCode = '', callback = (error, data) => {}) => null,
-    emitToDoCreated: ({ projectCode = '', description = '' } = {}, callback = (error, data) => {}) => null,
+    emitToDoCreating: (data = { projectCode: '', id: '', description: '', priority: 0 }, callback = (error, data) => {}) => null,
   },
 });
 

@@ -21,6 +21,10 @@ class StrmProject {
   registerLeaved = (onLeaved) => this.socket.on('leaved', onLeaved);
   unregisterLeaved = () => this.socket.off('leaved');
 
+  // to do created
+  registerToDoCreated = (onToDoCreated) => this.socket.on('todo_created', onToDoCreated);
+  unregisterToDoCreated = () => this.socket.off('todo_created');
+
   // END -- LISTENER REGISTRATION
 
   // START -- EMITTERS
@@ -31,8 +35,8 @@ class StrmProject {
   // user leaving project
   emitLeave = (projectCode, callback) => this.socket.emit('leave', projectCode, callback);
 
-  // to do created
-  emitToDoCreated = ({ projectCode, description } = {}, callback) => this.socket.emit('todo_created', { projectCode, description }, callback);
+  // creating to do
+  emitToDoCreating = (data = { projectCode: '', id: '', description: '', priority: 0 }, callback) => this.socket.emit('todo_creating', data, callback);
 
   // END -- EMITTERS
 }
