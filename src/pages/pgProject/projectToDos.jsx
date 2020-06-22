@@ -1,10 +1,8 @@
 import './projectToDos.css';
 
-import { SearchOutlined } from '@ant-design/icons';
 import { Col, Input, Row, Select, Space, Spin } from 'antd';
 import _ from 'lodash';
 import React from 'react';
-import { useHistory } from 'react-router';
 
 import HTTPMETHOD from '../../constants/HTTPMETHOD';
 import INPUTSELECT from '../../constants/INPUTSELECT';
@@ -13,7 +11,7 @@ import CtxApi from '../../contexts/ctxApi';
 import ToDoCreate from './projectToDos/toDoCreate';
 import ToDoLine from './projectToDos/toDoLine';
 
-const ProjectToDos = ({ projectCode }) => {
+const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => {
   // START -- CONTEXTS
 
   // api
@@ -23,18 +21,12 @@ const ProjectToDos = ({ projectCode }) => {
 
   // START -- OTHERS
 
-  // history
-  const history = useHistory();
-
   // END -- OTHERS
 
   // START -- STATES
 
-  // to dos
-  const [toDos, toDosSet] = React.useState([]);
-
   // searching state
-  const [isSearching, isSearchingSet] = React.useState(true);
+  const [isSearching, isSearchingSet] = React.useState(false);
 
   // END -- STATES
 
@@ -80,20 +72,6 @@ const ProjectToDos = ({ projectCode }) => {
 
   // START -- EFFECTS
 
-  // prepare initial data
-  React.useEffect(() => {
-    svsT3dapi
-      .sendRequest(`api/todo/${projectCode}`, HTTPMETHOD.GET)
-      .then((response) => {
-        // set to do list
-        toDosSet(response.data);
-
-        // not searching...
-        isSearchingSet(false);
-      })
-      .catch((error) => {});
-  }, [projectCode, svsT3dapi]);
-
   // END -- EFFECTS
 
   return (
@@ -104,8 +82,8 @@ const ProjectToDos = ({ projectCode }) => {
       <Row gutter={8}>
         {/* filter bar */}
         <Col id='col-filter' span={4}>
-          <Select defaultValue={SELECTOPTIONS.FILTER[0].value} name='toDoFilter'>
-            {SELECTOPTIONS.FILTER.map((filter, filterIndex) => (
+          <Select defaultValue={SELECTOPTIONS.TODO_FILTER[0].value} name='toDoFilter'>
+            {SELECTOPTIONS.TODO_FILTER.map((filter, filterIndex) => (
               <Select.Option key={filterIndex} value={filter.value}>
                 {filter.text}
               </Select.Option>
@@ -118,10 +96,10 @@ const ProjectToDos = ({ projectCode }) => {
         </Col>
       </Row>
       {/* to do list */}
-      <Spin spinning={isSearching}>
+      <Spin spinning={isSearching} tip='searching todos..'>
         <Space direction='vertical'>
           {toDos.map((toDo, toDoIndex) => (
-            <ToDoLine key={toDoIndex} toDo={toDo}></ToDoLine>
+            <ToDoLine key={toDoIndex} toDo={toDo} handleModalToDoOpen={handleModalToDoOpen}></ToDoLine>
           ))}
         </Space>
       </Spin>

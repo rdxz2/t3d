@@ -1,7 +1,7 @@
 import './homeProjects.css';
 
 import { ClockCircleOutlined, EllipsisOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Input, Space, Typography } from 'antd';
+import { Button, Card, Input, Space, Typography, Spin } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -9,15 +9,15 @@ import { useHistory } from 'react-router';
 import { Route } from 'react-router-dom';
 
 import CmpDrawer from '../../components/cmpDrawer';
-import HTTPMETHOD from '../../constants/HTTPMETHOD';
 import INPUTSELECT from '../../constants/INPUTSELECT';
 import PADDING from '../../constants/PADDING';
 import TIMEFORMAT from '../../constants/TIMEFORMAT';
-import CtxApi from '../../contexts/ctxApi';
 import { convertIsoDateToMoment } from '../../utilities/utlType';
 import ProjectCreate from './homeProjects/projectCreate';
+import CtxApi from '../../contexts/ctxApi';
+import HTTPMETHOD from '../../constants/HTTPMETHOD';
 
-const HomeProjects = ({ match }) => {
+const HomeProjects = ({ recentProjects, recentProjectsSet, handleProjectCreated, match }) => {
   // START -- CONTEXTS
 
   // api
@@ -34,38 +34,39 @@ const HomeProjects = ({ match }) => {
 
   // START -- STATES
 
-  // user projects
-  const [recentProject, recentProjectsSet] = React.useState([]);
+  // searching state
+  const [isSearching, isSearchingSet] = React.useState(false);
 
   // END -- STATES
 
   // START -- FUNCTIONS
 
   // open drawer: project create
-  const handleOpenDrawerProjectCreate = () => history.push(`${match.path}/createproject`);
+  const handleOpenDrawerProjectCreate = () => history.push(`${match.url}/createproject`);
 
   // navigate: project
   const handleNavigateToProject = (projectCode) => history.push(`/project/${projectCode}`);
 
   // search project
-  const handleSearchProject = async (event) => {};
+  const handleSearchProjects = (event) => {
+    event.persist();
+    handleSearchProjectsDebounced(event.target.value);
+  };
+  const handleSearchProjectsDebounced = _.debounce(async (value) => {
+    // searching...
+    isSearchingSet(true);
+    try {
+      // send request
+      const response = await svsT3dapi.sendRequest(`api/user/recentprojects?search=${value}`, HTTPMETHOD.GET);
 
-  // project created
-  const handleProjectCreated = (response) =>
-    recentProjectsSet((_recentProjects) => {
-      // add created project to the first element
-      _recentProjects.unshift({
-        name: response.data.name,
-        code: response.data.code,
-        author: response.data.author,
-        description: response.data.description,
-        last_accessed: response.data.last_accessed,
-        is_owning: response.data.is_owning,
-      });
-
-      // set state
-      return [..._recentProjects];
-    });
+      // set recent projects
+      recentProjectsSet(response.data);
+    } catch (error) {
+    } finally {
+      // not searching...
+      isSearchingSet(false);
+    }
+  }, INPUTSELECT.SEARCH_DELAY);
 
   // // horizontal mouse scroll on a container
   // const handleHorizontalScroll = (event) => {
@@ -83,66 +84,59 @@ const HomeProjects = ({ match }) => {
 
   // START -- EFFECTS
 
-  // prepare initial data
-  React.useEffect(() => {
-    // load user's recent projects
-    svsT3dapi
-      .sendRequest('api/user/recentprojects', HTTPMETHOD.GET)
-      .then((response) => recentProjectsSet(response.data))
-      .catch((error) => {});
-  }, [svsT3dapi]);
-
   // END -- EFFECTS
 
   return (
-    <Space direction='vertical' style={{ width: '100%' }}>
-      {/* title */}
-      <Typography.Title level={3} style={{ ...PADDING.LEFT_RIGHT(), marginBottom: 0 }}>
-        Projects
-      </Typography.Title>
-      {/* search bar */}
-      <div style={{ width: 266, paddingLeft: 16 }}>
-        <Input name='searchProject' placeholder='search project' onChange={_.debounce(handleSearchProject, INPUTSELECT.SEARCH_DELAY)}></Input>
-      </div>
-      {/* project list */}
-      <PerfectScrollbar id='recent-projects' /**onWheel={handleHorizontalScroll} */>
-        {/* render create project card */}
-        <Card id='recent-project-card-create' className='recent-project-card' bordered={false}>
-          <Button type='primary' size='large' icon={<PlusOutlined></PlusOutlined>} onClick={handleOpenDrawerProjectCreate} style={{ width: '100%', height: '100%' }}></Button>
-        </Card>
-        {/* render other projects */}
-        {recentProject.map((project, projectIndex) => (
-          <Card
-            className='recent-project-card'
-            key={projectIndex}
-            size='small'
-            title={`[${project.code}] ${project.name}`}
-            // extra={project.is_owning ? <Button type='link' icon={<SettingOutlined></SettingOutlined>} onClick={() => handleOpenDrawerProjectEdit(project.code)}></Button> : false}
-            onClick={() => handleNavigateToProject(project.code)}
-            // actions={[<Button block type='primary' icon={<ArrowRightOutlined></ArrowRightOutlined>} onClick={}></Button>]}
-          >
-            <p>
-              <EllipsisOutlined></EllipsisOutlined> {project.description}
-            </p>
-            <p>
-              <UserOutlined></UserOutlined> {project.is_owning ? <b>{project.author}</b> : project.author}
-            </p>
-            <p>
-              <ClockCircleOutlined></ClockCircleOutlined> {convertIsoDateToMoment(project.last_accessed, TIMEFORMAT.DDMMYYHHMMSS_BACKSLASH)}
-            </p>
+    <Spin spinning={isSearching} tip='searching projects..'>
+      <Space direction='vertical' style={{ width: '100%' }}>
+        {/* title */}
+        <Typography.Title level={3} style={{ ...PADDING.LEFT_RIGHT(), marginBottom: 0 }}>
+          Projects
+        </Typography.Title>
+        {/* search bar */}
+        <div style={{ width: 266, paddingLeft: 16 }}>
+          <Input allowClear name='searchProject' placeholder='search project' onChange={handleSearchProjects}></Input>
+        </div>
+        {/* project list */}
+        <PerfectScrollbar id='recent-projects' /**onWheel={handleHorizontalScroll} */>
+          {/* render create project card */}
+          <Card id='recent-project-card-create' className='recent-project-card' bordered={false}>
+            <Button type='primary' size='large' icon={<PlusOutlined></PlusOutlined>} onClick={handleOpenDrawerProjectCreate} style={{ width: '100%', height: '100%' }}></Button>
           </Card>
-        ))}
-      </PerfectScrollbar>
-      {/* routes */}
-      {/* create project */}
-      <Route
-        path={`${match.path}/createproject`}
-        render={({ match: _match }) => (
-          <CmpDrawer title='Create project' width={500} history={history} drawerCloseCallback={handleProjectCreated}>
-            <ProjectCreate match={_match}></ProjectCreate>
-          </CmpDrawer>
-        )}></Route>
-    </Space>
+          {/* render other projects */}
+          {recentProjects.map((project, projectIndex) => (
+            <Card
+              className='recent-project-card'
+              key={projectIndex}
+              size='small'
+              title={`[${project.code}] ${project.name}`}
+              // extra={project.is_owning ? <Button type='link' icon={<SettingOutlined></SettingOutlined>} onClick={() => handleOpenDrawerProjectEdit(project.code)}></Button> : false}
+              onClick={() => handleNavigateToProject(project.code)}
+              // actions={[<Button block type='primary' icon={<ArrowRightOutlined></ArrowRightOutlined>} onClick={}></Button>]}
+            >
+              <p>
+                <EllipsisOutlined></EllipsisOutlined> {project.description}
+              </p>
+              <p>
+                <UserOutlined></UserOutlined> {project.is_owning ? <b>{project.author}</b> : project.author}
+              </p>
+              <p>
+                <ClockCircleOutlined></ClockCircleOutlined> {convertIsoDateToMoment(project.last_accessed, TIMEFORMAT.DDMMYYHHMMSS_BACKSLASH)}
+              </p>
+            </Card>
+          ))}
+        </PerfectScrollbar>
+        {/* routes */}
+        {/* create project */}
+        <Route
+          path={`${match.url}/createproject`}
+          render={({ match: _match }) => (
+            <CmpDrawer title='Create project' width={500} history={history} drawerCloseCallback={handleProjectCreated}>
+              <ProjectCreate match={_match}></ProjectCreate>
+            </CmpDrawer>
+          )}></Route>
+      </Space>
+    </Spin>
   );
 };
 

@@ -33,7 +33,7 @@ class SvsT3dapi {
           break;
         // unauthorized
         case HTTPSTATUS.UNAUTHORIZED:
-          // just don't do anything if we already retrying the same request with
+          // just don't do anything if we already retrying the same request
           if (++retryCount <= 1) {
             // get refresh token from local storage
             const refreshToken = this.getApiRefreshToken();
@@ -44,8 +44,8 @@ class SvsT3dapi {
             // set the newly obtained jwt
             this.setApiJwt(responseNewToken.data.token);
 
-            // set the newly obtained refresh token
-            this.setApiRefreshToken(responseNewToken.data.refreshToken);
+            // // set the newly obtained refresh token
+            // this.setApiRefreshToken(responseNewToken.data.refreshToken);
 
             try {
               // resend this request
@@ -56,8 +56,13 @@ class SvsT3dapi {
           // remove token from local storage
           this.removeApiJwt();
 
-          // show warning message
-          message.warning('please log in again');
+          // remove refresh token from local storage
+          this.removeApiRefreshToken();
+
+          alert('REDIRECTING');
+
+          // redirect to login page
+          window.location.replace('/login?reason=Unauthorized');
 
           break;
         // server error

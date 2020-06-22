@@ -1,15 +1,9 @@
-import React from 'react';
-
-import CtxApi from '../../contexts/ctxApi';
-import HTTPMETHOD from '../../constants/HTTPMETHOD';
-import { Typography, Timeline } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import { Timeline, Typography } from 'antd';
+import React from 'react';
 
 const ProjectActivities = ({ projectCode }) => {
   // START -- CONTEXTS
-
-  // api
-  const { svsT3dapi } = React.useContext(CtxApi);
 
   // END -- CONTEXTS
 
@@ -19,9 +13,6 @@ const ProjectActivities = ({ projectCode }) => {
 
   // START -- STATES
 
-  // activities
-  const [activities, activitiesSet] = React.useState([]);
-
   // END -- STATES
 
   // START -- FUNCTIONS
@@ -29,14 +20,6 @@ const ProjectActivities = ({ projectCode }) => {
   // END -- FUNCTIONS
 
   // START -- EFFECTS
-
-  // prepare initial data
-  React.useEffect(() => {
-    svsT3dapi
-      .sendRequest(`api/project/activities/${projectCode}`, HTTPMETHOD.GET)
-      .then((response) => activitiesSet(response.data))
-      .catch((error) => ({}));
-  }, [projectCode, svsT3dapi]);
 
   // END -- EFFECTS
 

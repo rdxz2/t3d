@@ -38,41 +38,13 @@ export const CtxPvdApi = ({ children }) => {
 
   // START -- FUNCTIONS
 
-  // send request middleware
-  const sendRequest = async (endpoint, method, body = {}, additionalData) => {
-    try {
-      // send http request
-      const response = svsT3dapi.sendRequest(endpoint, method, body, additionalData);
-
-      return response;
-    } catch (error) {
-      console.log('ERRRR', error);
-    }
-  };
-
   // END -- FUNCTIONS
 
   // START -- EFFECTS
 
-  // // check token validity
-  // React.useState(() => {
-  //   // get token
-  //   const jwt = svsT3dapi.getApiJwt();
-  //   if (!jwt) {
-  //     history.replace('/login');
-  //     return;
-  //   }
-
-  //   // just check if token is valid
-  //   svsT3dapi
-  //     .sendRequest('api/authentication/check', HTTPMETHOD.GET)
-  //     .then((response) => {})
-  //     .catch((error) => {});
-  // }, []);
-
   // END -- EFFECTS
 
-  return <CtxApi.Provider value={{ svsT3dapi, sendRequest }}>{children}</CtxApi.Provider>;
+  return <CtxApi.Provider value={{ svsT3dapi }}>{children}</CtxApi.Provider>;
 };
 
 export default CtxApi;

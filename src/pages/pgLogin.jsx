@@ -1,12 +1,13 @@
 import './pgLogin.css';
 
-import { Card, Divider, Button } from 'antd';
+import { Card, Divider, Button, message } from 'antd';
 import React from 'react';
 
 import packageJson from '../../package.json';
 import { setDocumentTitle } from '../utilities/utlWindow';
 import LoginForm from './pgLogin/loginForm';
 import { useHistory } from 'react-router';
+import useQuery from '../hooks/useQuery';
 
 const PgLogin = () => {
   // START -- CONTEXTS
@@ -17,6 +18,9 @@ const PgLogin = () => {
 
   // history
   const history = useHistory();
+
+  // url query string
+  const queryString = useQuery();
 
   // END -- OTHERS
 
@@ -33,7 +37,10 @@ const PgLogin = () => {
   React.useEffect(() => {
     // change document title
     setDocumentTitle('Log in');
-  }, []);
+
+    // show warning message if user got to this page by unauthorized
+    if (queryString.get('reason') === 'Unauthorized') message.warning('your session has ended, please log in again');
+  }, [queryString]);
 
   // END -- EFFECTS
 

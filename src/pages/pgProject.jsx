@@ -5,11 +5,12 @@ import { Route, useHistory } from 'react-router-dom';
 
 import CmpDrawer from '../components/cmpDrawer';
 import HTTPMETHOD from '../constants/HTTPMETHOD';
+import PADDING from '../constants/PADDING';
 import CtxApi from '../contexts/ctxApi';
 import ProjectEdit from './pgHome/homeProjects/projectEdit';
 import ProjectActivities from './pgProject/projectActivities';
+import ProjectSelectedToDo from './pgProject/projectSelectedToDo';
 import ProjectToDos from './pgProject/projectToDos';
-import PADDING from '../constants/PADDING';
 
 const PgProject = ({ match, handleChangeActivePage }) => {
   // START -- CONTEXTS
@@ -31,9 +32,44 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   // project
   const [project, projectSet] = React.useState({});
 
+  // to do list
+  const [toDos, toDosSet] = React.useState([]);
+
+  // activities
+  const [activities, activitiesSet] = React.useState([]);
+
   // END -- STATES
 
   // START -- FUNCTIONS
+
+  // prepare initial data
+  const prepareInitialData = React.useCallback(async () => {
+    // get project code from url params
+    const projectCode = match.params.projectCode;
+
+    try {
+      // send request (project)
+      const responseProject = await svsT3dapi.sendRequest(`api/project/${projectCode}`, HTTPMETHOD.GET);
+
+      // change page title
+      handleChangeActivePage(responseProject.data.code);
+
+      // set project
+      projectSet(responseProject.data);
+
+      // send request (to dos)
+      const responseToDos = await svsT3dapi.sendRequest(`api/todo/${projectCode}`, HTTPMETHOD.GET);
+
+      // set to dos
+      toDosSet(responseToDos.data);
+
+      // send request (activities)
+      const responseActivities = await svsT3dapi.sendRequest(`api/project/activities/${projectCode}`, HTTPMETHOD.GET);
+
+      // set activities
+      activitiesSet(responseActivities.data);
+    } catch (error) {}
+  }, [handleChangeActivePage, match.params.projectCode, svsT3dapi]);
 
   // open drawer: project edit
   const handleOpenDrawerProjectEdit = (projectCode) => history.push(`${projectCode}/edit`);
@@ -68,23 +104,17 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     // });
   };
 
+  // open to do detail modal
+  const handleModalToDoOpen = (toDoId) => history.push(`${match.url}/todo/${toDoId}`);
+
   // END -- FUNCTIONS
 
   // START -- EFFECTS
 
   // prepare initial data
   React.useEffect(() => {
-    svsT3dapi
-      .sendRequest(`api/project/${match.params.projectCode}`, HTTPMETHOD.GET)
-      .then((response) => {
-        // change page title
-        handleChangeActivePage(response.data.code);
-
-        // set project
-        projectSet(response.data);
-      })
-      .catch((error) => {});
-  }, [handleChangeActivePage, match.params.projectCode, svsT3dapi]);
+    prepareInitialData();
+  }, [prepareInitialData]);
 
   // END -- EFFECTS
 
@@ -100,23 +130,25 @@ const PgProject = ({ match, handleChangeActivePage }) => {
         <Row gutter={16}>
           {/* to do list */}
           <Col span={16}>
-            <ProjectToDos projectCode={match.params.projectCode}></ProjectToDos>
+            <ProjectToDos toDos={toDos} toDosSet={toDosSet} projectCode={match.params.projectCode} handleModalToDoOpen={handleModalToDoOpen}></ProjectToDos>
           </Col>
           {/* activities */}
           <Col span={8}>
-            <ProjectActivities projectCode={match.params.projectCode}></ProjectActivities>
+            <ProjectActivities activities={activities} activitiesSet={activitiesSet} projectCode={match.params.projectCode}></ProjectActivities>
           </Col>
         </Row>
       </section>
       {/* routes */}
       {/* edit project */}
       <Route
-        path={`${match.path}/edit`}
+        path={`${match.url}/edit`}
         render={({ match: _match }) => (
           <CmpDrawer title={`Edit ${_match.params.projectCode}`} width={500} history={history} drawerCloseCallback={handleProjectEdited}>
             <ProjectEdit match={_match}></ProjectEdit>
           </CmpDrawer>
         )}></Route>
+      {/* to do detail */}
+      <Route path={`${match.url}/todo/:id`} render={({ match: _match }) => <ProjectSelectedToDo match={_match} history={history}></ProjectSelectedToDo>}></Route>
     </>
   );
 };

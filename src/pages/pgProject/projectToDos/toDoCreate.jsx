@@ -60,7 +60,8 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
       // show success message
       message.success('to do created');
     } catch (error) {
-      // not submitting
+    } finally {
+      // not submitting...
       isSubmittingSet(false);
     }
   };
@@ -82,12 +83,12 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
     <Form form={form} onFinish={handleSubmit}>
       {/* description */}
       <Form.Item name='description' style={{ marginBottom: 0 }}>
-        <Input autoFocus placeholder='what to be done?' onKeyDown={handleKeyPres} style={{ width: '100%' }}></Input>
+        <Input autoFocus autoComplete='off' placeholder='what to be done?' onKeyDown={handleKeyPres} style={{ width: '100%' }}></Input>
       </Form.Item>
     </Form>
   ) : (
     // add button
-    <Button block type='primary' icon={<PlusOutlined></PlusOutlined>} onClick={handleCreateToDoOpen}></Button>
+    <Button block type='primary' loading={isSubmitting} icon={<PlusOutlined></PlusOutlined>} onClick={handleCreateToDoOpen}></Button>
   );
 };
 

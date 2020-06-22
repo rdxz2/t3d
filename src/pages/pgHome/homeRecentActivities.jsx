@@ -2,7 +2,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { Timeline, Typography } from 'antd';
 import React from 'react';
 
-const HomeRecentActivities = () => {
+const HomeRecentActivities = ({ recentActivities, recentActivitiesSet }) => {
   // START -- CONTEXTS
 
   // END -- CONTEXTS

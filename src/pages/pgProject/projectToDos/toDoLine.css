@@ -1,0 +1,13 @@
+.star {
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.todo-description {
+  transition: 0.3s;
+}
+
+.todo-description:hover {
+  color: black;
+  cursor: pointer;
+}

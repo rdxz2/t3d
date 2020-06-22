@@ -1,14 +1,8 @@
 import { Calendar, Typography } from 'antd';
 import React from 'react';
 
-import HTTPMETHOD from '../../constants/HTTPMETHOD';
-import CtxApi from '../../contexts/ctxApi';
-
-const HomeCalendar = () => {
+const HomeCalendar = ({ schedules, schedulesSet }) => {
   // START -- CONTEXTS
-
-  // api
-  const { svsT3dapi } = React.useContext(CtxApi);
 
   // END -- CONTEXTS
 
@@ -30,14 +24,6 @@ const HomeCalendar = () => {
   // END -- FUNCTIONS
 
   // START -- EFFECTS
-
-  // prepare initial data
-  React.useEffect(() => {
-    svsT3dapi
-      .sendRequest('api/user/schedule', HTTPMETHOD.GET)
-      .then((response) => ({}))
-      .catch((error) => ({}));
-  }, [svsT3dapi]);
 
   // END -- EFFECTS
 

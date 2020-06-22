@@ -34,23 +34,32 @@ const Lay = () => {
   // current page
   const [currentActivePage, currentActivePageSet] = React.useState('');
 
+  // user profile
+  const [profile, profileSet] = React.useState({});
+
+  // notifications
+  const [notifications, notificationsSet] = React.useState([]);
+
   // notification drawer
   const [isDrawerNotificationOpen, isDrawerNotificationOpenSet] = React.useState(false);
-
-  // user profile
-  const [userProfile, userProfileSet] = React.useState({});
 
   // END -- STATES
 
   // START -- FUNCTIONS
 
   // prepare initial data
-  const prepareInitiaData = React.useCallback(() => {
-    // get user profile
-    svsT3dapi
-      .sendRequest('api/user/profileMinimal', HTTPMETHOD.GET)
-      .then((response) => userProfileSet(response.data))
-      .catch((error) => {});
+  const prepareInitiaData = React.useCallback(async () => {
+    // send request (minimal profile)
+    const responseMinimalProfile = await svsT3dapi.sendRequest('api/user/profileminimal', HTTPMETHOD.GET);
+
+    // set minimal profile
+    profileSet(responseMinimalProfile.data);
+
+    // send request (notifications)
+    const responseNotifications = await svsT3dapi.sendRequest('api/user/notifications', HTTPMETHOD.GET);
+
+    // set notifications
+    notificationsSet(responseNotifications.data);
   }, [svsT3dapi]);
 
   // handle open/close drawer notification
@@ -82,18 +91,15 @@ const Lay = () => {
 
   // START -- EFFECTS
 
-  // request t3d jwt validity
+  // prepare initial data
   React.useEffect(() => {
-    svsT3dapi
-      .sendRequest('api/authentication/check', HTTPMETHOD.GET)
-      .then((response) => prepareInitiaData())
-      .catch((error) => history.replace('/login'));
-  }, [history, prepareInitiaData, svsT3dapi]);
+    prepareInitiaData();
+  }, [prepareInitiaData]);
 
   // END -- EFFECTS
 
   // construct user name initials
-  const userNameInitials = userProfile.name
+  const userNameInitials = profile.name
     ?.match(/\b(\w)/g)
     .join('')
     .toUpperCase();
@@ -109,7 +115,7 @@ const Lay = () => {
     <Layout>
       {/* notification drawer */}
       <Drawer className='drawer-notification' title='Notification' placement='right' visible={isDrawerNotificationOpen} onClose={handleDrawerNotificationClose}>
-        <LayDrawerNotification></LayDrawerNotification>
+        <LayDrawerNotification notifications={notifications}></LayDrawerNotification>
       </Drawer>
       {/* page header */}
       <PageHeader
@@ -123,11 +129,11 @@ const Lay = () => {
           // divider
           <Divider key='page-header-divider1' type='vertical' style={{ marginRight: 0 }}></Divider>,
           // user's account
-          <Popover key='page-header-miniprofile' placement='bottomRight' title='Your profile' content={<LayMiniProfile profile={userProfile} nameInitials={userNameInitials}></LayMiniProfile>} style={{ width: 400 }}>
+          <Popover key='page-header-miniprofile' placement='bottomRight' title='Your profile' content={<LayMiniProfile profile={profile} nameInitials={userNameInitials}></LayMiniProfile>} style={{ width: 400 }}>
             {userAccountButton}
           </Popover>,
           // notification
-          <Badge key='page-header-badge-notification' count={48}>
+          <Badge key='page-header-badge-notification' count={notifications.length}>
             <Button type='primary' shape='circle' icon={<NotificationOutlined></NotificationOutlined>} onClick={handleDrawerNotificationOpen}></Button>
           </Badge>,
           // divider
