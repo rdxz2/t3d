@@ -43,7 +43,7 @@ export const convertIsoDateToMoment = (input, format = TIMEFORMAT.DDMMMMYYYYHHMM
 // START  -- STRING
 
 // create an ellipsis effect if input string is longer than desired max length
-export const makeEllipsis = (input, maxLength = 20) => (input.length > maxLength ? `${input.slice(0, 20)}` : input);
+export const makeEllipsis = (input, maxLength = 20) => (input.length > maxLength ? `${input.slice(0, 20)}...` : input);
 
 // END -- STRING
 

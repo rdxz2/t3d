@@ -13,9 +13,21 @@ class SvsT3dapi {
     this._domain = process.env.REACT_APP_DOMAIN_T3DAPI;
   }
 
-  // send normal request
-  sendRequest = async (endpoint, method, body = {}, { additionalHeaders = {}, jwtKey = JWTKEY.T3DAPI, retryCount = 0 } = {}) => {
+  // main request sender
+  sendRequest = async (endpoint, method, body = {}, { additionalHeaders = {}, jwtKey = JWTKEY.T3DAPI } = {}) => {
     try {
+      // if current jwt is expired then request for new jwt
+      if (this.isApiJwtExpired()) {
+        // get refresh token from local storage
+        const refreshToken = this.getApiRefreshToken();
+
+        // request for new token (via refresh token)
+        const responseNewToken = await sendHttpRequest(`${this._domain}/api/authentication/refresh`, HTTPMETHOD.POST, { refreshToken: refreshToken }, { jwtKey });
+
+        // set the newly obtained jwt
+        this.setApiJwt(responseNewToken.data.token);
+      }
+
       // send request
       const response = await sendHttpRequest(`${this._domain}/${endpoint}`, method, body, { additionalHeaders, jwtKey });
 
@@ -33,26 +45,6 @@ class SvsT3dapi {
           break;
         // unauthorized
         case HTTPSTATUS.UNAUTHORIZED:
-          // just don't do anything if we already retrying the same request
-          if (++retryCount <= 1) {
-            // get refresh token from local storage
-            const refreshToken = this.getApiRefreshToken();
-
-            // request for new token (via refresh token)
-            const responseNewToken = await this.sendRequest('api/authentication/refresh', HTTPMETHOD.POST, { refreshToken: refreshToken }, { retryCount });
-
-            // set the newly obtained jwt
-            this.setApiJwt(responseNewToken.data.token);
-
-            // // set the newly obtained refresh token
-            // this.setApiRefreshToken(responseNewToken.data.refreshToken);
-
-            try {
-              // resend this request
-              return await this.sendRequest(endpoint, method, body, { additionalHeaders, jwtKey, retryCount });
-            } catch {}
-          }
-
           // remove token from local storage
           this.removeApiJwt();
 

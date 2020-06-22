@@ -1,12 +1,10 @@
 import { Modal, Select, Space, Typography } from 'antd';
-import _, { values } from 'lodash';
 import React from 'react';
 
-import HTTPMETHOD from '../../constants/HTTPMETHOD';
-import INPUTSELECT from '../../constants/INPUTSELECT';
-import CtxApi from '../../contexts/ctxApi';
 import CmpTags from '../../components/cmpTags';
+import HTTPMETHOD from '../../constants/HTTPMETHOD';
 import SELECTOPTIONS from '../../constants/SELECTOPTIONS';
+import CtxApi from '../../contexts/ctxApi';
 
 const ProjectSelectedToDo = ({ match, history }) => {
   // START -- CONTEXTS

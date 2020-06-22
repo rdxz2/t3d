@@ -1,13 +1,13 @@
 import './toDoLine.css';
 
 import { StarTwoTone } from '@ant-design/icons';
-import { Checkbox, message, Space, Typography } from 'antd';
+import { Checkbox, message, Space } from 'antd';
 import React from 'react';
-import { useHistory } from 'react-router';
 
 import COLOR from '../../../constants/COLOR';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
+import { makeEllipsis } from '../../../utilities/utlType';
 
 const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
   // START -- CONTEXTS
@@ -45,9 +45,12 @@ const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
       // show error message if response is not the same as expected important state
       if (event.target.checked !== response.data.is_completed) return message.error('data error');
 
+      // convert to ellispis string
+      const toDoDescription = makeEllipsis(toDo.description);
+
       // show message
-      if (response.data.is_completed) message.success(`'${toDo.description}' completed`);
-      else message.info(`'${toDo.description}' is opened again`);
+      if (response.data.is_completed) message.success(`'${toDoDescription}' completed`);
+      else message.info(`'${toDoDescription}' is opened again`);
     } catch (error) {
     } finally {
       // not loading...

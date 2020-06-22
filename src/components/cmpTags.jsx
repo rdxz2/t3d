@@ -1,6 +1,6 @@
-import React from 'react';
-import { Space, Tag, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { Input, Tag } from 'antd';
+import React from 'react';
 
 const CmpTags = ({ initialValue = [], onChange }) => {
   // START -- CONTEXTS
