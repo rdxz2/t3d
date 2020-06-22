@@ -1,6 +1,7 @@
 import React from 'react';
 
 import SvsT3dapi from '../services/svsT3dapi';
+import StrmProject from '../streamers/strmProject';
 
 const CtxApi = React.createContext({
   svsT3dapi: {
@@ -18,6 +19,15 @@ const CtxApi = React.createContext({
     getApiRefreshToken: () => '',
     removeApiRefreshToken: () => null,
   },
+  strmProject: {
+    registerJoined: (onJoined = () => {}) => null,
+    unregisterJoined: () => null,
+    registerLeaved: (onLeaved = () => {}) => null,
+    unregisterLeaved: () => null,
+    emitJoin: (data = { projectCode: '', name: '' }, callback = (error, data) => {}) => null,
+    emitLeave: (projectCode = '', callback = (error, data) => {}) => null,
+    emitToDoCreated: ({ projectCode = '', description = '' } = {}, callback = (error, data) => {}) => null,
+  },
 });
 
 export const CtxPvdApi = ({ children }) => {
@@ -34,6 +44,9 @@ export const CtxPvdApi = ({ children }) => {
   // apis
   const [svsT3dapi] = React.useState(new SvsT3dapi());
 
+  // project streamer
+  const [strmProject] = React.useState(new StrmProject());
+
   // END -- STATES
 
   // START -- FUNCTIONS
@@ -44,7 +57,7 @@ export const CtxPvdApi = ({ children }) => {
 
   // END -- EFFECTS
 
-  return <CtxApi.Provider value={{ svsT3dapi }}>{children}</CtxApi.Provider>;
+  return <CtxApi.Provider value={{ svsT3dapi, strmProject }}>{children}</CtxApi.Provider>;
 };
 
 export default CtxApi;

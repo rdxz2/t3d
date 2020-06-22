@@ -56,6 +56,4 @@ export const SELECTOPTION = {
   TODO_PRIORITY: convertCollectionToObject(SELECTOPTIONS.TODO_PRIORITY, 'value'),
 };
 
-console.log('QQ', SELECTOPTION);
-
 export default SELECTOPTIONS;

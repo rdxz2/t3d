@@ -29,7 +29,7 @@ const CmpTags = ({ initialValue = [], onChange }) => {
 
   // delete tag
   const handleDeleteTag = (tagName) => {
-    // set state
+    // set tags
     tagsSet((_tags) => {
       // find tag
       const tagIndex = _tags.indexOf(tagName);
@@ -56,7 +56,7 @@ const CmpTags = ({ initialValue = [], onChange }) => {
     // don't do any operations if value is empty
     if (!tagName) return;
 
-    // set state
+    // set tags
     tagsSet((_tags) => {
       // insert new tag
       _tags.push(tagName);

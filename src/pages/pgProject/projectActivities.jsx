@@ -32,7 +32,7 @@ const ProjectActivities = ({ projectCode }) => {
         <div>ac</div>
       ))} */}
 
-      <Typography.Title level={3}>Recent Activities</Typography.Title>
+      <Typography.Title level={3}>Activities</Typography.Title>
       <Timeline mode='left'>
         <Timeline.Item color='green'>a</Timeline.Item>
         <Timeline.Item color='green'>b</Timeline.Item>

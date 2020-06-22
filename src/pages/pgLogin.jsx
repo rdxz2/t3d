@@ -8,9 +8,13 @@ import { setDocumentTitle } from '../utilities/utlWindow';
 import LoginForm from './pgLogin/loginForm';
 import { useHistory } from 'react-router';
 import useQuery from '../hooks/useQuery';
+import CtxApi from '../contexts/ctxApi';
 
 const PgLogin = () => {
   // START -- CONTEXTS
+
+  // api
+  const { svsT3dapi } = React.useContext(CtxApi);
 
   // END -- CONTEXTS
 
@@ -35,12 +39,18 @@ const PgLogin = () => {
   // START -- EFFECTS
 
   React.useEffect(() => {
+    // remove jwt
+    svsT3dapi.removeApiJwt();
+
+    // remove refresh token
+    svsT3dapi.removeApiRefreshToken();
+
     // change document title
     setDocumentTitle('Log in');
 
     // show warning message if user got to this page by unauthorized
     if (queryString.get('reason') === 'Unauthorized') message.warning('your session has ended, please log in again');
-  }, [queryString]);
+  }, [queryString, svsT3dapi]);
 
   // END -- EFFECTS
 

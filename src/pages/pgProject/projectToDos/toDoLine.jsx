@@ -70,7 +70,7 @@ const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
     // toggle important flag
     const isImportantToggled = !_isImportant;
 
-    // set state
+    // set important flag
     isImportantSet(isImportantToggled);
 
     try {

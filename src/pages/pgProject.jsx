@@ -1,5 +1,5 @@
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Col, Row, Typography } from 'antd';
+import { Button, Col, Row, Typography, message } from 'antd';
 import React from 'react';
 import { Route, useHistory } from 'react-router-dom';
 
@@ -11,12 +11,13 @@ import ProjectEdit from './pgHome/homeProjects/projectEdit';
 import ProjectActivities from './pgProject/projectActivities';
 import ProjectSelectedToDo from './pgProject/projectSelectedToDo';
 import ProjectToDos from './pgProject/projectToDos';
+import ProjectCollaborators from './pgProject/projectCollaborators';
 
 const PgProject = ({ match, handleChangeActivePage }) => {
   // START -- CONTEXTS
 
   // api
-  const { svsT3dapi } = React.useContext(CtxApi);
+  const { svsT3dapi, strmProject } = React.useContext(CtxApi);
 
   // END -- CONTEXTS
 
@@ -37,6 +38,10 @@ const PgProject = ({ match, handleChangeActivePage }) => {
 
   // activities
   const [activities, activitiesSet] = React.useState([]);
+
+  // online collaborators
+  const [collaborators, collaboratorsSet] = React.useState([]);
+  const [onlineCollaborators, onlineCollaboratorsSet] = React.useState([]);
 
   // END -- STATES
 
@@ -68,6 +73,12 @@ const PgProject = ({ match, handleChangeActivePage }) => {
 
       // set activities
       activitiesSet(responseActivities.data);
+
+      // send request (collaborators)
+      const responseCollaborators = await svsT3dapi.sendRequest(`api/project/collaborators/${projectCode}`, HTTPMETHOD.GET);
+
+      // set collaborators
+      collaboratorsSet(responseCollaborators.data);
     } catch (error) {}
   }, [handleChangeActivePage, match.params.projectCode, svsT3dapi]);
 
@@ -120,14 +131,55 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       return _toDos;
     });
 
+  // collaborator joined
+  const handleCollaboratorJoined = (data) => onlineCollaboratorsSet((_onlineCollaborators) => (_onlineCollaborators.indexOf(data) > -1 ? _onlineCollaborators : [..._onlineCollaborators, data]));
+
+  // collaborator leaved
+  const handleCollaboratorLeaved = (data) =>
+    onlineCollaboratorsSet((_onlineCollaborators) => {
+      // get leaving collaborator index
+      const leavingCollaboratorIndex = _onlineCollaborators.indexOf(data);
+
+      // delete leaving collaborator from online collaborators
+      _onlineCollaborators.splice(leavingCollaboratorIndex, 1);
+
+      // set state
+      return [..._onlineCollaborators];
+    });
+
   // END -- FUNCTIONS
 
   // START -- EFFECTS
 
   // prepare initial data
   React.useEffect(() => {
+    // prepare initial data
     prepareInitialData();
-  }, [prepareInitialData]);
+
+    // get user name form jwt
+    const userInfo = svsT3dapi.getApiJwtInfo();
+
+    // join project room
+    strmProject.emitJoin({ projectCode: match.params.projectCode, name: userInfo.name }, (error, data) => {
+      if (error) message.error(`error joining project room: ${error}`);
+
+      // set online collaborators
+      onlineCollaboratorsSet(data);
+    });
+  }, [match.params.projectCode, prepareInitialData, strmProject, svsT3dapi]);
+
+  // on user joined subscriber
+  React.useEffect(() => {
+    strmProject.registerJoined(handleCollaboratorJoined);
+    strmProject.registerLeaved(handleCollaboratorLeaved);
+
+    return () => {
+      strmProject.unregisterJoined();
+      strmProject.unregisterLeaved();
+
+      strmProject.emitLeave(match.params.projectCode, () => {});
+    };
+  }, [match.params.projectCode, strmProject]);
 
   // END -- EFFECTS
 
@@ -145,9 +197,12 @@ const PgProject = ({ match, handleChangeActivePage }) => {
           <Col span={16}>
             <ProjectToDos toDos={toDos} toDosSet={toDosSet} projectCode={match.params.projectCode} handleModalToDoOpen={handleModalToDoOpen}></ProjectToDos>
           </Col>
-          {/* activities */}
+          {/* others */}
           <Col span={8}>
+            {/* activities */}
             <ProjectActivities activities={activities} activitiesSet={activitiesSet} projectCode={match.params.projectCode}></ProjectActivities>
+            {/* online collaborators */}
+            <ProjectCollaborators collaborators={collaborators} onlineCollaborators={onlineCollaborators}></ProjectCollaborators>
           </Col>
         </Row>
       </section>

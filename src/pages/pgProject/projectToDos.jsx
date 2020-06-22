@@ -15,7 +15,7 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
   // START -- CONTEXTS
 
   // api
-  const { svsT3dapi } = React.useContext(CtxApi);
+  const { svsT3dapi, strmProject } = React.useContext(CtxApi);
 
   // END -- CONTEXTS
 
@@ -54,7 +54,11 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
   }, INPUTSELECT.SEARCH_DELAY);
 
   // to do created
-  const handleToDoCreated = (response) =>
+  const handleToDoCreated = (response) => {
+    // send streamer message
+    strmProject.emitToDoCreated({ projectCode, description: response.data.description });
+
+    // set to dos
     toDosSet((_toDos) => {
       // add created to do to the first element
       _toDos.unshift({
@@ -65,6 +69,7 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
       // set state
       return [..._toDos];
     });
+  };
 
   // END -- FUNCTIONS
 

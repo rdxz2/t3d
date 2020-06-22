@@ -67,7 +67,7 @@ const ProjectSelectedToDo = ({ match, history, handlePriorityChanged }) => {
       // trigger changed priority to caller
       handlePriorityChanged(match.params.id, response.data.priority);
 
-      // set state
+      // set to dos
       toDoSet((_toDo) => ({ ..._toDo, priority: response.data.priority }));
     } catch (error) {}
   };

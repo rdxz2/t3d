@@ -9,6 +9,7 @@ const COLOR = {
   RED: '#f50',
   ORANGE: '#f29e0c',
   BLACK: '#000',
+  GREEN: '#5ee82c',
 };
 
 export default COLOR;
