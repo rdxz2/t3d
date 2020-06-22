@@ -7,6 +7,12 @@
   padding-bottom: 20px;
 }
 
+/* perfect scrollbar always visible */
+#recent-projects > .ps__rail-x {
+  opacity: 0.6;
+}
+
+/* hover animation on project card */
 .recent-project-card:hover {
   background-color: #f8f0ff;
   cursor: pointer;

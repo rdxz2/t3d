@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message } from 'antd';
+import { Button, Input, message } from 'antd';
 import React from 'react';
 
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
@@ -14,9 +14,6 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
   // END -- CONTEXTS
 
   // START -- OTHERS
-
-  // form
-  const [form] = Form.useForm();
 
   // END -- OTHERS
 
@@ -37,25 +34,25 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
   const handleCreateToDoClose = () => isCreatingToDoSet(false);
 
   // submit: create to do
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (event) => {
+    // get value
+    const description = event.target.value;
+
     // do not do anything if description is empty
-    if (!values.description) return;
+    if (!description) return;
 
     // submitting...
     isSubmittingSet(true);
 
     try {
       // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/${projectCode}`, HTTPMETHOD.POST, values);
+      const response = await svsT3dapi.sendRequest(`api/todo/${projectCode}`, HTTPMETHOD.POST, { description });
 
       // run callback
       handleAfterCreated(response);
 
       // close the form
       handleCreateToDoClose();
-
-      // reset form
-      form.resetFields();
 
       // show success message
       message.success('to do created');
@@ -69,7 +66,7 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
   // handle key press
   const handleKeyPres = (event) => {
     // close this form on esc
-    if (event.key === 'Escape') handleCreateToDoClose(form.getFieldValue('description'));
+    if (event.key === 'Escape') handleCreateToDoClose();
   };
 
   // END -- FUNCTIONS
@@ -80,12 +77,7 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
 
   return isCreatingToDo ? (
     // create to do form
-    <Form form={form} onFinish={handleSubmit}>
-      {/* description */}
-      <Form.Item name='description' style={{ marginBottom: 0 }}>
-        <Input autoFocus autoComplete='off' placeholder='what to be done?' onKeyDown={handleKeyPres} style={{ width: '100%' }}></Input>
-      </Form.Item>
-    </Form>
+    <Input autoFocus autoComplete='off' placeholder='what to be done?' onPressEnter={handleSubmit} onBlur={handleCreateToDoClose} onKeyDown={handleKeyPres} style={{ width: '100%' }}></Input>
   ) : (
     // add button
     <Button block type='primary' loading={isSubmitting} icon={<PlusOutlined></PlusOutlined>} onClick={handleCreateToDoOpen}></Button>

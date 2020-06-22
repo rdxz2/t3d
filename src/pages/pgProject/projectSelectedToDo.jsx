@@ -1,12 +1,13 @@
-import { Modal, Select, Space, Typography } from 'antd';
+import { Divider, Modal, Select, Space, Spin, Typography } from 'antd';
 import React from 'react';
 
 import CmpTags from '../../components/cmpTags';
 import HTTPMETHOD from '../../constants/HTTPMETHOD';
 import SELECTOPTIONS from '../../constants/SELECTOPTIONS';
 import CtxApi from '../../contexts/ctxApi';
+import { convertIsoDateToMoment } from '../../utilities/utlType';
 
-const ProjectSelectedToDo = ({ match, history }) => {
+const ProjectSelectedToDo = ({ match, history, handlePriorityChanged }) => {
   // START -- CONTEXTS
 
   // api
@@ -19,6 +20,9 @@ const ProjectSelectedToDo = ({ match, history }) => {
   // END -- OTHERS
 
   // START -- STATES
+
+  // loading state
+  const [isLoading, isLoadingSet] = React.useState(false);
 
   // to do
   const [toDo, toDoSet] = React.useState({});
@@ -38,9 +42,8 @@ const ProjectSelectedToDo = ({ match, history }) => {
     // set to do detail
     toDoSet(responseToDoDetail.data);
 
-    // send request (select level)
-
-    //
+    // not loading...
+    isLoadingSet(false);
   }, [match.params.id, svsT3dapi]);
 
   // close modal
@@ -52,6 +55,20 @@ const ProjectSelectedToDo = ({ match, history }) => {
     try {
       // send request
       await svsT3dapi.sendRequest(`api/todo/tags/${match.params.id}`, HTTPMETHOD.POST, { tags });
+    } catch (error) {}
+  };
+
+  // change priority
+  const handleChangePriority = async (priorityLevel) => {
+    try {
+      // send request
+      const response = await svsT3dapi.sendRequest(`api/todo/priority/${match.params.id}?priorityLevel=${priorityLevel}`, HTTPMETHOD.GET);
+
+      // trigger changed priority to caller
+      handlePriorityChanged(match.params.id, response.data.priority);
+
+      // set state
+      toDoSet((_toDo) => ({ ..._toDo, priority: response.data.priority }));
     } catch (error) {}
   };
 
@@ -68,33 +85,45 @@ const ProjectSelectedToDo = ({ match, history }) => {
 
   return (
     <Modal destroyOnClose footer={null} visible={isModalVisible} onCancel={handleCloseModal} afterClose={handleRedirectToBefore}>
-      <Space direction='vertical'>
-        <Space>
-          {/* completed checkbox */}
-          {/* <Checkbox defaultChecked={toDo.is_completed} onChange={handleToggleToDoCompleted}></Checkbox> */}
-          {/* important flag */}
-          {/* <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleToDoImportant}></StarTwoTone> */}
-          {/* description */}
-          <Typography.Text
-            editable={{
-              onChange: (value) => {
-                console.log('edit desc:', value);
-              },
-            }}>
-            {toDo.description}
+      {/* spinner */}
+      <Spin spinning={isLoading}>
+        <Space direction='vertical'>
+          {/* main to do informations */}
+          <Space>
+            {/* completed checkbox */}
+            {/* <Checkbox defaultChecked={toDo.is_completed} onChange={handleToggleToDoCompleted}></Checkbox> */}
+            {/* important flag */}
+            {/* <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleToDoImportant}></StarTwoTone> */}
+            {/* description */}
+            <Typography.Text
+              editable={{
+                onChange: (value) => {
+                  console.log('edit desc:', value);
+                },
+              }}>
+              {toDo.description}
+            </Typography.Text>
+          </Space>
+          {/* tags */}
+          <CmpTags initialValue={toDo.tags} onChange={handleTagsChanged}></CmpTags>
+          {/* priority */}
+          <Select name='priority' value={toDo.priority} onChange={handleChangePriority} style={{ minWidth: 100 }}>
+            {SELECTOPTIONS.TODO_PRIORITY.map((priority, priorityIndex) => (
+              <Select.Option key={priorityIndex} value={priority.value}>
+                {priority.text}
+              </Select.Option>
+            ))}
+          </Select>
+          {/* meta */}
+          <Divider style={{ marginTop: 16, marginBottom: 16 }}></Divider>
+          <Typography.Text>
+            Created on <b>{convertIsoDateToMoment(toDo.create_date)}</b> by <b>{toDo.creatorName}</b>
+          </Typography.Text>
+          <Typography.Text>
+            Last updated on <b>{convertIsoDateToMoment(toDo.update_date)}</b>
           </Typography.Text>
         </Space>
-        {/* tags */}
-        <CmpTags initialValue={toDo.tags} onChange={handleTagsChanged}></CmpTags>
-        {/* priority */}
-        <Select>
-          {SELECTOPTIONS.TODO_PRIORITY.map((priority, priorityIndex) => (
-            <Select.Option key={priorityIndex} value={priority.value}>
-              {priority.text}
-            </Select.Option>
-          ))}
-        </Select>
-      </Space>
+      </Spin>
     </Modal>
   );
 };

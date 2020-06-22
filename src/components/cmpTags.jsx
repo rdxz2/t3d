@@ -84,7 +84,7 @@ const CmpTags = ({ initialValue = [], onChange }) => {
     <>
       {/* tags */}
       {tags.map((tag, tagIndex) => (
-        <Tag key={tagIndex} onClose={handleDeleteTag}>
+        <Tag key={tagIndex} closable onClose={handleDeleteTag}>
           {tag}
         </Tag>
       ))}

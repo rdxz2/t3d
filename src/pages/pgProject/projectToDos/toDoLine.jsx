@@ -1,13 +1,14 @@
 import './toDoLine.css';
 
 import { StarTwoTone } from '@ant-design/icons';
-import { Checkbox, message, Space } from 'antd';
+import { Checkbox, message, Space, Tag } from 'antd';
 import React from 'react';
 
 import COLOR from '../../../constants/COLOR';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
 import { makeEllipsis } from '../../../utilities/utlType';
+import { SELECTOPTION } from '../../../constants/SELECTOPTIONS';
 
 const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
   // START -- CONTEXTS
@@ -95,12 +96,16 @@ const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
 
   // END -- EFFECTS
 
+  const selecOptionToDoPriority = SELECTOPTION.TODO_PRIORITY[toDo.priority];
+
   return (
     <Space style={{ width: '100%' }}>
       {/* completed checkbox */}
       <Checkbox disabled={isLoading} defaultChecked={toDo.is_completed} onChange={handleToggleToDoCompleted}></Checkbox>
       {/* important flag */}
       <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleToDoImportant}></StarTwoTone>
+      {/* priority tag (only if priority is not normal (4)) */}
+      {toDo.priority !== 4 && <Tag color={selecOptionToDoPriority.tagColor}>{selecOptionToDoPriority.text}</Tag>}
       {/* description */}
       <span className='todo-description' onClick={() => handleModalToDoOpen(toDo._id)}>
         {toDo.description}

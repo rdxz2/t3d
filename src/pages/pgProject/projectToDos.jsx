@@ -62,8 +62,6 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
         description: response.data.description,
       });
 
-      console.log('_toDos', _toDos);
-
       // set state
       return [..._toDos];
     });
@@ -92,7 +90,7 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
         </Col>
         {/* search bar */}
         <Col span={20}>
-          <Input name='toDoSearch' placeholder='search to dos' onChange={handleSearchToDos}></Input>
+          <Input allowClear name='toDoSearch' placeholder='search to dos' onChange={handleSearchToDos}></Input>
         </Col>
       </Row>
       {/* to do list */}

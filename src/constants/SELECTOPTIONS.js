@@ -1,3 +1,6 @@
+import COLOR from './COLOR';
+import { convertCollectionToObject } from '../utilities/utlType';
+
 const SELECTOPTIONS = {
   // to do filter in to do list
   TODO_FILTER: [
@@ -19,28 +22,40 @@ const SELECTOPTIONS = {
     {
       value: 1,
       text: 'Super',
+      tagColor: COLOR.BLACK,
     },
     {
       value: 2,
       text: 'Urgent',
+      tagColor: COLOR.RED,
     },
     {
       value: 3,
       text: 'High',
+      tagColor: COLOR.ORANGE,
     },
     {
       value: 4,
       text: 'Normal',
+      tagColor: COLOR.PRIMARY,
     },
     {
       value: 5,
       text: 'Low',
+      tagColor: COLOR.GREY,
     },
     {
       value: 6,
       text: 'Lower',
+      tagColor: COLOR.GREY_LIGHT,
     },
   ],
 };
+
+export const SELECTOPTION = {
+  TODO_PRIORITY: convertCollectionToObject(SELECTOPTIONS.TODO_PRIORITY, 'value'),
+};
+
+console.log('QQ', SELECTOPTION);
 
 export default SELECTOPTIONS;
