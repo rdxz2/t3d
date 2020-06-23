@@ -4,7 +4,9 @@ import decode from 'jwt-decode';
 export const getJwt = (key) => localStorage.getItem(key);
 
 // set jwt to local storage
-export const setJwt = (key, jwt) => localStorage.setItem(key, jwt);
+export const setJwt = (key, jwt) => {
+  if (jwt) localStorage.setItem(key, jwt);
+};
 
 // remove jwt from local storage
 export const removeJwt = (key) => localStorage.removeItem(key);
@@ -23,4 +25,4 @@ export const isJwtExpired = (key) => {
 };
 
 // get jwt stored information
-export const getJwtInfo = (jwt) => (jwt ? decode(jwt) : null);
+export const getJwtInfo = (jwt) => (jwt ? decode(jwt) : {});

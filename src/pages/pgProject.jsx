@@ -1,5 +1,5 @@
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Col, Row, Typography, message } from 'antd';
+import { Button, Col, Row, Typography, message, Divider } from 'antd';
 import React from 'react';
 import { Route, useHistory } from 'react-router-dom';
 
@@ -9,9 +9,10 @@ import PADDING from '../constants/PADDING';
 import CtxApi from '../contexts/ctxApi';
 import ProjectEdit from './pgHome/homeProjects/projectEdit';
 import ProjectActivities from './pgProject/projectActivities';
-import ProjectSelectedToDo from './pgProject/projectSelectedToDo';
-import ProjectToDos from './pgProject/projectToDos';
+import ProjectSelectedTodo from './pgProject/projectSelectedTodo';
+import ProjectTodos from './pgProject/projectTodos';
 import ProjectCollaborators from './pgProject/projectCollaborators';
+import ACTIVITY from '../constants/ACTIVITY';
 
 const PgProject = ({ match, handleChangeActivePage }) => {
   // START -- CONTEXTS
@@ -34,10 +35,10 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   const [project, projectSet] = React.useState({});
 
   // to do list
-  const [toDos, toDosSet] = React.useState([]);
+  const [todos, todosSet] = React.useState([]);
 
   // activities
-  const [activities, activitiesSet] = React.useState([]);
+  const [activities, activitiesSet] = React.useState({ projectActivitiesTotalData: 0, projectActivities: [] });
 
   // online collaborators
   const [collaborators, collaboratorsSet] = React.useState([]);
@@ -63,14 +64,15 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       projectSet(responseProject.data);
 
       // send request (to dos)
-      const responseToDos = await svsT3dapi.sendRequest(`api/todo/${projectCode}`, HTTPMETHOD.GET);
+      const responseTodos = await svsT3dapi.sendRequest(`api/todo/${projectCode}`, HTTPMETHOD.GET);
 
       // set to dos
-      toDosSet(responseToDos.data);
+      todosSet(responseTodos.data);
 
       // send request (activities)
-      const responseActivities = await svsT3dapi.sendRequest(`api/project/activities/${projectCode}`, HTTPMETHOD.GET);
+      const responseActivities = await svsT3dapi.sendRequest(`api/project/activities/${projectCode}?pageSize=${ACTIVITY.PAGESIZE}&currentPage=1`, HTTPMETHOD.GET);
 
+      console.log('responseActivities.data', responseActivities.data);
       // set activities
       activitiesSet(responseActivities.data);
 
@@ -81,6 +83,8 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       collaboratorsSet(responseCollaborators.data);
     } catch (error) {}
   }, [handleChangeActivePage, match.params.projectCode, svsT3dapi]);
+
+  // START -- PROJECT FUNCTIONALITY
 
   // open drawer: project edit
   const handleOpenDrawerProjectEdit = (projectCode) => history.push(`${projectCode}/edit`);
@@ -115,34 +119,60 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     // });
   };
 
+  // END -- PROJECT FUNCTIONALITY
+
+  // START -- MODAL FUNCTIONALITY
+
   // open to do detail modal
-  const handleModalToDoOpen = (toDoId) => history.push(`${match.url}/todo/${toDoId}`);
+  const handleModalTodoOpen = (todoId) => history.push(`${match.url}/todo/${todoId}`);
 
   // to do priority changed in modal
-  const handlePriorityChanged = (toDoId, priority) =>
-    toDosSet((_toDos) => {
+  const handlePriorityChanged = (todoId, priority) =>
+    todosSet((_todos) => {
       // get updated to do
-      const updatedToDo = _toDos.find((toDo) => toDo.id === toDoId);
+      const updatedTodo = _todos.find((todo) => todo.id === todoId);
 
       // update to do
-      updatedToDo.priority = priority;
+      updatedTodo.priority = priority;
 
       // set state
-      return _toDos;
+      return _todos;
     });
 
   // to do description changed in modal
-  const handleDescriptionChanged = (toDoId, description) =>
-    toDosSet((_toDos) => {
+  const handleDescriptionChanged = (todoId, description) =>
+    todosSet((_todos) => {
       // get updated to do
-      const updatedToDo = _toDos.find((toDo) => toDo.id === toDoId);
+      const updatedTodo = _todos.find((todo) => todo.id === todoId);
 
       // update to do
-      updatedToDo.description = description;
+      updatedTodo.description = description;
 
       // set state
-      return _toDos;
+      return _todos;
     });
+
+  // load more activities
+
+  // END -- MODAL FUNCTIONALITY
+
+  // START -- ACTIVITIES FUNCTIONALITY
+
+  const handleLoadMoreActivities = async (currentPage) => {
+    try {
+      // send request
+      const response = await svsT3dapi.sendRequest(`api/project/activities/${match.params.projectCode}?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
+
+      // set activities
+      activitiesSet((_activities) => ({ projectActivitiesTotalData: response.data.projectActivitiesTotalData, projectActivities: [..._activities.projectActivities, ...response.data.projectActivities] }));
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // END -- ACTIVITIES FUNCTIONALITY
+
+  // START -- SOCKET LISTENERS
 
   // collaborator joined
   const handleCollaboratorJoined = (data) => onlineCollaboratorsSet((_onlineCollaborators) => (_onlineCollaborators.indexOf(data) > -1 ? _onlineCollaborators : [..._onlineCollaborators, data]));
@@ -159,6 +189,8 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       // set state
       return [..._onlineCollaborators];
     });
+
+  // END -- SOCKET LISTENERS
 
   // END -- FUNCTIONS
 
@@ -210,13 +242,15 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       <section style={{ ...PADDING.LEFT_RIGHT() }}>
         <Row gutter={16}>
           {/* to do list */}
-          <Col span={16}>
-            <ProjectToDos toDos={toDos} toDosSet={toDosSet} projectCode={match.params.projectCode} handleModalToDoOpen={handleModalToDoOpen}></ProjectToDos>
+          <Col span={14}>
+            <ProjectTodos todos={todos} todosSet={todosSet} projectCode={match.params.projectCode} handleModalTodoOpen={handleModalTodoOpen}></ProjectTodos>
           </Col>
           {/* others */}
-          <Col span={8}>
+          <Col span={10}>
             {/* activities */}
-            <ProjectActivities activities={activities} activitiesSet={activitiesSet} projectCode={match.params.projectCode}></ProjectActivities>
+            <ProjectActivities activities={activities} activitiesSet={activitiesSet} projectCode={match.params.projectCode} onLoadMore={handleLoadMoreActivities}></ProjectActivities>
+            {/* divider */}
+            <Divider style={{ marginTop: 8, marginBottom: 8 }}></Divider>
             {/* online collaborators */}
             <ProjectCollaborators collaborators={collaborators} onlineCollaborators={onlineCollaborators}></ProjectCollaborators>
           </Col>
@@ -234,7 +268,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       {/* to do detail */}
       <Route
         path={`${match.url}/todo/:id`}
-        render={({ match: _match }) => <ProjectSelectedToDo match={_match} history={history} handleDescriptionChanged={handleDescriptionChanged} handlePriorityChanged={handlePriorityChanged}></ProjectSelectedToDo>}></Route>
+        render={({ match: _match }) => <ProjectSelectedTodo match={_match} history={history} handleDescriptionChanged={handleDescriptionChanged} handlePriorityChanged={handlePriorityChanged}></ProjectSelectedTodo>}></Route>
     </>
   );
 };

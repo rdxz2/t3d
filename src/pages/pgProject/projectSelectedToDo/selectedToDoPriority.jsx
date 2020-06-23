@@ -5,7 +5,7 @@ import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import SELECTOPTIONS from '../../../constants/SELECTOPTIONS';
 import CtxApi from '../../../contexts/ctxApi';
 
-const SelectedToDoPriority = ({ toDo, toDoSet, handlePriorityChanged }) => {
+const SelectedTodoPriority = ({ todo, todoSet, handlePriorityChanged }) => {
   // START -- CONTEXTS
 
   // api
@@ -27,13 +27,13 @@ const SelectedToDoPriority = ({ toDo, toDoSet, handlePriorityChanged }) => {
   const handleChangePriority = async (priorityLevel) => {
     try {
       // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/priority/${toDo.id}?priorityLevel=${priorityLevel}`, HTTPMETHOD.GET);
+      const response = await svsT3dapi.sendRequest(`api/todo/priority/${todo.id}?priorityLevel=${priorityLevel}`, HTTPMETHOD.GET);
 
       // trigger changed priority to caller
-      handlePriorityChanged(toDo.id, response.data.priority);
+      handlePriorityChanged(todo.id, response.data.priority);
 
       // set to dos
-      toDoSet((_toDo) => ({ ..._toDo, priority: response.data.priority }));
+      todoSet((_todo) => ({ ..._todo, priority: response.data.priority }));
     } catch (error) {}
   };
 
@@ -44,7 +44,7 @@ const SelectedToDoPriority = ({ toDo, toDoSet, handlePriorityChanged }) => {
   // END -- EFFECTS
 
   return (
-    <Select name='priority' value={toDo.priority} onChange={handleChangePriority} style={{ minWidth: 100 }}>
+    <Select name='priority' value={todo.priority} onChange={handleChangePriority} style={{ minWidth: 100 }}>
       {SELECTOPTIONS.TODO_PRIORITY.map((priority, priorityIndex) => (
         <Select.Option key={priorityIndex} value={priority.value}>
           {priority.text}
@@ -54,4 +54,4 @@ const SelectedToDoPriority = ({ toDo, toDoSet, handlePriorityChanged }) => {
   );
 };
 
-export default SelectedToDoPriority;
+export default SelectedTodoPriority;

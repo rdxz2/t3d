@@ -5,7 +5,7 @@ import React from 'react';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
 
-const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
+const TodoCreate = ({ projectCode, handleAfterCreated }) => {
   // START -- CONTEXTS
 
   // api
@@ -20,7 +20,7 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
   // START -- STATES
 
   // creating state
-  const [isCreatingToDo, isCreatingToDoSet] = React.useState(false);
+  const [isCreatingTodo, isCreatingTodoSet] = React.useState(false);
 
   // submitting state
   const [isSubmitting, isSubmittingSet] = React.useState(false);
@@ -30,8 +30,8 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
   // START -- FUNCTIONS
 
   // handle open/close create to do form
-  const handleCreateToDoOpen = () => isCreatingToDoSet(true);
-  const handleCreateToDoClose = () => isCreatingToDoSet(false);
+  const handleCreateTodoOpen = () => isCreatingTodoSet(true);
+  const handleCreateTodoClose = () => isCreatingTodoSet(false);
 
   // submit: create to do
   const handleSubmit = async (event) => {
@@ -52,7 +52,7 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
       handleAfterCreated(response);
 
       // close the form
-      handleCreateToDoClose();
+      handleCreateTodoClose();
 
       // show success message
       message.success('to do created');
@@ -66,7 +66,7 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
   // handle key press
   const handleKeyDown = (event) => {
     // close this form on esc
-    if (event.key === 'Escape') handleCreateToDoClose();
+    if (event.key === 'Escape') handleCreateTodoClose();
   };
 
   // END -- FUNCTIONS
@@ -75,13 +75,13 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
 
   // END -- EFFECTS
 
-  return isCreatingToDo ? (
+  return isCreatingTodo ? (
     // create to do form
-    <Input autoFocus autoComplete='off' placeholder='what to be done?' onPressEnter={handleSubmit} onBlur={handleCreateToDoClose} onKeyDown={handleKeyDown} style={{ width: '100%' }}></Input>
+    <Input autoFocus autoComplete='off' placeholder='what to be done?' onPressEnter={handleSubmit} onBlur={handleCreateTodoClose} onKeyDown={handleKeyDown} style={{ width: '100%' }}></Input>
   ) : (
     // add button
-    <Button block type='primary' loading={isSubmitting} icon={<PlusOutlined></PlusOutlined>} onClick={handleCreateToDoOpen}></Button>
+    <Button block type='primary' loading={isSubmitting} icon={<PlusOutlined></PlusOutlined>} onClick={handleCreateTodoOpen}></Button>
   );
 };
 
-export default ToDoCreate;
+export default TodoCreate;

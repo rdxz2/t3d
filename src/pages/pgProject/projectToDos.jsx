@@ -1,4 +1,4 @@
-import './projectToDos.css';
+import './projectTodos.css';
 
 import { Col, Input, Row, Select, Space, Spin } from 'antd';
 import _ from 'lodash';
@@ -8,10 +8,10 @@ import HTTPMETHOD from '../../constants/HTTPMETHOD';
 import INPUTSELECT from '../../constants/INPUTSELECT';
 import SELECTOPTIONS from '../../constants/SELECTOPTIONS';
 import CtxApi from '../../contexts/ctxApi';
-import ToDoCreate from './projectToDos/toDoCreate';
-import ToDoLine from './projectToDos/toDoLine';
+import TodoCreate from './projectTodos/todoCreate';
+import TodoLine from './projectTodos/todoLine';
 
-const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => {
+const ProjectTodos = ({ todos, todosSet, projectCode, handleModalTodoOpen }) => {
   // START -- CONTEXTS
 
   // api
@@ -33,11 +33,11 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
   // START -- FUNCTIONS
 
   // search: to dos
-  const handleSearchToDos = (event) => {
+  const handleSearchTodos = (event) => {
     event.persist();
-    handleSearchToDosDebounced(event.target.value);
+    handleSearchTodosDebounced(event.target.value);
   };
-  const handleSearchToDosDebounced = _.debounce(async (value) => {
+  const handleSearchTodosDebounced = _.debounce(async (value) => {
     // searching...
     isSearchingSet(true);
     try {
@@ -45,7 +45,7 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
       const response = await svsT3dapi.sendRequest(`api/todo/${projectCode}?search=${value}`, HTTPMETHOD.GET);
 
       // set to do list
-      toDosSet(response.data);
+      todosSet(response.data);
     } catch (error) {
     } finally {
       // not searching...
@@ -54,47 +54,47 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
   }, INPUTSELECT.SEARCH_DELAY);
 
   // add created to do to the first element
-  const unshiftToDos = React.useCallback(
+  const unshiftTodos = React.useCallback(
     (id, description, priority) =>
-      toDosSet((_toDos) => {
-        _toDos.unshift({
+      todosSet((_todos) => {
+        _todos.unshift({
           id,
           description,
           priority,
         });
 
         // set state
-        return [..._toDos];
+        return [..._todos];
       }),
-    [toDosSet]
+    [todosSet]
   );
 
   // to do created
-  const handleToDoCreated = (response) => {
+  const handleTodoCreated = (response) => {
     // send streamer message
-    strmProject.emitToDoCreating({ projectCode, id: response.data.id, description: response.data.description, priority: response.data.priority }, () => {});
+    strmProject.emitTodoCreating({ projectCode, id: response.data.id, description: response.data.description, priority: response.data.priority }, () => {});
 
     // unshift to do
-    unshiftToDos(response.data.id, response.data.description, response.data.priority);
+    unshiftTodos(response.data.id, response.data.description, response.data.priority);
 
     // // set to dos
-    // toDosSet((_toDos) => {
+    // todosSet((_todos) => {
     //   // add created to do to the first element
-    //   _toDos.unshift({
+    //   _todos.unshift({
     //     id: response.data.id,
     //     description: response.data.description,
     //   });
 
     //   // set state
-    //   return [..._toDos];
+    //   return [..._todos];
     // });
   };
 
   // to do created (socket)
-  const handleToDoCreatedEmit = React.useCallback(
+  const handleTodoCreatedEmit = React.useCallback(
     // unshift to do
-    (response) => unshiftToDos(response.id, response.description, response.priority),
-    [unshiftToDos]
+    (response) => unshiftTodos(response.id, response.description, response.priority),
+    [unshiftTodos]
   );
 
   // END -- FUNCTIONS
@@ -102,24 +102,24 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
   // START -- EFFECTS
 
   React.useEffect(() => {
-    strmProject.registerToDoCreated(handleToDoCreatedEmit);
+    strmProject.registerTodoCreated(handleTodoCreatedEmit);
 
     return () => {
-      strmProject.unregisterToDoCreated();
+      strmProject.unregisterTodoCreated();
     };
-  }, [handleToDoCreatedEmit, strmProject]);
+  }, [handleTodoCreatedEmit, strmProject]);
 
   // END -- EFFECTS
 
   return (
     <Space direction='vertical' style={{ width: '100%' }}>
       {/* create to do */}
-      <ToDoCreate projectCode={projectCode} handleAfterCreated={handleToDoCreated}></ToDoCreate>
+      <TodoCreate projectCode={projectCode} handleAfterCreated={handleTodoCreated}></TodoCreate>
       {/* to do list actions */}
       <Row gutter={8}>
         {/* filter bar */}
         <Col id='col-filter' span={4}>
-          <Select defaultValue={SELECTOPTIONS.TODO_FILTER[0].value} name='toDoFilter'>
+          <Select defaultValue={SELECTOPTIONS.TODO_FILTER[0].value} name='todoFilter'>
             {SELECTOPTIONS.TODO_FILTER.map((filter, filterIndex) => (
               <Select.Option key={filterIndex} value={filter.value}>
                 {filter.text}
@@ -129,14 +129,14 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
         </Col>
         {/* search bar */}
         <Col span={20}>
-          <Input allowClear name='toDoSearch' placeholder='search to dos' onChange={handleSearchToDos}></Input>
+          <Input allowClear name='todoSearch' placeholder='search to dos' onChange={handleSearchTodos}></Input>
         </Col>
       </Row>
       {/* to do list */}
       <Spin spinning={isSearching} tip='searching todos..'>
         <Space direction='vertical'>
-          {toDos.map((toDo, toDoIndex) => (
-            <ToDoLine key={toDoIndex} toDo={toDo} handleModalToDoOpen={handleModalToDoOpen}></ToDoLine>
+          {todos.map((todo, todoIndex) => (
+            <TodoLine key={todoIndex} todo={todo} handleModalTodoOpen={handleModalTodoOpen}></TodoLine>
           ))}
         </Space>
       </Spin>
@@ -144,4 +144,4 @@ const ProjectToDos = ({ toDos, toDosSet, projectCode, handleModalToDoOpen }) => 
   );
 };
 
-export default ProjectToDos;
+export default ProjectTodos;

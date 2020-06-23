@@ -4,11 +4,11 @@ import React from 'react';
 import HTTPMETHOD from '../../constants/HTTPMETHOD';
 import CtxApi from '../../contexts/ctxApi';
 import { convertIsoDateToMoment } from '../../utilities/utlType';
-import SelectedToDoDescription from './projectSelectedToDo/selectedToDoDescription';
-import SelectedToDoPriority from './projectSelectedToDo/selectedToDoPriority';
-import SelectedToDoTags from './projectSelectedToDo/selectedToDoTags';
+import SelectedTodoDescription from './projectSelectedTodo/selectedTodoDescription';
+import SelectedTodoPriority from './projectSelectedTodo/selectedTodoPriority';
+import SelectedTodoTags from './projectSelectedTodo/selectedTodoTags';
 
-const ProjectSelectedToDo = ({ match, history, handleDescriptionChanged, handlePriorityChanged }) => {
+const ProjectSelectedTodo = ({ match, history, handleDescriptionChanged, handlePriorityChanged }) => {
   // START -- CONTEXTS
 
   // api
@@ -26,7 +26,7 @@ const ProjectSelectedToDo = ({ match, history, handleDescriptionChanged, handleP
   const [isLoading, isLoadingSet] = React.useState(false);
 
   // to do
-  const [toDo, toDoSet] = React.useState({});
+  const [todo, todoSet] = React.useState({});
 
   // modal visible state
   const [isModalVisible, isModalVisibleSet] = React.useState(true);
@@ -38,10 +38,10 @@ const ProjectSelectedToDo = ({ match, history, handleDescriptionChanged, handleP
   // prepare initial data
   const prepareInitialData = React.useCallback(async () => {
     // send request (to do detail)
-    const responseToDoDetail = await svsT3dapi.sendRequest(`api/todo/detail/${match.params.id}`, HTTPMETHOD.GET);
+    const responseTodoDetail = await svsT3dapi.sendRequest(`api/todo/detail/${match.params.id}`, HTTPMETHOD.GET);
 
     // set to do detail
-    toDoSet(responseToDoDetail.data);
+    todoSet(responseTodoDetail.data);
 
     // not loading...
     isLoadingSet(false);
@@ -70,23 +70,23 @@ const ProjectSelectedToDo = ({ match, history, handleDescriptionChanged, handleP
           {/* main to do informations */}
           <Space>
             {/* completed checkbox */}
-            {/* <Checkbox defaultChecked={toDo.is_completed} onChange={handleToggleToDoCompleted}></Checkbox> */}
+            {/* <Checkbox defaultChecked={todo.is_completed} onChange={handleToggleTodoCompleted}></Checkbox> */}
             {/* important flag */}
-            {/* <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleToDoImportant}></StarTwoTone> */}
+            {/* <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleTodoImportant}></StarTwoTone> */}
             {/* description */}
-            <SelectedToDoDescription toDo={toDo} handleDescriptionChanged={handleDescriptionChanged}></SelectedToDoDescription>
+            <SelectedTodoDescription todo={todo} handleDescriptionChanged={handleDescriptionChanged}></SelectedTodoDescription>
           </Space>
           {/* tags */}
-          <SelectedToDoTags toDo={toDo}></SelectedToDoTags>
+          <SelectedTodoTags todo={todo}></SelectedTodoTags>
           {/* priority */}
-          <SelectedToDoPriority toDo={toDo} toDoSet={toDoSet} handlePriorityChanged={handlePriorityChanged}></SelectedToDoPriority>
+          <SelectedTodoPriority todo={todo} todoSet={todoSet} handlePriorityChanged={handlePriorityChanged}></SelectedTodoPriority>
           {/* meta */}
           <Divider style={{ marginTop: 16, marginBottom: 16 }}></Divider>
           <Typography.Text>
-            Created on <b>{convertIsoDateToMoment(toDo.create_date)}</b> by <b>{toDo.creatorName}</b>
+            Created on <b>{convertIsoDateToMoment(todo.create_date)}</b> by <b>{todo.creatorName}</b>
           </Typography.Text>
           <Typography.Text>
-            Last updated on <b>{convertIsoDateToMoment(toDo.update_date)}</b>
+            Last updated on <b>{convertIsoDateToMoment(todo.update_date)}</b>
           </Typography.Text>
         </Space>
       </Spin>
@@ -94,4 +94,4 @@ const ProjectSelectedToDo = ({ match, history, handleDescriptionChanged, handleP
   );
 };
 
-export default ProjectSelectedToDo;
+export default ProjectSelectedTodo;

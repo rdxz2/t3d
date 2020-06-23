@@ -1,8 +1,9 @@
-import { UserOutlined } from '@ant-design/icons';
-import { Timeline, Typography } from 'antd';
 import React from 'react';
 
-const ProjectActivities = ({ projectCode }) => {
+import CmpActivities from '../../components/cmpActivities';
+import { Typography } from 'antd';
+
+const ProjectActivities = ({ activities, activitiesSet, projectCode, onLoadMore }) => {
   // START -- CONTEXTS
 
   // END -- CONTEXTS
@@ -26,27 +27,9 @@ const ProjectActivities = ({ projectCode }) => {
   return (
     <>
       {/* title */}
-      {/* <Typography.Title level={3}>Project activities</Typography.Title> */}
-      {/* activities */}
-      {/* {activities.map((activity, activityIndex) => (
-        <div>ac</div>
-      ))} */}
-
       <Typography.Title level={3}>Activities</Typography.Title>
-      <Timeline mode='left'>
-        <Timeline.Item color='green'>a</Timeline.Item>
-        <Timeline.Item color='green'>b</Timeline.Item>
-        <Timeline.Item>
-          <p>1</p>
-          <p>2</p>
-          <p>3</p>
-        </Timeline.Item>
-        <Timeline.Item color='red' dot={<UserOutlined></UserOutlined>}>
-          Content
-        </Timeline.Item>
-        <Timeline.Item>Content</Timeline.Item>
-        <Timeline.Item color='gray'>Content</Timeline.Item>
-      </Timeline>
+      {/* activities timeline */}
+      <CmpActivities activities={activities} onLoadMore={onLoadMore}></CmpActivities>
     </>
   );
 };

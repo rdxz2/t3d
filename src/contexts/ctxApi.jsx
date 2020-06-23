@@ -24,11 +24,11 @@ const CtxApi = React.createContext({
     unregisterJoined: () => null,
     registerLeaved: (onLeaved = () => {}) => null,
     unregisterLeaved: () => null,
-    registerToDoCreated: (onToDoCreated = () => {}) => null,
-    unregisterToDoCreated: () => null,
+    registerTodoCreated: (onTodoCreated = () => {}) => null,
+    unregisterTodoCreated: () => null,
     emitJoin: (data = { projectCode: '', id: '', name: '' }, callback = (error, data) => {}) => null,
     emitLeave: (projectCode = '', callback = (error, data) => {}) => null,
-    emitToDoCreating: (data = { projectCode: '', id: '', description: '', priority: 0 }, callback = (error, data) => {}) => null,
+    emitTodoCreating: (data = { projectCode: '', id: '', description: '', priority: 0 }, callback = (error, data) => {}) => null,
   },
 });
 

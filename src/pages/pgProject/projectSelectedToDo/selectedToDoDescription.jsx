@@ -5,7 +5,7 @@ import React from 'react';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
 
-const SelectedToDoDescription = ({ toDo = {}, handleDescriptionChanged }) => {
+const SelectedTodoDescription = ({ todo = {}, handleDescriptionChanged }) => {
   // START -- CONTEXTS
 
   // api
@@ -43,10 +43,10 @@ const SelectedToDoDescription = ({ toDo = {}, handleDescriptionChanged }) => {
 
     try {
       // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/description/${toDo.id}`, HTTPMETHOD.POST, { description });
+      const response = await svsT3dapi.sendRequest(`api/todo/description/${todo.id}`, HTTPMETHOD.POST, { description });
 
       // run callback
-      handleDescriptionChanged(toDo.id, response.data.description);
+      handleDescriptionChanged(todo.id, response.data.description);
 
       // close this
       handleEditDescriptionClose();
@@ -67,8 +67,8 @@ const SelectedToDoDescription = ({ toDo = {}, handleDescriptionChanged }) => {
 
   // set description value
   React.useEffect(() => {
-    descriptionSet(toDo.description);
-  }, [toDo.description]);
+    descriptionSet(todo.description);
+  }, [todo.description]);
 
   // END -- EFFECTS
 
@@ -85,4 +85,4 @@ const SelectedToDoDescription = ({ toDo = {}, handleDescriptionChanged }) => {
   );
 };
 
-export default SelectedToDoDescription;
+export default SelectedTodoDescription;

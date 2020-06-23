@@ -17,9 +17,7 @@ const HomeCalendar = ({ schedules, schedulesSet }) => {
   // START -- FUNCTIONS
 
   // render date cell
-  const renderDateCell = (value) => {
-    // console.log('render date cell', value);
-  };
+  const renderDateCell = (value) => {};
 
   // END -- FUNCTIONS
 

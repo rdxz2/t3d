@@ -4,7 +4,7 @@ import CmpTags from '../../../components/cmpTags';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
 
-const SelectedToDoTags = ({ toDo }) => {
+const SelectedTodoTags = ({ todo }) => {
   // START -- CONTEXTS
 
   // api
@@ -22,11 +22,19 @@ const SelectedToDoTags = ({ toDo }) => {
 
   // START -- FUNCTIONS
 
-  // submit: tags changed
-  const handleTagsChanged = async (tags) => {
+  // submit: tag created
+  const handleTagCreated = async (tag) => {
     try {
       // send request
-      await svsT3dapi.sendRequest(`api/todo/tags/${toDo.id}`, HTTPMETHOD.POST, { tags });
+      await svsT3dapi.sendRequest(`api/todo/tag/${todo.id}?tag=${tag}`, HTTPMETHOD.GET);
+    } catch (error) {}
+  };
+
+  // submit: tag deleted
+  const handleTagDeleted = async (tag) => {
+    try {
+      // send request
+      await svsT3dapi.sendRequest(`api/todo/tag/${todo.id}?tag=${tag}`, HTTPMETHOD.DELETE);
     } catch (error) {}
   };
 
@@ -36,7 +44,7 @@ const SelectedToDoTags = ({ toDo }) => {
 
   // END -- EFFECTS
 
-  return <CmpTags initialValue={toDo.tags} onChange={handleTagsChanged}></CmpTags>;
+  return <CmpTags initialValue={todo.tags} onCreated={handleTagCreated} onDeleted={handleTagDeleted}></CmpTags>;
 };
 
-export default SelectedToDoTags;
+export default SelectedTodoTags;

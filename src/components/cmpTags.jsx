@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Input, Tag } from 'antd';
 import React from 'react';
 
-const CmpTags = ({ initialValue = [], onChange }) => {
+const CmpTags = ({ initialValue = [], onCreated, onDeleted }) => {
   // START -- CONTEXTS
 
   // END -- CONTEXTS
@@ -28,20 +28,20 @@ const CmpTags = ({ initialValue = [], onChange }) => {
   const handleNotCreatingTag = () => isCreatingSet(false);
 
   // delete tag
-  const handleDeleteTag = (tagName) => {
+  const handleDeleteTag = (tagIndex) => {
     // set tags
     tagsSet((_tags) => {
       // find tag
-      const tagIndex = _tags.indexOf(tagName);
+      const deletedTag = _tags[tagIndex];
 
       // remove tag
       _tags.splice(tagIndex, 1);
 
-      // send all data to caller
-      onChange(_tags);
+      // send deleted data to caller
+      onDeleted(deletedTag);
 
       // set state
-      return _tags;
+      return [..._tags];
     });
   };
 
@@ -61,8 +61,8 @@ const CmpTags = ({ initialValue = [], onChange }) => {
       // insert new tag
       _tags.push(tagName);
 
-      // send all data to caller
-      onChange(_tags);
+      // send created  data to caller
+      onCreated(tagName);
 
       // set state
       return _tags;
@@ -84,7 +84,13 @@ const CmpTags = ({ initialValue = [], onChange }) => {
     <>
       {/* tags */}
       {tags.map((tag, tagIndex) => (
-        <Tag key={tagIndex} closable onClose={handleDeleteTag}>
+        <Tag
+          key={tagIndex}
+          closable
+          onClose={(event) => {
+            event.preventDefault();
+            handleDeleteTag(tagIndex);
+          }}>
           {tag}
         </Tag>
       ))}

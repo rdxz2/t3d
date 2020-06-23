@@ -1,4 +1,4 @@
-import './toDoLine.css';
+import './todoLine.css';
 
 import { StarTwoTone } from '@ant-design/icons';
 import { Checkbox, message, Space, Tag } from 'antd';
@@ -10,7 +10,7 @@ import CtxApi from '../../../contexts/ctxApi';
 import { makeEllipsis } from '../../../utilities/utlType';
 import { SELECTOPTION } from '../../../constants/SELECTOPTIONS';
 
-const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
+const TodoLine = ({ todo, handleModalTodoOpen }) => {
   // START -- CONTEXTS
 
   // api
@@ -24,46 +24,33 @@ const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
 
   // START -- STATES
 
-  // loading state
-  const [isLoading, isLoadingSet] = React.useState(false);
-
   // important stat
-  const [isImportant, isImportantSet] = React.useState(toDo.is_important ?? false);
+  const [isImportant, isImportantSet] = React.useState(todo.is_important ?? false);
 
   // END -- STATES
 
   // START -- FUNCTIONS
 
   // toggle to do completed
-  const handleToggleToDoCompleted = async (event) => {
-    // loading...
-    isLoadingSet(true);
-
+  const handleToggleTodoCompleted = async (event) => {
     try {
       // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/complete/${toDo.id}?is_completed=${event.target.checked}`, HTTPMETHOD.GET);
+      const response = await svsT3dapi.sendRequest(`api/todo/complete/${todo.id}?is_completed=${event.target.checked}`, HTTPMETHOD.GET);
 
       // show error message if response is not the same as expected important state
       if (event.target.checked !== response.data.is_completed) return message.error('data error');
 
-      // convert to ellispis string
-      const toDoDescription = makeEllipsis(toDo.description);
+      // make ellipsis description
+      const todoDescription = makeEllipsis(todo.description);
 
       // show message
-      if (response.data.is_completed) message.success(`'${toDoDescription}' completed`);
-      else message.info(`'${toDoDescription}' is opened again`);
-    } catch (error) {
-    } finally {
-      // not loading...
-      isLoadingSet(false);
-    }
+      if (response.data.is_completed) message.success(`'${todoDescription}' completed`);
+      else message.info(`'${todoDescription}' is opened again`);
+    } catch (error) {}
   };
 
   // toggle to do important
-  const handleToggleToDoImportant = async () => {
-    // loading...
-    isLoadingSet(true);
-
+  const handleToggleTodoImportant = async () => {
     // get important flag
     const _isImportant = isImportant;
 
@@ -75,19 +62,18 @@ const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
 
     try {
       // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/important/${toDo.id}?is_important=${isImportantToggled}`, HTTPMETHOD.GET);
+      const response = await svsT3dapi.sendRequest(`api/todo/important/${todo.id}?is_important=${isImportantToggled}`, HTTPMETHOD.GET);
 
       // show error message if response is not the same as expected important state
       if (isImportantToggled !== response.data.is_important) return message.error('data error');
 
+      // make ellipsis description
+      const todoDescription = makeEllipsis(todo.description);
+
       // show message
-      if (response.data.is_important) message.success(`'${toDo.description}' is marked important`);
-      else message.info(`'${toDo.description}' is marked not important`);
-    } catch (error) {
-    } finally {
-      // not loading...
-      isLoadingSet(false);
-    }
+      if (response.data.is_important) message.success(`'${todoDescription}' is marked important`);
+      else message.info(`'${todoDescription}' is marked not important`);
+    } catch (error) {}
   };
 
   // END -- FUNCTIONS
@@ -96,22 +82,22 @@ const ToDoLine = ({ toDo, handleModalToDoOpen }) => {
 
   // END -- EFFECTS
 
-  const selectOptionToDoPriority = SELECTOPTION.TODO_PRIORITY[toDo.priority];
+  const selectOptionTodoPriority = SELECTOPTION.TODO_PRIORITY[todo.priority];
 
   return (
     <Space style={{ width: '100%' }}>
       {/* completed checkbox */}
-      <Checkbox disabled={isLoading} defaultChecked={toDo.is_completed} onChange={handleToggleToDoCompleted}></Checkbox>
+      <Checkbox defaultChecked={todo.is_completed} onChange={handleToggleTodoCompleted}></Checkbox>
       {/* important flag */}
-      <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleToDoImportant}></StarTwoTone>
+      <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleTodoImportant}></StarTwoTone>
       {/* priority tag (only if priority is not normal (4)) */}
-      {toDo.priority !== 4 && selectOptionToDoPriority && <Tag color={selectOptionToDoPriority.tagColor}>{selectOptionToDoPriority.text}</Tag>}
+      {todo.priority !== 4 && selectOptionTodoPriority && <Tag color={selectOptionTodoPriority.tagColor}>{selectOptionTodoPriority.text}</Tag>}
       {/* description */}
-      <span className='todo-description' onClick={() => handleModalToDoOpen(toDo.id)}>
-        {toDo.description}
+      <span className='todo-description' onClick={() => handleModalTodoOpen(todo.id)}>
+        {todo.description}
       </span>
     </Space>
   );
 };
 
-export default ToDoLine;
+export default TodoLine;
