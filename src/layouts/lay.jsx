@@ -12,7 +12,8 @@ import PAGE from '../constants/PAGE';
 import CtxApi from '../contexts/ctxApi';
 import { setDocumentTitle } from '../utilities/utlWindow';
 import LayDrawerNotification from './layDrawerNotification';
-import LayMiniProfile from './layMiniProfile';
+import CmpMiniProfile from '../components/cmpMiniProfile';
+import { makeNameInitials } from '../utilities/utlType';
 
 const Lay = () => {
   // START -- CONTEXTS
@@ -49,8 +50,11 @@ const Lay = () => {
 
   // prepare initial data
   const prepareInitiaData = React.useCallback(async () => {
+    // get jwt information
+    const apiJwtInfo = svsT3dapi.getApiJwtInfo();
+
     // send request (minimal profile)
-    const responseMinimalProfile = await svsT3dapi.sendRequest('api/user/profileminimal', HTTPMETHOD.GET);
+    const responseMinimalProfile = await svsT3dapi.sendRequest(`api/user/profileminimal/${apiJwtInfo.id}`, HTTPMETHOD.GET);
 
     // set minimal profile
     profileSet(responseMinimalProfile.data);
@@ -98,18 +102,8 @@ const Lay = () => {
 
   // END -- EFFECTS
 
-  // construct user name initials
-  const userNameInitials = profile.name
-    ?.match(/\b(\w)/g)
-    .join('')
-    .toUpperCase();
-
-  // render account button based on initials
-  const userAccountButton = (
-    <Button shape='circle' onClick={() => history.push('account')}>
-      {userNameInitials ? userNameInitials : <UserOutlined></UserOutlined>}
-    </Button>
-  );
+  // make user name initials
+  const userNameInitials = makeNameInitials(profile.name);
 
   return (
     <Layout>
@@ -129,8 +123,10 @@ const Lay = () => {
           // divider
           <Divider key='page-header-divider1' type='vertical' style={{ marginRight: 0 }}></Divider>,
           // user's account
-          <Popover key='page-header-miniprofile' placement='bottomRight' title='Your profile' content={<LayMiniProfile profile={profile} nameInitials={userNameInitials}></LayMiniProfile>} style={{ width: 400 }}>
-            {userAccountButton}
+          <Popover key='page-header-miniprofile' placement='bottomRight' title='Your profile' content={<CmpMiniProfile profile={profile} nameInitials={userNameInitials}></CmpMiniProfile>} style={{ width: 400 }}>
+            <Button shape='circle' onClick={() => history.push('account')}>
+              {userNameInitials || <UserOutlined></UserOutlined>}
+            </Button>
           </Popover>,
           // notification
           <Badge key='page-header-badge-notification' count={notifications.length}>

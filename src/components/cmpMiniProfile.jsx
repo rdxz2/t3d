@@ -1,9 +1,9 @@
 import { Avatar } from 'antd';
 import React from 'react';
 
-import CmpDetail from '../components/cmpDetail';
+import CmpDetail from './cmpDetail';
 
-const LayMiniProfile = ({ profile, nameInitials }) => {
+const CmpMiniProfile = ({ profile, nameInitials = '' }) => {
   // START -- CONTEXTS
 
   // END -- CONTEXTS
@@ -35,11 +35,11 @@ const LayMiniProfile = ({ profile, nameInitials }) => {
       {/* name */}
       <CmpDetail label='Name' value={profile.name}></CmpDetail>
       {/* department */}
-      <CmpDetail label='Department' value={profile.department.name}></CmpDetail>
+      <CmpDetail label='Department' value={profile.department?.name}></CmpDetail>
       {/* position */}
-      <CmpDetail label='Position' value={profile.position.name}></CmpDetail>
+      <CmpDetail label='Position' value={profile.position?.name}></CmpDetail>
     </div>
   );
 };
 
-export default LayMiniProfile;
+export default CmpMiniProfile;

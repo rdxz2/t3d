@@ -82,8 +82,17 @@ export const convertCollectionToObject = (inputs, keyField = '', fields = []) =>
 
 // START  -- STRING
 
+// make name initial from user name
+const nameInitialsMaxLength = 3;
+export const makeNameInitials = (input) =>
+  input
+    ?.match(/\b(\w)/g)
+    .join('')
+    .toUpperCase()
+    .slice(0, nameInitialsMaxLength);
+
 // create an ellipsis effect if input string is longer than desired max length
-export const makeEllipsis = (input, maxLength = 20) => (input.length > maxLength ? `${input.slice(0, 20)}...` : input);
+export const makeEllipsis = (input, maxLength = 20) => (input.length > maxLength ? `${input.slice(0, maxLength)}...` : input);
 
 // convert iso date to readable format
 export const convertIsoDateToMoment = (input, format = TIMEFORMAT.DDMMMMYYYYHHMMSS) => (input ? moment(input).format(format) : '-');

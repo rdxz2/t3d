@@ -26,7 +26,7 @@ const CtxApi = React.createContext({
     unregisterLeaved: () => null,
     registerToDoCreated: (onToDoCreated = () => {}) => null,
     unregisterToDoCreated: () => null,
-    emitJoin: (data = { projectCode: '', name: '' }, callback = (error, data) => {}) => null,
+    emitJoin: (data = { projectCode: '', id: '', name: '' }, callback = (error, data) => {}) => null,
     emitLeave: (projectCode = '', callback = (error, data) => {}) => null,
     emitToDoCreating: (data = { projectCode: '', id: '', description: '', priority: 0 }, callback = (error, data) => {}) => null,
   },

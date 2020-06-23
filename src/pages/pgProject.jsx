@@ -180,7 +180,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     const userInfo = svsT3dapi.getApiJwtInfo();
 
     // broadcast: joining project room
-    strmProject.emitJoin({ projectCode: match.params.projectCode, name: userInfo.name }, (error, data) => {
+    strmProject.emitJoin({ projectCode: match.params.projectCode, id: userInfo.id, name: userInfo.name }, (error, data) => {
       if (error) message.error(`error joining project room: ${error}`);
 
       // set online collaborators

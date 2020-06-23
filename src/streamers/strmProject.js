@@ -30,7 +30,7 @@ class StrmProject {
   // START -- EMITTERS
 
   // user entering project
-  emitJoin = (data = { projectCode: '', name: '' }, callback) => this.socket.emit('join', data, callback);
+  emitJoin = (data = { projectCode: '', id: '', name: '' }, callback) => this.socket.emit('join', data, callback);
 
   // user leaving project
   emitLeave = (projectCode, callback) => this.socket.emit('leave', projectCode, callback);

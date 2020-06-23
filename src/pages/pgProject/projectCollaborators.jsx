@@ -1,9 +1,11 @@
 import React from 'react';
 import CtxApi from '../../contexts/ctxApi';
 import { useHistory } from 'react-router';
-import { Typography, Space } from 'antd';
+import { Typography, Space, Popover } from 'antd';
 import { SmileOutlined, SmileTwoTone } from '@ant-design/icons';
 import COLOR from '../../constants/COLOR';
+import CmpMiniProfile from '../../components/cmpMiniProfile';
+import CmpMiniProfileAsync from '../../components/cmpMiniProfileAsync';
 
 const ProjectCollaborators = ({ collaborators = [], onlineCollaborators = [] }) => {
   // START -- CONTEXTS
@@ -26,8 +28,11 @@ const ProjectCollaborators = ({ collaborators = [], onlineCollaborators = [] }) 
 
   // END -- EFFECTS
 
+  // get online collaborators id
+  const onlineCollaboratorsId = onlineCollaborators.map((onlineCollaborator) => onlineCollaborator.id);
+
   // get offline collaborators
-  const offlineCollaborators = collaborators.filter((collaborator) => !onlineCollaborators.includes(collaborator));
+  const offlineCollaborators = collaborators.filter((collaborator) => !onlineCollaboratorsId.includes(collaborator.id));
 
   return (
     <Space direction='vertical' style={{ width: '100%' }}>
@@ -35,16 +40,19 @@ const ProjectCollaborators = ({ collaborators = [], onlineCollaborators = [] }) 
       <Typography.Title level={3}>Collaborators</Typography.Title>
       {/* online collaborator list */}
       {onlineCollaborators.map((onlineCollaborator, onlineCollaboratorIndex) => (
-        <Typography.Text key={onlineCollaboratorIndex} strong>
-          <SmileTwoTone twoToneColor={COLOR.GREEN}></SmileTwoTone> {onlineCollaborator}
-        </Typography.Text>
+        <Popover key={onlineCollaboratorIndex} mouseEnterDelay={0.3} placement='top' content={<CmpMiniProfileAsync userId={onlineCollaborator.id}></CmpMiniProfileAsync>} style={{ width: 400 }}>
+          <Typography.Link>
+            <SmileTwoTone twoToneColor={COLOR.GREEN}></SmileTwoTone> {onlineCollaborator.name}
+          </Typography.Link>
+        </Popover>
       ))}
       {/* offline collaborator list */}
-
       {offlineCollaborators.map((offlineCollaborator, offlineCollaboratorIndex) => (
-        <Typography.Text key={offlineCollaboratorIndex} strong>
-          <SmileTwoTone twoToneColor={COLOR.RED}></SmileTwoTone> {offlineCollaborator}
-        </Typography.Text>
+        <Popover key={offlineCollaboratorIndex} mouseEnterDelay={0.3} placement='top' content={<CmpMiniProfileAsync userId={offlineCollaborator.id}></CmpMiniProfileAsync>} style={{ width: 400 }}>
+          <Typography.Link>
+            <SmileTwoTone twoToneColor={COLOR.RED}></SmileTwoTone> {offlineCollaborator.name}
+          </Typography.Link>
+        </Popover>
       ))}
     </Space>
   );

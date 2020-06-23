@@ -67,7 +67,6 @@ const SelectedToDoDescription = ({ toDo = {}, handleDescriptionChanged }) => {
 
   // set description value
   React.useEffect(() => {
-    console.log('todo description', toDo.description);
     descriptionSet(toDo.description);
   }, [toDo.description]);
 
