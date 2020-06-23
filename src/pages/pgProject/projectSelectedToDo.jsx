@@ -1,13 +1,14 @@
-import { Divider, Modal, Select, Space, Spin, Typography } from 'antd';
+import { Divider, Modal, Space, Spin, Typography } from 'antd';
 import React from 'react';
 
-import CmpTags from '../../components/cmpTags';
 import HTTPMETHOD from '../../constants/HTTPMETHOD';
-import SELECTOPTIONS from '../../constants/SELECTOPTIONS';
 import CtxApi from '../../contexts/ctxApi';
 import { convertIsoDateToMoment } from '../../utilities/utlType';
+import SelectedToDoDescription from './projectSelectedToDo/selectedToDoDescription';
+import SelectedToDoPriority from './projectSelectedToDo/selectedToDoPriority';
+import SelectedToDoTags from './projectSelectedToDo/selectedToDoTags';
 
-const ProjectSelectedToDo = ({ match, history, handlePriorityChanged }) => {
+const ProjectSelectedToDo = ({ match, history, handleDescriptionChanged, handlePriorityChanged }) => {
   // START -- CONTEXTS
 
   // api
@@ -50,28 +51,6 @@ const ProjectSelectedToDo = ({ match, history, handlePriorityChanged }) => {
   const handleCloseModal = () => isModalVisibleSet(false);
   const handleRedirectToBefore = () => history.goBack();
 
-  // tags changed
-  const handleTagsChanged = async (tags) => {
-    try {
-      // send request
-      await svsT3dapi.sendRequest(`api/todo/tags/${match.params.id}`, HTTPMETHOD.POST, { tags });
-    } catch (error) {}
-  };
-
-  // change priority
-  const handleChangePriority = async (priorityLevel) => {
-    try {
-      // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/priority/${match.params.id}?priorityLevel=${priorityLevel}`, HTTPMETHOD.GET);
-
-      // trigger changed priority to caller
-      handlePriorityChanged(match.params.id, response.data.priority);
-
-      // set to dos
-      toDoSet((_toDo) => ({ ..._toDo, priority: response.data.priority }));
-    } catch (error) {}
-  };
-
   // END -- FUNCTIONS
 
   // START -- EFFECTS
@@ -95,25 +74,12 @@ const ProjectSelectedToDo = ({ match, history, handlePriorityChanged }) => {
             {/* important flag */}
             {/* <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleToDoImportant}></StarTwoTone> */}
             {/* description */}
-            <Typography.Text
-              editable={{
-                onChange: (value) => {
-                  console.log('edit desc:', value);
-                },
-              }}>
-              {toDo.description}
-            </Typography.Text>
+            <SelectedToDoDescription toDo={toDo} handleDescriptionChanged={handleDescriptionChanged}></SelectedToDoDescription>
           </Space>
           {/* tags */}
-          <CmpTags initialValue={toDo.tags} onChange={handleTagsChanged}></CmpTags>
+          <SelectedToDoTags toDo={toDo}></SelectedToDoTags>
           {/* priority */}
-          <Select name='priority' value={toDo.priority} onChange={handleChangePriority} style={{ minWidth: 100 }}>
-            {SELECTOPTIONS.TODO_PRIORITY.map((priority, priorityIndex) => (
-              <Select.Option key={priorityIndex} value={priority.value}>
-                {priority.text}
-              </Select.Option>
-            ))}
-          </Select>
+          <SelectedToDoPriority toDo={toDo} toDoSet={toDoSet} handlePriorityChanged={handlePriorityChanged}></SelectedToDoPriority>
           {/* meta */}
           <Divider style={{ marginTop: 16, marginBottom: 16 }}></Divider>
           <Typography.Text>

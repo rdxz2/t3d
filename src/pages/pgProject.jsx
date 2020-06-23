@@ -118,7 +118,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   // open to do detail modal
   const handleModalToDoOpen = (toDoId) => history.push(`${match.url}/todo/${toDoId}`);
 
-  // to do priority changed
+  // to do priority changed in modal
   const handlePriorityChanged = (toDoId, priority) =>
     toDosSet((_toDos) => {
       // get updated to do
@@ -126,6 +126,19 @@ const PgProject = ({ match, handleChangeActivePage }) => {
 
       // update to do
       updatedToDo.priority = priority;
+
+      // set state
+      return _toDos;
+    });
+
+  // to do description changed in modal
+  const handleDescriptionChanged = (toDoId, description) =>
+    toDosSet((_toDos) => {
+      // get updated to do
+      const updatedToDo = _toDos.find((toDo) => toDo.id === toDoId);
+
+      // update to do
+      updatedToDo.description = description;
 
       // set state
       return _toDos;
@@ -219,7 +232,9 @@ const PgProject = ({ match, handleChangeActivePage }) => {
           </CmpDrawer>
         )}></Route>
       {/* to do detail */}
-      <Route path={`${match.url}/todo/:id`} render={({ match: _match }) => <ProjectSelectedToDo match={_match} history={history} handlePriorityChanged={handlePriorityChanged}></ProjectSelectedToDo>}></Route>
+      <Route
+        path={`${match.url}/todo/:id`}
+        render={({ match: _match }) => <ProjectSelectedToDo match={_match} history={history} handleDescriptionChanged={handleDescriptionChanged} handlePriorityChanged={handlePriorityChanged}></ProjectSelectedToDo>}></Route>
     </>
   );
 };

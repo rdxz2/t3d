@@ -64,7 +64,7 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
   };
 
   // handle key press
-  const handleKeyPres = (event) => {
+  const handleKeyDown = (event) => {
     // close this form on esc
     if (event.key === 'Escape') handleCreateToDoClose();
   };
@@ -77,7 +77,7 @@ const ToDoCreate = ({ projectCode, handleAfterCreated }) => {
 
   return isCreatingToDo ? (
     // create to do form
-    <Input autoFocus autoComplete='off' placeholder='what to be done?' onPressEnter={handleSubmit} onBlur={handleCreateToDoClose} onKeyDown={handleKeyPres} style={{ width: '100%' }}></Input>
+    <Input autoFocus autoComplete='off' placeholder='what to be done?' onPressEnter={handleSubmit} onBlur={handleCreateToDoClose} onKeyDown={handleKeyDown} style={{ width: '100%' }}></Input>
   ) : (
     // add button
     <Button block type='primary' loading={isSubmitting} icon={<PlusOutlined></PlusOutlined>} onClick={handleCreateToDoOpen}></Button>
