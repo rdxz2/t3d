@@ -11,7 +11,7 @@ class StrmProject {
     });
   }
 
-  // START -- LISTENER REGISTRATION
+  // START -- LISTENERS REGISTRATION
 
   // other user is joined
   registerJoined = (onJoined) => this.socket.on('joined', onJoined);
@@ -25,7 +25,15 @@ class StrmProject {
   registerTodoCreated = (onTodoCreated) => this.socket.on('todo_created', onTodoCreated);
   unregisterTodoCreated = () => this.socket.off('todo_created');
 
-  // END -- LISTENER REGISTRATION
+  // other user created tag
+  registerTodoTagCreated = (onTodoTagCreated) => this.socket.on('todotag_created', onTodoTagCreated);
+  unregisterTodoTagCreated = () => this.socket.off('todotag_created');
+
+  // other user deleted tag
+  registerTodoTagDeleted = (onTodoTagDeleted) => this.socket.on('todotag_deleted', onTodoTagDeleted);
+  unregisterTodoTagDeleted = () => this.socket.off('todotag_deleted');
+
+  // END -- LISTENERS REGISTRATION
 
   // START -- EMITTERS
 
@@ -36,7 +44,13 @@ class StrmProject {
   emitLeave = (projectCode, callback) => this.socket.emit('leave', projectCode, callback);
 
   // this user created to do
-  emitTodoCreating = (data = { projectCode: '', id: '', description: '', priority: 0 }, callback) => this.socket.emit('todo_creating', data, callback);
+  emitTodoCreating = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('todo_creating', data, callback);
+
+  // this user created a tag
+  emitTodoTagCreating = (data = { projectCode: '', tag: '', activity: {} }, callback) => this.socket.emit('todotag_creating', data, callback);
+
+  // this user deleted a tag
+  emitTodoTagDeleted = (data = { projectCode: '', tag: '', activity: {} }, callback) => this.socket.emit('todotag_creating', data, callback);
 
   // END -- EMITTERS
 }

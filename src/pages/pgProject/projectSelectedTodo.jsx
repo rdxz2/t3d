@@ -8,7 +8,7 @@ import SelectedTodoDescription from './projectSelectedTodo/selectedTodoDescripti
 import SelectedTodoPriority from './projectSelectedTodo/selectedTodoPriority';
 import SelectedTodoTags from './projectSelectedTodo/selectedTodoTags';
 
-const ProjectSelectedTodo = ({ match, history, handleDescriptionChanged, handlePriorityChanged }) => {
+const ProjectSelectedTodo = ({ match, history, handleDescriptionChanged, handlePriorityChanged, handleTagCreated, handleTagDeleted }) => {
   // START -- CONTEXTS
 
   // api
@@ -77,7 +77,7 @@ const ProjectSelectedTodo = ({ match, history, handleDescriptionChanged, handleP
             <SelectedTodoDescription todo={todo} handleDescriptionChanged={handleDescriptionChanged}></SelectedTodoDescription>
           </Space>
           {/* tags */}
-          <SelectedTodoTags todo={todo}></SelectedTodoTags>
+          <SelectedTodoTags todo={todo} handleTagCreated={handleTagCreated} handleTagDeleted={handleTagDeleted}></SelectedTodoTags>
           {/* priority */}
           <SelectedTodoPriority todo={todo} todoSet={todoSet} handlePriorityChanged={handlePriorityChanged}></SelectedTodoPriority>
           {/* meta */}

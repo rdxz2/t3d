@@ -4,7 +4,7 @@ import CmpTags from '../../../components/cmpTags';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
 
-const SelectedTodoTags = ({ todo }) => {
+const SelectedTodoTags = ({ todo, handleTagCreated: handleCallerTagCreated, handleTagDeleted: handleCallerTagDeleted }) => {
   // START -- CONTEXTS
 
   // api
@@ -26,7 +26,10 @@ const SelectedTodoTags = ({ todo }) => {
   const handleTagCreated = async (tag) => {
     try {
       // send request
-      await svsT3dapi.sendRequest(`api/todo/tag/${todo.id}?tag=${tag}`, HTTPMETHOD.GET);
+      const response = await svsT3dapi.sendRequest(`api/todo/tag/${todo.id}?tag=${tag}`, HTTPMETHOD.GET);
+
+      // runn callback
+      handleCallerTagCreated(response);
     } catch (error) {}
   };
 
@@ -34,7 +37,9 @@ const SelectedTodoTags = ({ todo }) => {
   const handleTagDeleted = async (tag) => {
     try {
       // send request
-      await svsT3dapi.sendRequest(`api/todo/tag/${todo.id}?tag=${tag}`, HTTPMETHOD.DELETE);
+      const response = await svsT3dapi.sendRequest(`api/todo/tag/${todo.id}?tag=${tag}`, HTTPMETHOD.DELETE);
+
+      handleCallerTagDeleted(response);
     } catch (error) {}
   };
 

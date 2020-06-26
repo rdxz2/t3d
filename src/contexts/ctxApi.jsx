@@ -20,15 +20,23 @@ const CtxApi = React.createContext({
     removeApiRefreshToken: () => null,
   },
   strmProject: {
+    // listeners
     registerJoined: (onJoined = () => {}) => null,
     unregisterJoined: () => null,
     registerLeaved: (onLeaved = () => {}) => null,
     unregisterLeaved: () => null,
     registerTodoCreated: (onTodoCreated = () => {}) => null,
     unregisterTodoCreated: () => null,
+    registerTodoTagCreated: (onTodoTagCreated = () => {}) => null,
+    unregisterTodoTagCreated: () => null,
+    registerTodoTagDeleted: (onTodoTagDeletd = () => {}) => null,
+    unregisterTodoTagDeleted: () => null,
+    // emitters
     emitJoin: (data = { projectCode: '', id: '', name: '' }, callback = (error, data) => {}) => null,
     emitLeave: (projectCode = '', callback = (error, data) => {}) => null,
-    emitTodoCreating: (data = { projectCode: '', id: '', description: '', priority: 0 }, callback = (error, data) => {}) => null,
+    emitTodoCreating: (data = { projectCode: '', todo: {}, activity: {} }, callback = (error, data) => {}) => null,
+    emitTodoTagCreating: (data = { projectCode: '', tag: '', activity: {} }, callback = (error, data) => {}) => null,
+    emitTodoTagDeleted: (data = { projectCode: '', tag: '', activity: {} }, callback = (error, data) => {}) => null,
   },
 });
 

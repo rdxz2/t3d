@@ -141,109 +141,6 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     // });
   };
 
-  // END -- PROJECT FUNCTIONALITY
-
-  // START -- TODO FUNCTIONALITY
-
-  // add created to do to the first element
-  const unshiftTodos = React.useCallback((newTodo) => {
-    return todosSet((_todos) => {
-      _todos.unshift(newTodo);
-
-      // set state
-      return [..._todos];
-    });
-  }, []);
-
-  // add created activity (to do) to the first element
-  const unshiftActivities = React.useCallback((newActivity) => {
-    return activitiesSet((_activities) => ({ ..._activities, projectActivitiesTotalData: _activities.projectActivitiesTotalData + 1, projectActivities: [newActivity, ..._activities.projectActivities] }));
-  }, []);
-
-  // to do created
-  const handleTodoCreated = (response) => {
-    const { todo: newTodo, activity: newActivity } = response.data;
-
-    // send streamer message
-    strmProject.emitTodoCreating({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity }, () => {});
-
-    // unshift to do
-    unshiftTodos(newTodo);
-
-    // append activity
-    unshiftActivities(newActivity);
-  };
-
-  // to do created (socket)
-  const handleTodoCreatedEmit = React.useCallback(
-    // unshift to do
-    (response) => {
-      const { todo: newTodo, activity: newActivity } = response;
-
-      // append to do
-      unshiftTodos(newTodo);
-
-      // append activity
-      unshiftActivities(newActivity);
-    },
-    [unshiftActivities, unshiftTodos]
-  );
-
-  // END -- TODO FUNCTIONALITY
-
-  // START -- MODAL FUNCTIONALITY
-
-  // open to do detail modal
-  const handleModalTodoOpen = (todoId) => history.push(`${match.url}/todo/${todoId}`);
-
-  // to do priority changed in modal
-  const handlePriorityChanged = (todoId, priority) =>
-    todosSet((_todos) => {
-      // get updated to do
-      const updatedTodo = _todos.find((todo) => todo.id === todoId);
-
-      // update to do
-      updatedTodo.priority = priority;
-
-      // set state
-      return _todos;
-    });
-
-  // to do description changed in modal
-  const handleDescriptionChanged = (todoId, description) =>
-    todosSet((_todos) => {
-      // get updated to do
-      const updatedTodo = _todos.find((todo) => todo.id === todoId);
-
-      // update to do
-      updatedTodo.description = description;
-
-      // set state
-      return _todos;
-    });
-
-  // load more activities
-
-  // END -- MODAL FUNCTIONALITY
-
-  // START -- ACTIVITIES FUNCTIONALITY
-
-  const handleLoadMoreActivities = async (currentPage) => {
-    try {
-      // send request
-      const response = await svsT3dapi.sendRequest(`api/project/activities/${match.params.projectCode}?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
-
-      // set activities
-      activitiesSet((_activities) => ({ projectActivitiesTotalData: response.data.projectActivitiesTotalData, projectActivities: [..._activities.projectActivities, ...response.data.projectActivities] }));
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  // END -- ACTIVITIES FUNCTIONALITY
-
-  // START -- SOCKET LISTENERS
-
   // collaborator joined
   const handleCollaboratorJoined = (data) => {
     // set collaborators
@@ -276,7 +173,150 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     });
   };
 
-  // END -- SOCKET LISTENERS
+  // END -- PROJECT FUNCTIONALITY
+
+  // START -- TODO FUNCTIONALITY
+
+  // add created to do to the first element
+  const unshiftTodos = React.useCallback((newTodo) => {
+    return todosSet((_todos) => {
+      _todos.unshift(newTodo);
+
+      // set state
+      return [..._todos];
+    });
+  }, []);
+
+  // add created activity (to do) to the first element
+  const unshiftActivities = React.useCallback((newActivity) => {
+    return activitiesSet((_activities) => ({ ..._activities, projectActivitiesTotalData: _activities.projectActivitiesTotalData + 1, projectActivities: [newActivity, ..._activities.projectActivities] }));
+  }, []);
+
+  // to do created
+  const handleTodoCreated = (response) => {
+    const { todo: newTodo, activity: newActivity } = response.data;
+
+    // send streamer message
+    strmProject.emitTodoCreating({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity }, () => {});
+
+    // // unshift to do
+    // unshiftTodos(newTodo);
+
+    // // append activity
+    // unshiftActivities(newActivity);
+  };
+
+  // to do created (socket)
+  const handleTodoCreatedEmit = React.useCallback(
+    // unshift to do
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response;
+
+      // append to do
+      unshiftTodos(newTodo);
+
+      // append activity
+      unshiftActivities(newActivity);
+    },
+    [unshiftActivities, unshiftTodos]
+  );
+
+  // END -- TODO FUNCTIONALITY
+
+  // START -- MODAL FUNCTIONALITY
+
+  // open to do detail modal
+  const handleModalTodoOpen = (todoId) => history.push(`${match.url}/todo/${todoId}`);
+
+  // to do priority changed in modal
+  const handlePriorityChanged = (todoId, priority) => {
+    // set to dos
+    return todosSet((_todos) => {
+      // get updated to do
+      const updatedTodo = _todos.find((todo) => todo.id === todoId);
+
+      // update to do
+      updatedTodo.priority = priority;
+
+      // set state
+      return _todos;
+    });
+  };
+
+  // to do description changed in modal
+  const handleDescriptionChanged = (todoId, description) => {
+    // set to dos
+    return todosSet((_todos) => {
+      // get updated to do
+      const updatedTodo = _todos.find((todo) => todo.id === todoId);
+
+      // update to do
+      updatedTodo.description = description;
+
+      // set state
+      return _todos;
+    });
+  };
+
+  // to do tag created in modal
+  const handleTodoTagCreated = (response) => {
+    const { tag: newTag, activity: newActivity } = response.data;
+
+    // broadcast: tag created
+    strmProject.emitTodoTagCreating({ projectCode: match.params.projectCode, tag: newTag, activity: newActivity }, () => {});
+
+    // // append activity
+    // unshiftActivities(response.activity);
+  };
+
+  // to do tag created by other user
+  const handleTodoTagCreatedEmit = React.useCallback(
+    (response) => {
+      // append activity
+      unshiftActivities(response.activity);
+    },
+    [unshiftActivities]
+  );
+
+  // to do tag deleted in modal
+  const handleTodoTagDeleted = (response) => {
+    const { tag: newTag, activity: newActivity } = response.data;
+
+    // broadcast: tag created
+    strmProject.emitTodoTagCreating({ projectCode: match.params.projectCode, tag: newTag, activity: newActivity }, () => {});
+
+    // // append activity
+    // unshiftActivities(response.activity);
+  };
+
+  // to do tag deleted by other user
+  const handleTodoTagDeletedEmit = React.useCallback(
+    (response) => {
+      // append activity
+      unshiftActivities(response.activity);
+    },
+    [unshiftActivities]
+  );
+
+  // load more activities
+
+  // END -- MODAL FUNCTIONALITY
+
+  // START -- ACTIVITIES FUNCTIONALITY
+
+  const handleLoadMoreActivities = async (currentPage) => {
+    try {
+      // send request
+      const response = await svsT3dapi.sendRequest(`api/project/activities/${match.params.projectCode}?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
+
+      // set activities
+      activitiesSet((_activities) => ({ projectActivitiesTotalData: response.data.projectActivitiesTotalData, projectActivities: [..._activities.projectActivities, ...response.data.projectActivities] }));
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // END -- ACTIVITIES FUNCTIONALITY
 
   // END -- FUNCTIONS
 
@@ -294,17 +334,21 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     strmProject.registerJoined(handleCollaboratorJoined);
     strmProject.registerLeaved(handleCollaboratorLeaved);
     strmProject.registerTodoCreated(handleTodoCreatedEmit);
+    strmProject.registerTodoTagCreated(handleTodoTagCreatedEmit);
+    strmProject.registerTodoTagDeleted(handleTodoTagDeletedEmit);
 
     return () => {
       // unsubscribe from server emits
       strmProject.unregisterJoined();
       strmProject.unregisterLeaved();
       strmProject.unregisterTodoCreated();
+      strmProject.unregisterTodoTagCreated();
+      strmProject.unregisterTodoTagDeleted();
 
       // broadcast: leaving the project room
       strmProject.emitLeave(match.params.projectCode, () => {});
     };
-  }, [handleTodoCreatedEmit, match.params.projectCode, strmProject, svsT3dapi]);
+  }, [handleTodoCreatedEmit, handleTodoTagCreatedEmit, handleTodoTagDeletedEmit, match.params.projectCode, strmProject, svsT3dapi]);
 
   // END -- EFFECTS
 
@@ -345,7 +389,15 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       {/* to do detail */}
       <Route
         path={`${match.url}/todo/:id`}
-        render={({ match: _match }) => <ProjectSelectedTodo match={_match} history={history} handleDescriptionChanged={handleDescriptionChanged} handlePriorityChanged={handlePriorityChanged}></ProjectSelectedTodo>}></Route>
+        render={({ match: _match }) => (
+          <ProjectSelectedTodo
+            match={_match}
+            history={history}
+            handleDescriptionChanged={handleDescriptionChanged}
+            handlePriorityChanged={handlePriorityChanged}
+            handleTagCreated={handleTodoTagCreated}
+            handleTagDeleted={handleTodoTagDeleted}></ProjectSelectedTodo>
+        )}></Route>
     </>
   );
 };
