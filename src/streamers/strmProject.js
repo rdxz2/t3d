@@ -13,15 +13,15 @@ class StrmProject {
 
   // START -- LISTENER REGISTRATION
 
-  // user is joined
+  // other user is joined
   registerJoined = (onJoined) => this.socket.on('joined', onJoined);
   unregisterJoined = () => this.socket.off('joined');
 
-  // user is leaved
+  // other user is leaved
   registerLeaved = (onLeaved) => this.socket.on('leaved', onLeaved);
   unregisterLeaved = () => this.socket.off('leaved');
 
-  // to do created
+  // other user created to do
   registerTodoCreated = (onTodoCreated) => this.socket.on('todo_created', onTodoCreated);
   unregisterTodoCreated = () => this.socket.off('todo_created');
 
@@ -29,13 +29,13 @@ class StrmProject {
 
   // START -- EMITTERS
 
-  // user entering project
+  // this user entering project
   emitJoin = (data = { projectCode: '', id: '', name: '' }, callback) => this.socket.emit('join', data, callback);
 
-  // user leaving project
+  // this user leaving project
   emitLeave = (projectCode, callback) => this.socket.emit('leave', projectCode, callback);
 
-  // creating to do
+  // this user created to do
   emitTodoCreating = (data = { projectCode: '', id: '', description: '', priority: 0 }, callback) => this.socket.emit('todo_creating', data, callback);
 
   // END -- EMITTERS

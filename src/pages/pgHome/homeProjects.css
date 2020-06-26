@@ -18,15 +18,10 @@
   cursor: pointer;
 }
 
-/* project create */
+/* project create card */
 #recent-project-card-create > .ant-card-body {
   height: 100%;
   padding: 0;
-}
-
-/* recent project card (leftmost card) */
-.recent-project-card:first-child {
-  margin-left: 16px;
 }
 
 /* recent project card */
@@ -37,9 +32,19 @@
   transition: 0.3s;
 }
 
-/* project card: desription */
+/* recent project card (leftmost card) */
+.recent-project-card:first-child {
+  margin-left: 16px;
+}
+
+/* recet project card: desription */
 .recent-project-card p {
   margin-bottom: 0;
+}
+
+/* recent project card: onclick */
+.recent-project-card:active {
+  background-color: #e7cffc;
 }
 
 .recent-project-card > .ant-card-actions > li {

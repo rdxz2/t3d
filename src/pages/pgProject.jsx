@@ -1,18 +1,18 @@
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Col, Row, Typography, message, Divider } from 'antd';
+import { Button, Col, Divider, message, Row, Typography } from 'antd';
 import React from 'react';
 import { Route, useHistory } from 'react-router-dom';
 
 import CmpDrawer from '../components/cmpDrawer';
+import ACTIVITY from '../constants/ACTIVITY';
 import HTTPMETHOD from '../constants/HTTPMETHOD';
 import PADDING from '../constants/PADDING';
 import CtxApi from '../contexts/ctxApi';
 import ProjectEdit from './pgHome/homeProjects/projectEdit';
 import ProjectActivities from './pgProject/projectActivities';
+import ProjectCollaborators from './pgProject/projectCollaborators';
 import ProjectSelectedTodo from './pgProject/projectSelectedTodo';
 import ProjectTodos from './pgProject/projectTodos';
-import ProjectCollaborators from './pgProject/projectCollaborators';
-import ACTIVITY from '../constants/ACTIVITY';
 
 const PgProject = ({ match, handleChangeActivePage }) => {
   // START -- CONTEXTS
@@ -42,7 +42,6 @@ const PgProject = ({ match, handleChangeActivePage }) => {
 
   // online collaborators
   const [collaborators, collaboratorsSet] = React.useState([]);
-  const [onlineCollaborators, onlineCollaboratorsSet] = React.useState([]);
 
   // END -- STATES
 
@@ -72,7 +71,6 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       // send request (activities)
       const responseActivities = await svsT3dapi.sendRequest(`api/project/activities/${projectCode}?pageSize=${ACTIVITY.PAGESIZE}&currentPage=1`, HTTPMETHOD.GET);
 
-      console.log('responseActivities.data', responseActivities.data);
       // set activities
       activitiesSet(responseActivities.data);
 
@@ -80,9 +78,33 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       const responseCollaborators = await svsT3dapi.sendRequest(`api/project/collaborators/${projectCode}`, HTTPMETHOD.GET);
 
       // set collaborators
-      collaboratorsSet(responseCollaborators.data);
+      collaboratorsSet(responseCollaborators.data.map((collaborator) => ({ ...collaborator, isOnline: false })));
+
+      // get user name from jwt
+      const userInfo = svsT3dapi.getApiJwtInfo();
+
+      // broadcast: joining project room
+      strmProject.emitJoin({ projectCode: match.params.projectCode, id: userInfo.id, name: userInfo.name }, (error, data) => {
+        if (error) message.error(`error joining project room: ${error}`);
+
+        // combine collaborators from sending request with online collaborators from this broadcast callback
+        const _collaborators = responseCollaborators.data;
+
+        // set existing collaborators to online
+        data.forEach((_data) => {
+          // get collaborator by id
+          const onlineCollaborator = _collaborators.find((collaborator) => collaborator.id === _data.id);
+          if (!onlineCollaborator) return;
+
+          // set online state
+          onlineCollaborator.isOnline = true;
+        });
+
+        // set collaborators
+        collaboratorsSet(_collaborators);
+      });
     } catch (error) {}
-  }, [handleChangeActivePage, match.params.projectCode, svsT3dapi]);
+  }, [handleChangeActivePage, match.params.projectCode, strmProject, svsT3dapi]);
 
   // START -- PROJECT FUNCTIONALITY
 
@@ -120,6 +142,54 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   };
 
   // END -- PROJECT FUNCTIONALITY
+
+  // START -- TODO FUNCTIONALITY
+
+  // add created to do to the first element
+  const unshiftTodos = React.useCallback((newTodo) => {
+    return todosSet((_todos) => {
+      _todos.unshift(newTodo);
+
+      // set state
+      return [..._todos];
+    });
+  }, []);
+
+  // add created activity (to do) to the first element
+  const unshiftActivities = React.useCallback((newActivity) => {
+    return activitiesSet((_activities) => ({ ..._activities, projectActivitiesTotalData: _activities.projectActivitiesTotalData + 1, projectActivities: [newActivity, ..._activities.projectActivities] }));
+  }, []);
+
+  // to do created
+  const handleTodoCreated = (response) => {
+    const { todo: newTodo, activity: newActivity } = response.data;
+
+    // send streamer message
+    strmProject.emitTodoCreating({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity }, () => {});
+
+    // unshift to do
+    unshiftTodos(newTodo);
+
+    // append activity
+    unshiftActivities(newActivity);
+  };
+
+  // to do created (socket)
+  const handleTodoCreatedEmit = React.useCallback(
+    // unshift to do
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response;
+
+      // append to do
+      unshiftTodos(newTodo);
+
+      // append activity
+      unshiftActivities(newActivity);
+    },
+    [unshiftActivities, unshiftTodos]
+  );
+
+  // END -- TODO FUNCTIONALITY
 
   // START -- MODAL FUNCTIONALITY
 
@@ -175,20 +245,36 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   // START -- SOCKET LISTENERS
 
   // collaborator joined
-  const handleCollaboratorJoined = (data) => onlineCollaboratorsSet((_onlineCollaborators) => (_onlineCollaborators.indexOf(data) > -1 ? _onlineCollaborators : [..._onlineCollaborators, data]));
+  const handleCollaboratorJoined = (data) => {
+    // set collaborators
+    collaboratorsSet((_collaborators) => {
+      // get collaborator by id
+      const joinedCollaborator = _collaborators.find((collaborator) => collaborator.id === data.id);
+      if (!joinedCollaborator) return _collaborators;
 
-  // collaborator leaved
-  const handleCollaboratorLeaved = (data) =>
-    onlineCollaboratorsSet((_onlineCollaborators) => {
-      // get leaving collaborator index
-      const leavingCollaboratorIndex = _onlineCollaborators.indexOf(data);
-
-      // delete leaving collaborator from online collaborators
-      _onlineCollaborators.splice(leavingCollaboratorIndex, 1);
+      // set online state
+      joinedCollaborator.isOnline = true;
 
       // set state
-      return [..._onlineCollaborators];
+      return [..._collaborators];
     });
+  };
+
+  // collaborator leaved
+  const handleCollaboratorLeaved = (data) => {
+    // set collaborators
+    collaboratorsSet((_collaborators) => {
+      // get leaving collaborator index
+      const leavedCollaborator = _collaborators.find((collaborator) => collaborator.id === data.id);
+      if (!leavedCollaborator) return _collaborators;
+
+      // set offline state
+      leavedCollaborator.isOnline = false;
+
+      // set state
+      return [..._collaborators];
+    });
+  };
 
   // END -- SOCKET LISTENERS
 
@@ -207,27 +293,18 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     // subscribe to server emits
     strmProject.registerJoined(handleCollaboratorJoined);
     strmProject.registerLeaved(handleCollaboratorLeaved);
-
-    // get user name from jwt
-    const userInfo = svsT3dapi.getApiJwtInfo();
-
-    // broadcast: joining project room
-    strmProject.emitJoin({ projectCode: match.params.projectCode, id: userInfo.id, name: userInfo.name }, (error, data) => {
-      if (error) message.error(`error joining project room: ${error}`);
-
-      // set online collaborators
-      onlineCollaboratorsSet(data);
-    });
+    strmProject.registerTodoCreated(handleTodoCreatedEmit);
 
     return () => {
-      // unsubscribe to server emits
+      // unsubscribe from server emits
       strmProject.unregisterJoined();
       strmProject.unregisterLeaved();
+      strmProject.unregisterTodoCreated();
 
       // broadcast: leaving the project room
       strmProject.emitLeave(match.params.projectCode, () => {});
     };
-  }, [match.params.projectCode, strmProject, svsT3dapi]);
+  }, [handleTodoCreatedEmit, match.params.projectCode, strmProject, svsT3dapi]);
 
   // END -- EFFECTS
 
@@ -243,7 +320,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
         <Row gutter={16}>
           {/* to do list */}
           <Col span={14}>
-            <ProjectTodos todos={todos} todosSet={todosSet} projectCode={match.params.projectCode} handleModalTodoOpen={handleModalTodoOpen}></ProjectTodos>
+            <ProjectTodos todos={todos} todosSet={todosSet} projectCode={match.params.projectCode} handleTodoCreated={handleTodoCreated} handleModalTodoOpen={handleModalTodoOpen}></ProjectTodos>
           </Col>
           {/* others */}
           <Col span={10}>
@@ -252,7 +329,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
             {/* divider */}
             <Divider style={{ marginTop: 8, marginBottom: 8 }}></Divider>
             {/* online collaborators */}
-            <ProjectCollaborators collaborators={collaborators} onlineCollaborators={onlineCollaborators}></ProjectCollaborators>
+            <ProjectCollaborators collaborators={collaborators}></ProjectCollaborators>
           </Col>
         </Row>
       </section>

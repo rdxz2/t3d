@@ -11,11 +11,11 @@ import CtxApi from '../../contexts/ctxApi';
 import TodoCreate from './projectTodos/todoCreate';
 import TodoLine from './projectTodos/todoLine';
 
-const ProjectTodos = ({ todos, todosSet, projectCode, handleModalTodoOpen }) => {
+const ProjectTodos = ({ todos, todosSet, projectCode, handleTodoCreated, handleModalTodoOpen }) => {
   // START -- CONTEXTS
 
   // api
-  const { svsT3dapi, strmProject } = React.useContext(CtxApi);
+  const { svsT3dapi } = React.useContext(CtxApi);
 
   // END -- CONTEXTS
 
@@ -53,61 +53,9 @@ const ProjectTodos = ({ todos, todosSet, projectCode, handleModalTodoOpen }) => 
     }
   }, INPUTSELECT.SEARCH_DELAY);
 
-  // add created to do to the first element
-  const unshiftTodos = React.useCallback(
-    (id, description, priority) =>
-      todosSet((_todos) => {
-        _todos.unshift({
-          id,
-          description,
-          priority,
-        });
-
-        // set state
-        return [..._todos];
-      }),
-    [todosSet]
-  );
-
-  // to do created
-  const handleTodoCreated = (response) => {
-    // send streamer message
-    strmProject.emitTodoCreating({ projectCode, id: response.data.id, description: response.data.description, priority: response.data.priority }, () => {});
-
-    // unshift to do
-    unshiftTodos(response.data.id, response.data.description, response.data.priority);
-
-    // // set to dos
-    // todosSet((_todos) => {
-    //   // add created to do to the first element
-    //   _todos.unshift({
-    //     id: response.data.id,
-    //     description: response.data.description,
-    //   });
-
-    //   // set state
-    //   return [..._todos];
-    // });
-  };
-
-  // to do created (socket)
-  const handleTodoCreatedEmit = React.useCallback(
-    // unshift to do
-    (response) => unshiftTodos(response.id, response.description, response.priority),
-    [unshiftTodos]
-  );
-
   // END -- FUNCTIONS
 
   // START -- EFFECTS
-
-  React.useEffect(() => {
-    strmProject.registerTodoCreated(handleTodoCreatedEmit);
-
-    return () => {
-      strmProject.unregisterTodoCreated();
-    };
-  }, [handleTodoCreatedEmit, strmProject]);
 
   // END -- EFFECTS
 

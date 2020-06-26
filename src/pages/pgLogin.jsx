@@ -41,6 +41,7 @@ const PgLogin = () => {
   React.useEffect(() => {
     // remove jwt
     svsT3dapi.removeApiJwt();
+    alert('remove api jwt pg login');
 
     // remove refresh token
     svsT3dapi.removeApiRefreshToken();

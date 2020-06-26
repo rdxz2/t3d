@@ -1,10 +1,9 @@
-import { message } from 'antd';
-
 import HTTPMETHOD from '../constants/HTTPMETHOD';
 import HTTPSTATUS from '../constants/HTTPSTATUS';
 import JWTKEY from '../constants/JWTKEY';
 import { getJwt, getJwtInfo, isJwtExpired, removeJwt, setJwt } from '../utilities/utlJwt';
 import { sendHttpRequest } from './svsBase';
+import { message } from 'antd';
 
 class SvsT3dapi {
   // constructor

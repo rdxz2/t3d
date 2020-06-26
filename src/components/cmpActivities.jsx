@@ -41,7 +41,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
 
     try {
       // send request trigger to caller
-      const response = await onLoadMore(_currentPage);
+      await onLoadMore(_currentPage);
 
       // set current page
       currentPageSet(_currentPage);

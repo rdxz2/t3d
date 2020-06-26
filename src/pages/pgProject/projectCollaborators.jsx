@@ -3,10 +3,11 @@ import { Popover, Space, Typography } from 'antd';
 import React from 'react';
 
 import './projectCollaborators.css';
+import _ from 'lodash';
 import CmpMiniProfileAsync from '../../components/cmpMiniProfileAsync';
 import COLOR from '../../constants/COLOR';
 
-const ProjectCollaborators = ({ collaborators = [], onlineCollaborators = [] }) => {
+const ProjectCollaborators = ({ collaborators = [] }) => {
   // START -- CONTEXTS
 
   // END -- CONTEXTS
@@ -27,29 +28,18 @@ const ProjectCollaborators = ({ collaborators = [], onlineCollaborators = [] }) 
 
   // END -- EFFECTS
 
-  // get online collaborators id
-  const onlineCollaboratorsId = onlineCollaborators.map((onlineCollaborator) => onlineCollaborator.id);
-
-  // get offline collaborators
-  const offlineCollaborators = collaborators.filter((collaborator) => !onlineCollaboratorsId.includes(collaborator.id));
+  // sort collaborator by online state
+  const collaboratorsSorted = _.sortBy(collaborators, ['isOnline']);
 
   return (
     <Space direction='vertical'>
       {/* title */}
       <Typography.Title level={3}>Collaborators</Typography.Title>
-      {/* online collaborator list */}
-      {onlineCollaborators.map((onlineCollaborator, onlineCollaboratorIndex) => (
-        <Popover key={onlineCollaboratorIndex} mouseEnterDelay={0.3} placement='top' content={<CmpMiniProfileAsync userId={onlineCollaborator.id}></CmpMiniProfileAsync>} style={{ width: 400 }}>
+      {/* collaborator list */}
+      {collaboratorsSorted.map((collaborator, collaboratorIndex) => (
+        <Popover key={collaboratorIndex} mouseEnterDelay={0.3} placement='top' content={<CmpMiniProfileAsync userId={collaborator.id}></CmpMiniProfileAsync>} style={{ width: 400 }}>
           <Typography.Text className='collaborator-name' strong>
-            <SmileTwoTone twoToneColor={COLOR.GREEN}></SmileTwoTone> {onlineCollaborator.name}
-          </Typography.Text>
-        </Popover>
-      ))}
-      {/* offline collaborator list */}
-      {offlineCollaborators.map((offlineCollaborator, offlineCollaboratorIndex) => (
-        <Popover key={offlineCollaboratorIndex} mouseEnterDelay={0.3} placement='top' content={<CmpMiniProfileAsync userId={offlineCollaborator.id}></CmpMiniProfileAsync>} style={{ width: 400 }}>
-          <Typography.Text className='collaborator-name' strong>
-            <SmileTwoTone twoToneColor={COLOR.RED}></SmileTwoTone> {offlineCollaborator.name}
+            <SmileTwoTone twoToneColor={collaborator.isOnline ? COLOR.GREEN : COLOR.RED}></SmileTwoTone> {collaborator.name}
           </Typography.Text>
         </Popover>
       ))}
