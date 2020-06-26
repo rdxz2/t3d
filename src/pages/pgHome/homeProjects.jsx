@@ -1,7 +1,7 @@
 import './homeProjects.css';
 
-import { ClockCircleOutlined, EllipsisOutlined, PlusOutlined, UserOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Button, Card, Input, Space, Typography, Spin, Row, Col } from 'antd';
+import { ClockCircleOutlined, EllipsisOutlined, PlusOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Card, Input, Space, Spin, Typography } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -9,13 +9,13 @@ import { useHistory } from 'react-router';
 import { Route } from 'react-router-dom';
 
 import CmpDrawer from '../../components/cmpDrawer';
+import HTTPMETHOD from '../../constants/HTTPMETHOD';
 import INPUTSELECT from '../../constants/INPUTSELECT';
 import PADDING from '../../constants/PADDING';
 import TIMEFORMAT from '../../constants/TIMEFORMAT';
+import CtxApi from '../../contexts/ctxApi';
 import { convertIsoDateToMoment } from '../../utilities/utlType';
 import ProjectCreate from './homeProjects/projectCreate';
-import CtxApi from '../../contexts/ctxApi';
-import HTTPMETHOD from '../../constants/HTTPMETHOD';
 
 const HomeProjects = ({ recentProjects, recentProjectsSet, handleProjectCreated, match }) => {
   // START -- CONTEXTS

@@ -8,7 +8,7 @@ import SelectedTodoDescription from './projectSelectedTodo/selectedTodoDescripti
 import SelectedTodoPriority from './projectSelectedTodo/selectedTodoPriority';
 import SelectedTodoTags from './projectSelectedTodo/selectedTodoTags';
 
-const ProjectSelectedTodo = ({ match, history, handleDescriptionChanged, handlePriorityChanged, handleTagCreated, handleTagDeleted }) => {
+const ProjectSelectedTodo = ({ match, history, handleDescriptionEdited, handlePriorityChanged, handleTagCreated, handleTagDeleted }) => {
   // START -- CONTEXTS
 
   // api
@@ -74,7 +74,7 @@ const ProjectSelectedTodo = ({ match, history, handleDescriptionChanged, handleP
             {/* important flag */}
             {/* <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleTodoImportant}></StarTwoTone> */}
             {/* description */}
-            <SelectedTodoDescription todo={todo} handleDescriptionChanged={handleDescriptionChanged}></SelectedTodoDescription>
+            <SelectedTodoDescription todo={todo} handleDescriptionEdited={handleDescriptionEdited}></SelectedTodoDescription>
           </Space>
           {/* tags */}
           <SelectedTodoTags todo={todo} handleTagCreated={handleTagCreated} handleTagDeleted={handleTagDeleted}></SelectedTodoTags>

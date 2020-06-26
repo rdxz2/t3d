@@ -33,6 +33,10 @@ class StrmProject {
   registerTodoTagDeleted = (onTodoTagDeleted) => this.socket.on('todotag_deleted', onTodoTagDeleted);
   unregisterTodoTagDeleted = () => this.socket.off('todotag_deleted');
 
+  // other user edited tag
+  registerTodoDescriptionEdited = (onTodoDescriptionEdited) => this.socket.on('tododesc_edited', onTodoDescriptionEdited);
+  unregisterTodoDescriptionEdited = () => this.socket.off('tododesc_edited');
+
   // END -- LISTENERS REGISTRATION
 
   // START -- EMITTERS
@@ -51,6 +55,9 @@ class StrmProject {
 
   // this user deleted a tag
   emitTodoTagDeleted = (data = { projectCode: '', tag: '', activity: {} }, callback) => this.socket.emit('todotag_creating', data, callback);
+
+  // this user edited description
+  emitTodoDescriptionEditing = (data = { projectCode: '', description: '', activity: {} }, callback) => this.socket.emit('tododesc_editing', data, callback);
 
   // END -- EMITTERS
 }

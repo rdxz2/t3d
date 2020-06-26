@@ -5,7 +5,7 @@ import React from 'react';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
 
-const SelectedTodoDescription = ({ todo = {}, handleDescriptionChanged }) => {
+const SelectedTodoDescription = ({ todo = {}, handleDescriptionEdited }) => {
   // START -- CONTEXTS
 
   // api
@@ -46,7 +46,7 @@ const SelectedTodoDescription = ({ todo = {}, handleDescriptionChanged }) => {
       const response = await svsT3dapi.sendRequest(`api/todo/description/${todo.id}`, HTTPMETHOD.POST, { description });
 
       // run callback
-      handleDescriptionChanged(todo.id, response.data.description);
+      handleDescriptionEdited(response);
 
       // close this
       handleEditDescriptionClose();
@@ -75,7 +75,7 @@ const SelectedTodoDescription = ({ todo = {}, handleDescriptionChanged }) => {
   return (
     <>
       {isEditingDescription ? (
-        <Input autoFocus name='description' value={description} onChange={handleChangeDescription} onPressEnter={handleSubmitEditDescription} onBlur={handleEditDescriptionClose} onKeyDown={handleDescriptionKeyDown}></Input>
+        <Input autoFocus autoComplete='off' name='description' value={description} onChange={handleChangeDescription} onPressEnter={handleSubmitEditDescription} onBlur={handleEditDescriptionClose} onKeyDown={handleDescriptionKeyDown}></Input>
       ) : (
         <Typography.Text strong>
           {description} <Button type='link' icon={<EditOutlined></EditOutlined>} onClick={handleEditDescriptionOpen}></Button>

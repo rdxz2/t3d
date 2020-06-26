@@ -8,9 +8,6 @@ import TIMEFORMAT from '../constants/TIMEFORMAT';
 import { convertIsoDateToMoment } from '../utilities/utlType';
 import CmpRenderer from './cmpRenderer';
 
-// get activity actions
-const ACTIVITY_ACTION = ACTIVITY.ACTION;
-
 const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
   // START -- CONTEXTS
 
@@ -61,7 +58,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
     if (activity.project_action)
       switch (activity.project_action) {
         // create -- {actor} created {project}
-        case ACTIVITY_ACTION.CREATE:
+        case ACTIVITY.ACTION.CREATE:
           return (
             <>
               <Typography.Link strong>{activity.actor.name}</Typography.Link>
@@ -78,7 +75,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
     else if (activity.todo_action)
       switch (activity.todo_action) {
         // create -- {actor} is is doing {project}
-        case ACTIVITY_ACTION.CREATE:
+        case ACTIVITY.ACTION.CREATE:
           return (
             <>
               <Typography.Link strong>{activity.actor.name}</Typography.Link>
@@ -87,7 +84,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
             </>
           );
         // create tag -- {actor} tagged {tag} to {todo}
-        case ACTIVITY_ACTION.CREATE_TAG:
+        case ACTIVITY.ACTION.CREATE_TAG:
           return (
             <>
               <Typography.Link strong>{activity.actor.name}</Typography.Link>
@@ -98,7 +95,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
             </>
           );
         // delete tag -- {actor} untagged {tag} from {todo}
-        case ACTIVITY_ACTION.DELETE_TAG:
+        case ACTIVITY.ACTION.DELETE_TAG:
           return (
             <>
               <Typography.Link strong>{activity.actor.name}</Typography.Link>
@@ -106,6 +103,57 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
               <Tag style={{ marginRight: 0 }}>{activity.todo_tag}</Tag>
               <Typography.Text> from </Typography.Text>
               <Typography.Link strong>{activity.todo_description}</Typography.Link>
+            </>
+          );
+        // edit description -- {actor} changed {old_description} to {new_description}
+        case ACTIVITY.ACTION.EDIT_DESCRIPTION:
+          return (
+            <>
+              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Text> changed </Typography.Text>
+              <Typography.Link strong>{activity.todo_description}</Typography.Link>
+              <Typography.Text> to </Typography.Text>
+              <Typography.Link strong>{activity.todo_description_new}</Typography.Link>
+            </>
+          );
+        // edit priority -- {actor} changed {old_priority} to {new_priority}
+        case ACTIVITY.ACTION.EDIT_PRIORITY:
+          return (
+            <>
+              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Text>asd</Typography.Text>
+            </>
+          );
+        // edit priority -- {actor} completed {description}
+        case ACTIVITY.ACTION.MARK_COMPLETED:
+          return (
+            <>
+              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Text>asd</Typography.Text>
+            </>
+          );
+        // edit priority -- {actor} opened {description}
+        case ACTIVITY.ACTION.UNMARK_COMPLETED:
+          return (
+            <>
+              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Text>asd</Typography.Text>
+            </>
+          );
+        // edit priority -- {actor} marked {description} as important
+        case ACTIVITY.ACTION.MARK_IMPORTANT:
+          return (
+            <>
+              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Text>asd</Typography.Text>
+            </>
+          );
+        // edit priority -- {actor} marked {description} as unimportant
+        case ACTIVITY.ACTION.UNMARK_IMPORTANT:
+          return (
+            <>
+              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Text>asd</Typography.Text>
             </>
           );
         default:
@@ -142,9 +190,9 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
     <div style={{ height: 'calc(50vh - 89px)', paddingTop: 10, overflowY: 'scroll' }}>
       <Timeline mode={mode}>
         {activitiesMapped.map((activity, activityIndex) => (
-          <Timeline.Item key={activityIndex} color={activity.color}>
+          <Timeline.Item key={activityIndex} color={activity.color} /* dot={activity.icon} */>
             {/* {date}: {description} */}
-            {activity.date}: {activity.description}
+            <strong>{activity.date}</strong>: {activity.description}
           </Timeline.Item>
         ))}
         {/* load more button */}

@@ -13,6 +13,12 @@ const ACTIVITY = {
     // to do
     CREATE_TAG: 'create_tag',
     DELETE_TAG: 'del_tag',
+    EDIT_DESCRIPTION: 'edit_desc',
+    EDIT_PRIORITY: 'edit_prio',
+    MARK_COMPLETED: 'mark_complete',
+    UNMARK_COMPLETED: 'unmark_complete',
+    MARK_IMPORTANT: 'mark_important',
+    UNMARK_IMPORTANT: 'unmark_important',
   },
   // timeline color
   COLOR: {

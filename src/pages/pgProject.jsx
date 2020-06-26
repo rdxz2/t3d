@@ -47,6 +47,48 @@ const PgProject = ({ match, handleChangeActivePage }) => {
 
   // START -- FUNCTIONS
 
+  // START -- HELPERS
+
+  // add created to do to the first element (in to do list)
+  const unshiftTodos = React.useCallback((newTodo) => {
+    return todosSet((_todos) => {
+      _todos.unshift(newTodo);
+
+      // set state
+      return [..._todos];
+    });
+  }, []);
+
+  // change edited to do (in to do list)
+  const mutateTodos = React.useCallback((newTodo) => {
+    return todosSet((_todos) => {
+      // get target to do
+      const editedTodo = _todos.find((todo) => todo.id === newTodo.id);
+      if (!editedTodo) return;
+
+      // change to do properties
+      editedTodo.description = newTodo.description;
+
+      console.log('mutatin', editedTodo, _todos);
+
+      // set state
+      return [..._todos];
+    });
+  }, []);
+
+  // add created activity (to do) to the first element (in activity list)
+  const unshiftActivities = React.useCallback((newActivity) => {
+    return activitiesSet((_activities) => {
+      return {
+        ..._activities,
+        projectActivitiesTotalData: _activities.projectActivitiesTotalData + 1,
+        projectActivities: [newActivity, ..._activities.projectActivities],
+      };
+    });
+  }, []);
+
+  // END -- HELPERS
+
   // prepare initial data
   const prepareInitialData = React.useCallback(async () => {
     // get project code from url params
@@ -177,21 +219,6 @@ const PgProject = ({ match, handleChangeActivePage }) => {
 
   // START -- TODO FUNCTIONALITY
 
-  // add created to do to the first element
-  const unshiftTodos = React.useCallback((newTodo) => {
-    return todosSet((_todos) => {
-      _todos.unshift(newTodo);
-
-      // set state
-      return [..._todos];
-    });
-  }, []);
-
-  // add created activity (to do) to the first element
-  const unshiftActivities = React.useCallback((newActivity) => {
-    return activitiesSet((_activities) => ({ ..._activities, projectActivitiesTotalData: _activities.projectActivitiesTotalData + 1, projectActivities: [newActivity, ..._activities.projectActivities] }));
-  }, []);
-
   // to do created
   const handleTodoCreated = (response) => {
     const { todo: newTodo, activity: newActivity } = response.data;
@@ -244,19 +271,38 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   };
 
   // to do description changed in modal
-  const handleDescriptionChanged = (todoId, description) => {
-    // set to dos
-    return todosSet((_todos) => {
-      // get updated to do
-      const updatedTodo = _todos.find((todo) => todo.id === todoId);
+  const handleDescriptionEdited = (response) => {
+    const { todo: newTodo, activity: newActivity } = response.data;
 
-      // update to do
-      updatedTodo.description = description;
+    // broadcast: to do changed
+    strmProject.emitTodoDescriptionEditing({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
 
-      // set state
-      return _todos;
-    });
+    // // set to dos
+    // return todosSet((_todos) => {
+    //   // get updated to do
+    //   const updatedTodo = _todos.find((todo) => todo.id === todoId);
+
+    //   // update to do
+    //   updatedTodo.description = description;
+
+    //   // set state
+    //   return _todos;
+    // });
   };
+
+  // to do description changed (socket)
+  const handleDescriptionEditedEmit = React.useCallback(
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response;
+
+      // change to do
+      mutateTodos(newTodo);
+
+      // append activity
+      unshiftActivities(newActivity);
+    },
+    [mutateTodos, unshiftActivities]
+  );
 
   // to do tag created in modal
   const handleTodoTagCreated = (response) => {
@@ -336,6 +382,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     strmProject.registerTodoCreated(handleTodoCreatedEmit);
     strmProject.registerTodoTagCreated(handleTodoTagCreatedEmit);
     strmProject.registerTodoTagDeleted(handleTodoTagDeletedEmit);
+    strmProject.registerTodoDescriptionEdited(handleDescriptionEditedEmit);
 
     return () => {
       // unsubscribe from server emits
@@ -344,11 +391,12 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       strmProject.unregisterTodoCreated();
       strmProject.unregisterTodoTagCreated();
       strmProject.unregisterTodoTagDeleted();
+      strmProject.unregisterTodoDescriptionEdited();
 
       // broadcast: leaving the project room
       strmProject.emitLeave(match.params.projectCode, () => {});
     };
-  }, [handleTodoCreatedEmit, handleTodoTagCreatedEmit, handleTodoTagDeletedEmit, match.params.projectCode, strmProject, svsT3dapi]);
+  }, [handleDescriptionEditedEmit, handleTodoCreatedEmit, handleTodoTagCreatedEmit, handleTodoTagDeletedEmit, match.params.projectCode, strmProject, svsT3dapi]);
 
   // END -- EFFECTS
 
@@ -371,7 +419,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
             {/* activities */}
             <ProjectActivities activities={activities} activitiesSet={activitiesSet} projectCode={match.params.projectCode} onLoadMore={handleLoadMoreActivities}></ProjectActivities>
             {/* divider */}
-            <Divider style={{ marginTop: 8, marginBottom: 8 }}></Divider>
+            <Divider></Divider>
             {/* online collaborators */}
             <ProjectCollaborators collaborators={collaborators}></ProjectCollaborators>
           </Col>
@@ -393,7 +441,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
           <ProjectSelectedTodo
             match={_match}
             history={history}
-            handleDescriptionChanged={handleDescriptionChanged}
+            handleDescriptionEdited={handleDescriptionEdited}
             handlePriorityChanged={handlePriorityChanged}
             handleTagCreated={handleTodoTagCreated}
             handleTagDeleted={handleTodoTagDeleted}></ProjectSelectedTodo>
