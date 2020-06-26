@@ -1,7 +1,7 @@
 import './homeProjects.css';
 
-import { ClockCircleOutlined, EllipsisOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Input, Space, Typography, Spin } from 'antd';
+import { ClockCircleOutlined, EllipsisOutlined, PlusOutlined, UserOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Card, Input, Space, Typography, Spin, Row, Col } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -37,6 +37,9 @@ const HomeProjects = ({ recentProjects, recentProjectsSet, handleProjectCreated,
   // searching state
   const [isSearching, isSearchingSet] = React.useState(false);
 
+  // search query
+  const [searchQuery, searchQuerySet] = React.useState('');
+
   // END -- STATES
 
   // START -- FUNCTIONS
@@ -51,10 +54,12 @@ const HomeProjects = ({ recentProjects, recentProjectsSet, handleProjectCreated,
   const handleSearchProjects = (event) => {
     event.persist();
     handleSearchProjectsDebounced(event.target.value);
+    searchQuerySet(event.target.value);
   };
   const handleSearchProjectsDebounced = _.debounce(async (value) => {
     // searching...
     isSearchingSet(true);
+
     try {
       // send request
       const response = await svsT3dapi.sendRequest(`api/user/recentprojects?search=${value}`, HTTPMETHOD.GET);
@@ -67,6 +72,24 @@ const HomeProjects = ({ recentProjects, recentProjectsSet, handleProjectCreated,
       isSearchingSet(false);
     }
   }, INPUTSELECT.SEARCH_DELAY);
+
+  // refresh project
+  const handleRefreshProjects = async () => {
+    // searching
+    isSearchingSet(true);
+
+    try {
+      // send request
+      const response = await svsT3dapi.sendRequest(`api/user/recentprojects?search=${searchQuery}`, HTTPMETHOD.GET);
+
+      // set recent projects
+      recentProjectsSet(response.data);
+    } catch (error) {
+    } finally {
+      // not searching
+      isSearchingSet(false);
+    }
+  };
 
   // // horizontal mouse scroll on a container
   // const handleHorizontalScroll = (event) => {
@@ -93,10 +116,15 @@ const HomeProjects = ({ recentProjects, recentProjectsSet, handleProjectCreated,
         <Typography.Title level={3} style={{ ...PADDING.LEFT_RIGHT(), marginBottom: 0 }}>
           Projects
         </Typography.Title>
-        {/* search bar */}
-        <div style={{ width: 266, paddingLeft: 16 }}>
-          <Input allowClear name='searchProject' placeholder='search project' onChange={handleSearchProjects}></Input>
-        </div>
+        {/* sub */}
+        <Space>
+          {/* search bar */}
+          <div style={{ width: 266, paddingLeft: 16, marginRight: 8 }}>
+            <Input allowClear name='searchProject' placeholder='search project' onChange={handleSearchProjects}></Input>
+          </div>
+          {/* refresh button */}
+          <Button type='primary' icon={<ReloadOutlined></ReloadOutlined>} onClick={handleRefreshProjects}></Button>
+        </Space>
         {/* project list */}
         <PerfectScrollbar id='recent-projects' /**onWheel={handleHorizontalScroll} */>
           {/* render create project card */}

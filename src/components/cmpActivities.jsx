@@ -1,11 +1,12 @@
-import { Timeline, Typography, Tag, Button, Space } from 'antd';
+import { EllipsisOutlined } from '@ant-design/icons';
+import { Button, Tag, Timeline, Typography } from 'antd';
 import React from 'react';
+// import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import ACTIVITY from '../constants/ACTIVITY';
 import TIMEFORMAT from '../constants/TIMEFORMAT';
 import { convertIsoDateToMoment } from '../utilities/utlType';
 import CmpRenderer from './cmpRenderer';
-import { EllipsisOutlined } from '@ant-design/icons';
 
 // get activity actions
 const ACTIVITY_ACTION = ACTIVITY.ACTION;
@@ -138,23 +139,22 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
   const isAllActivitiesLoaded = activities.projectActivities.length >= activities.projectActivitiesTotalData;
 
   return (
-    <Space direction='vertical' style={{ width: '100%' }}>
-      {/* timeline */}
-      <Timeline mode={mode} style={{ height: 'calc(50vh - 89px)', paddingTop: 10, overflowY: 'scroll' }}>
+    <div style={{ height: 'calc(50vh - 89px)', paddingTop: 10, overflowY: 'scroll' }}>
+      <Timeline mode={mode}>
         {activitiesMapped.map((activity, activityIndex) => (
           <Timeline.Item key={activityIndex} color={activity.color}>
             {/* {date}: {description} */}
             {activity.date}: {activity.description}
           </Timeline.Item>
         ))}
+        {/* load more button */}
+        {!isAllActivitiesLoaded && (
+          <Button block loading={isLoading} type='dashed' icon={<EllipsisOutlined></EllipsisOutlined>} onClick={handleLoadMore} style={{ marginTop: 16 }}>
+            Load more
+          </Button>
+        )}
       </Timeline>
-      {/* load more button */}
-      {!isAllActivitiesLoaded && (
-        <Button block loading={isLoading} type='dashed' icon={<EllipsisOutlined></EllipsisOutlined>} onClick={handleLoadMore}>
-          Load more
-        </Button>
-      )}
-    </Space>
+    </div>
   );
 };
 

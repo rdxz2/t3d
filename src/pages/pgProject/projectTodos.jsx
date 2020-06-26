@@ -1,5 +1,5 @@
 import './projectTodos.css';
-
+// import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Col, Input, Row, Select, Space, Spin } from 'antd';
 import _ from 'lodash';
 import React from 'react';
@@ -81,13 +81,15 @@ const ProjectTodos = ({ todos, todosSet, projectCode, handleTodoCreated, handleM
         </Col>
       </Row>
       {/* to do list */}
-      <Spin spinning={isSearching} tip='searching todos..'>
-        <Space direction='vertical'>
-          {todos.map((todo, todoIndex) => (
-            <TodoLine key={todoIndex} todo={todo} handleModalTodoOpen={handleModalTodoOpen}></TodoLine>
-          ))}
-        </Space>
-      </Spin>
+      <div style={{ maxHeight: 'calc(80vh - 89px)', overflowY: 'auto' }}>
+        <Spin spinning={isSearching} tip='searching todos..'>
+          <Space direction='vertical'>
+            {todos.map((todo, todoIndex) => (
+              <TodoLine key={todoIndex} todo={todo} handleModalTodoOpen={handleModalTodoOpen}></TodoLine>
+            ))}
+          </Space>
+        </Spin>
+      </div>
     </Space>
   );
 };
