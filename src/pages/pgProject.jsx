@@ -66,10 +66,9 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       const editedTodo = _todos.find((todo) => todo.id === newTodo.id);
       if (!editedTodo) return;
 
-      // change to do properties
-      editedTodo.description = newTodo.description;
-
-      console.log('mutatin', editedTodo, _todos);
+      // change to do properties (only if changed)
+      if (newTodo.description) editedTodo.description = newTodo.description;
+      if (newTodo.priority) editedTodo.priority = newTodo.priority;
 
       // set state
       return [..._todos];
@@ -256,19 +255,38 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   const handleModalTodoOpen = (todoId) => history.push(`${match.url}/todo/${todoId}`);
 
   // to do priority changed in modal
-  const handlePriorityChanged = (todoId, priority) => {
-    // set to dos
-    return todosSet((_todos) => {
-      // get updated to do
-      const updatedTodo = _todos.find((todo) => todo.id === todoId);
+  const handlePriorityChanged = (response) => {
+    const { todo: newTodo, activity: newActivity } = response.data;
 
-      // update to do
-      updatedTodo.priority = priority;
+    // broadcast: changing priority
+    strmProject.emitTodoPriorityEditing({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
 
-      // set state
-      return _todos;
-    });
+    // // set to dos
+    // return todosSet((_todos) => {
+    //   // get updated to do
+    //   const updatedTodo = _todos.find((todo) => todo.id === todoId);
+
+    //   // update to do
+    //   updatedTodo.priority = priority;
+
+    //   // set state
+    //   return _todos;
+    // });
   };
+
+  // to do priority changed (socket)
+  const handlePriorityChangedEmit = React.useCallback(
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response;
+
+      // change to do
+      mutateTodos(newTodo);
+
+      // append activity
+      unshiftActivities(newActivity);
+    },
+    [mutateTodos, unshiftActivities]
+  );
 
   // to do description changed in modal
   const handleDescriptionEdited = (response) => {
@@ -383,6 +401,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     strmProject.registerTodoTagCreated(handleTodoTagCreatedEmit);
     strmProject.registerTodoTagDeleted(handleTodoTagDeletedEmit);
     strmProject.registerTodoDescriptionEdited(handleDescriptionEditedEmit);
+    strmProject.registerTodoPriorityEdited(handlePriorityChangedEmit);
 
     return () => {
       // unsubscribe from server emits
@@ -392,11 +411,12 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       strmProject.unregisterTodoTagCreated();
       strmProject.unregisterTodoTagDeleted();
       strmProject.unregisterTodoDescriptionEdited();
+      strmProject.unregisterTodoPriorityEdited();
 
       // broadcast: leaving the project room
       strmProject.emitLeave(match.params.projectCode, () => {});
     };
-  }, [handleDescriptionEditedEmit, handleTodoCreatedEmit, handleTodoTagCreatedEmit, handleTodoTagDeletedEmit, match.params.projectCode, strmProject, svsT3dapi]);
+  }, [handleDescriptionEditedEmit, handlePriorityChangedEmit, handleTodoCreatedEmit, handleTodoTagCreatedEmit, handleTodoTagDeletedEmit, match.params.projectCode, strmProject, svsT3dapi]);
 
   // END -- EFFECTS
 

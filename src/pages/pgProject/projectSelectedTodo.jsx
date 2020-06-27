@@ -81,7 +81,7 @@ const ProjectSelectedTodo = ({ match, history, handleDescriptionEdited, handlePr
           {/* priority */}
           <SelectedTodoPriority todo={todo} todoSet={todoSet} handlePriorityChanged={handlePriorityChanged}></SelectedTodoPriority>
           {/* meta */}
-          <Divider style={{ marginTop: 16, marginBottom: 16 }}></Divider>
+          <Divider></Divider>
           <Typography.Text>
             Created on <b>{convertIsoDateToMoment(todo.create_date)}</b> by <b>{todo.creatorName}</b>
           </Typography.Text>

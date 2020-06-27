@@ -33,6 +33,8 @@ const CtxApi = React.createContext({
     unregisterTodoTagDeleted: () => {},
     registerTodoDescriptionEdited: (onTodoDescriptionEdited = () => {}) => {},
     unregisterTodoDescriptionEdited: () => {},
+    registerTodoPriorityEdited: (onTodoPriorityEdited = () => {}) => {},
+    unregisterTodoPriorityEdited: () => {},
     // emitters
     emitJoin: (data = { projectCode: '', id: '', name: '' }, callback = (error, data) => {}) => {},
     emitLeave: (projectCode = '', callback = (error, data) => {}) => {},
@@ -40,6 +42,7 @@ const CtxApi = React.createContext({
     emitTodoTagCreating: (data = { projectCode: '', tag: '', activity: {} }, callback = (error, data) => {}) => {},
     emitTodoTagDeleted: (data = { projectCode: '', tag: '', activity: {} }, callback = (error, data) => {}) => {},
     emitTodoDescriptionEditing: (data = { projectCode: '', description: '', activity: {} }, callback = (error, data) => {}) => {},
+    emitTodoPriorityEditing: (data = { projectCode: '', priority: 0, activity: {} }, callback = (error, data) => {}) => {},
   },
 });
 

@@ -37,6 +37,10 @@ class StrmProject {
   registerTodoDescriptionEdited = (onTodoDescriptionEdited) => this.socket.on('tododesc_edited', onTodoDescriptionEdited);
   unregisterTodoDescriptionEdited = () => this.socket.off('tododesc_edited');
 
+  // other user edited tag
+  registerTodoPriorityEdited = (onTodoPriorityEdited) => this.socket.on('todoprio_edited', onTodoPriorityEdited);
+  unregisterTodoPriorityEdited = () => this.socket.off('todoprio_edited');
+
   // END -- LISTENERS REGISTRATION
 
   // START -- EMITTERS
@@ -50,14 +54,17 @@ class StrmProject {
   // this user created to do
   emitTodoCreating = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('todo_creating', data, callback);
 
-  // this user created a tag
+  // this user created to do tag
   emitTodoTagCreating = (data = { projectCode: '', tag: '', activity: {} }, callback) => this.socket.emit('todotag_creating', data, callback);
 
-  // this user deleted a tag
+  // this user deleted to do tag
   emitTodoTagDeleted = (data = { projectCode: '', tag: '', activity: {} }, callback) => this.socket.emit('todotag_creating', data, callback);
 
-  // this user edited description
+  // this user edited to dodescription
   emitTodoDescriptionEditing = (data = { projectCode: '', description: '', activity: {} }, callback) => this.socket.emit('tododesc_editing', data, callback);
+
+  // this user edited to do priority
+  emitTodoPriorityEditing = (data = { projectCode: '', priority: 0, activity: {} }, callback) => this.socket.emit('todoprio_editing', data, callback);
 
   // END -- EMITTERS
 }

@@ -7,6 +7,7 @@ import ACTIVITY from '../constants/ACTIVITY';
 import TIMEFORMAT from '../constants/TIMEFORMAT';
 import { convertIsoDateToMoment } from '../utilities/utlType';
 import CmpRenderer from './cmpRenderer';
+import { SELECTOPTION } from '../constants/SELECTOPTIONS';
 
 const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
   // START -- CONTEXTS
@@ -118,10 +119,18 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
           );
         // edit priority -- {actor} changed {old_priority} to {new_priority}
         case ACTIVITY.ACTION.EDIT_PRIORITY:
+          const selectOptionTodoPriorityOld = SELECTOPTION.TODO_PRIORITY[activity.todo_priority];
+          const selectOptionTodoPriorityNew = SELECTOPTION.TODO_PRIORITY[activity.todo_priority_new];
+
           return (
             <>
               <Typography.Link strong>{activity.actor.name}</Typography.Link>
-              <Typography.Text>asd</Typography.Text>
+              <Typography.Text> changed </Typography.Text>
+              <Tag color={selectOptionTodoPriorityOld.tagColor}>{selectOptionTodoPriorityOld.text}</Tag>
+              <Typography.Text> to </Typography.Text>
+              <Tag color={selectOptionTodoPriorityNew.tagColor}>{selectOptionTodoPriorityNew.text}</Tag>
+              <Typography.Text> for </Typography.Text>
+              <Typography.Link strong>{activity.todo_description}</Typography.Link>
             </>
           );
         // edit priority -- {actor} completed {description}

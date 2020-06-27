@@ -19,6 +19,10 @@ const SelectedTodoPriority = ({ todo, todoSet, handlePriorityChanged }) => {
 
   // START -- STATES
 
+  // priority value
+  const [priority, prioritySet] = React.useState(0);
+  const [isChangingPriorityFromProp, isChangingPriorityFromPropSet] = React.useState(true);
+
   // END -- STATES
 
   // START -- FUNCTIONS
@@ -30,10 +34,13 @@ const SelectedTodoPriority = ({ todo, todoSet, handlePriorityChanged }) => {
       const response = await svsT3dapi.sendRequest(`api/todo/priority/${todo.id}?priorityLevel=${priorityLevel}`, HTTPMETHOD.GET);
 
       // trigger changed priority to caller
-      handlePriorityChanged(todo.id, response.data.priority);
+      handlePriorityChanged(response);
 
       // set to dos
       todoSet((_todo) => ({ ..._todo, priority: response.data.priority }));
+
+      // set this state
+      prioritySet(priorityLevel);
     } catch (error) {}
   };
 
@@ -41,10 +48,19 @@ const SelectedTodoPriority = ({ todo, todoSet, handlePriorityChanged }) => {
 
   // START -- EFFECTS
 
+  React.useEffect(() => {
+    // only change priority from prop on initialization
+    if (isChangingPriorityFromProp && todo.priority) {
+      prioritySet(todo.priority);
+
+      isChangingPriorityFromPropSet(false);
+    }
+  }, [isChangingPriorityFromProp, todo.priority]);
+
   // END -- EFFECTS
 
   return (
-    <Select name='priority' value={todo.priority} onChange={handleChangePriority} style={{ minWidth: 100 }}>
+    <Select name='priority' value={priority} onChange={handleChangePriority} style={{ minWidth: 100 }}>
       {SELECTOPTIONS.TODO_PRIORITY.map((priority, priorityIndex) => (
         <Select.Option key={priorityIndex} value={priority.value}>
           {priority.text}
