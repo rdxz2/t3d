@@ -20,6 +20,7 @@ const ACTIVITY = {
     UNMARK_COMPLETED: 'unmark_complete',
     MARK_IMPORTANT: 'mark_important',
     UNMARK_IMPORTANT: 'unmark_important',
+    COMMENT: 'comment',
   },
   // timeline color
   COLOR: {

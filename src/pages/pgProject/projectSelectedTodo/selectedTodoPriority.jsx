@@ -5,7 +5,7 @@ import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import SELECTOPTIONS from '../../../constants/SELECTOPTIONS';
 import CtxApi from '../../../contexts/ctxApi';
 
-const SelectedTodoPriority = ({ todo = {}, todoSet, handlePriorityChanged }) => {
+const SelectedTodoPriority = ({ todo = {}, todoSet, handlePriorityEdited }) => {
   // START -- CONTEXTS
 
   // api
@@ -30,17 +30,17 @@ const SelectedTodoPriority = ({ todo = {}, todoSet, handlePriorityChanged }) => 
   // submit: change priority
   const handleChangePriority = async (priorityLevel) => {
     try {
+      // set this state
+      prioritySet(priorityLevel);
+
       // send request
       const response = await svsT3dapi.sendRequest(`api/todo/priority/${todo.id}?priorityLevel=${priorityLevel}`, HTTPMETHOD.GET);
 
       // trigger changed priority to caller
-      handlePriorityChanged(response);
+      handlePriorityEdited(response);
 
       // // set to dos
       // todoSet((_todo) => ({ ..._todo, priority: response.data.priority }));
-
-      // set this state
-      prioritySet(priorityLevel);
     } catch (error) {}
   };
 

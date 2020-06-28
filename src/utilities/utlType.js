@@ -78,7 +78,16 @@ export const convertCollectionToObject = (inputs, keyField = '', fields = []) =>
   return object;
 };
 
-// ENd -- COLLECTION
+// create a tree from flat list
+export const makeTree = (input = []) => {};
+
+// search for tree node by specified property name
+export const searchTreeNode = (input = [], propertyName, searchedValue) => {
+  // quit if property or value not specified
+  if (!propertyName || !searchedValue) return {};
+};
+
+// END -- COLLECTION
 
 // START  -- STRING
 
@@ -92,7 +101,7 @@ export const makeNameInitials = (input) =>
     .slice(0, nameInitialsMaxLength);
 
 // create an ellipsis effect if input string is longer than desired max length
-export const makeEllipsis = (input, maxLength = 20) => (input.length > maxLength ? `${input.slice(0, maxLength)}...` : input);
+export const makeEllipsis = (input, maxLength = 20) => (input?.length > maxLength ? `${input.slice(0, maxLength)}...` : input);
 
 // convert iso date to readable format
 export const convertIsoDateToMoment = (input, format = TIMEFORMAT.DDMMMMYYYYHHMMSS) => (input ? moment(input).format(format) : '-');

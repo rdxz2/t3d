@@ -6,7 +6,7 @@ import React from 'react';
 
 import ACTIVITY from '../constants/ACTIVITY';
 import TIMEFORMAT from '../constants/TIMEFORMAT';
-import { convertIsoDateToMoment } from '../utilities/utlType';
+import { convertIsoDateToMoment, makeEllipsis } from '../utilities/utlType';
 import CmpRenderer from './cmpRenderer';
 import { SELECTOPTION } from '../constants/SELECTOPTIONS';
 
@@ -56,6 +56,12 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
 
   // generate activity description
   const generateActivityDescription = (activity) => {
+    // ellipsize actor name
+    const actorName = makeEllipsis(activity.actor.name, 10);
+
+    // ellipsize description
+    const todoDescription = makeEllipsis(activity.todo_description);
+
     // project action
     if (activity.project_action)
       switch (activity.project_action) {
@@ -63,7 +69,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
         case ACTIVITY.ACTION.CREATE:
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Link strong>{actorName}</Typography.Link>
               <Typography.Text> created </Typography.Text>
               <Typography.Link strong>
                 [{activity.project_code}] {activity.project_name}
@@ -80,40 +86,40 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
         case ACTIVITY.ACTION.CREATE:
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Link strong>{actorName}</Typography.Link>
               <Typography.Text> is doing </Typography.Text>
-              <Typography.Link strong>{activity.todo_description}</Typography.Link>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
         // create tag -- {actor} tagged {tag} to {todo}
         case ACTIVITY.ACTION.CREATE_TAG:
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Link strong>{actorName}</Typography.Link>
               <Typography.Text> tagged </Typography.Text>
               <Tag>{activity.todo_tag}</Tag>
               <Typography.Text> to </Typography.Text>
-              <Typography.Link strong>{activity.todo_description}</Typography.Link>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
         // delete tag -- {actor} untagged {tag} from {todo}
         case ACTIVITY.ACTION.DELETE_TAG:
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Link strong>{actorName}</Typography.Link>
               <Typography.Text> untagged </Typography.Text>
               <Tag>{activity.todo_tag}</Tag>
               <Typography.Text> from </Typography.Text>
-              <Typography.Link strong>{activity.todo_description}</Typography.Link>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
         // edit description -- {actor} changed {old_description} to {new_description}
         case ACTIVITY.ACTION.EDIT_DESCRIPTION:
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Link strong>{actorName}</Typography.Link>
               <Typography.Text> changed </Typography.Text>
-              <Typography.Link strong>{activity.todo_description}</Typography.Link>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
               <Typography.Text> to </Typography.Text>
               <Typography.Link strong>{activity.todo_description_new}</Typography.Link>
             </>
@@ -122,9 +128,9 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
         case ACTIVITY.ACTION.EDIT_DETAIL:
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Link strong>{actorName}</Typography.Link>
               <Typography.Text> changed detail for </Typography.Text>
-              <Typography.Link strong>{activity.todo_description}</Typography.Link>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
         // edit priority -- {actor} changed {old_priority} to {new_priority}
@@ -134,45 +140,54 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
 
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Link strong>{actorName}</Typography.Link>
               <Typography.Text> changed </Typography.Text>
               <Tag color={selectOptionTodoPriorityOld.tagColor}>{selectOptionTodoPriorityOld.text}</Tag>
               <Typography.Text> to </Typography.Text>
               <Tag color={selectOptionTodoPriorityNew.tagColor}>{selectOptionTodoPriorityNew.text}</Tag>
               <Typography.Text> for </Typography.Text>
-              <Typography.Link strong>{activity.todo_description}</Typography.Link>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
         // edit priority -- {actor} completed {description}
         case ACTIVITY.ACTION.MARK_COMPLETED:
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
-              <Typography.Text>asd</Typography.Text>
+              <Typography.Link strong>{actorName}</Typography.Link>
+              <Typography.Text> asd </Typography.Text>
             </>
           );
         // edit priority -- {actor} opened {description}
         case ACTIVITY.ACTION.UNMARK_COMPLETED:
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
-              <Typography.Text>asd</Typography.Text>
+              <Typography.Link strong>{actorName}</Typography.Link>
+              <Typography.Text> asd </Typography.Text>
             </>
           );
         // edit priority -- {actor} marked {description} as important
         case ACTIVITY.ACTION.MARK_IMPORTANT:
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
-              <Typography.Text>asd</Typography.Text>
+              <Typography.Link strong>{actorName}</Typography.Link>
+              <Typography.Text> asd </Typography.Text>
             </>
           );
         // edit priority -- {actor} marked {description} as unimportant
         case ACTIVITY.ACTION.UNMARK_IMPORTANT:
           return (
             <>
-              <Typography.Link strong>{activity.actor.name}</Typography.Link>
-              <Typography.Text>asd</Typography.Text>
+              <Typography.Link strong>{actorName}</Typography.Link>
+              <Typography.Text> asd </Typography.Text>
+            </>
+          );
+        // comment -- {actor} commented on {description}
+        case ACTIVITY.ACTION.COMMENT:
+          return (
+            <>
+              <Typography.Link strong>{actorName}</Typography.Link>
+              <Typography.Text> commented on </Typography.Text>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
         default:

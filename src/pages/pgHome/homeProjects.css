@@ -12,12 +12,6 @@
   opacity: 0.6;
 }
 
-/* hover animation on project card */
-.recent-project-card:hover {
-  background-color: #f8f0ff;
-  cursor: pointer;
-}
-
 /* project create card */
 #recent-project-card-create > .ant-card-body {
   height: 100%;
@@ -30,6 +24,12 @@
   /* project card: spacing between card  */
   margin: 0 8px;
   transition: 0.3s;
+}
+
+/* hover animation on project card */
+.recent-project-card:hover {
+  background-color: #f8f0ff;
+  cursor: pointer;
 }
 
 /* recent project card (leftmost card) */

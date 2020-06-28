@@ -1,0 +1,12 @@
+#todo-comments {
+  padding-left: 4px;
+  /* transition: 0.3s; */
+}
+/* 
+#todo-comments:hover {
+  background-color: #f8f0ff;
+} */
+
+.todo-comment > .ant-comment-inner {
+  padding: 8px 0;
+}

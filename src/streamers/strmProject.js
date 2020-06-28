@@ -45,6 +45,10 @@ class StrmProject {
   registerTodoPriorityEdited = (onTodoPriorityEdited) => this.socket.on('todoprio_edited', onTodoPriorityEdited);
   unregisterTodoPriorityEdited = () => this.socket.off('todoprio_edited');
 
+  // other user commenting to do
+  registerTodoCommented = (onTodoCommented) => this.socket.on('todo_commented', onTodoCommented);
+  unregisterTodoCommented = () => this.socket.off('todo_commented');
+
   // END -- LISTENERS REGISTRATION
 
   // START -- EMITTERS
@@ -72,6 +76,9 @@ class StrmProject {
 
   // this user edited to do priority
   emitTodoPriorityEditing = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('todoprio_editing', data, callback);
+
+  // this user is commenting a to do
+  emitTodoCommenting = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('todo_commenting', data, callback);
 
   // END -- EMITTERS
 }

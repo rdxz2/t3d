@@ -37,6 +37,8 @@ const CtxApi = React.createContext({
     unregisterTodoDetailEdited: () => {},
     registerTodoPriorityEdited: (onTodoPriorityEdited = () => {}) => {},
     unregisterTodoPriorityEdited: () => {},
+    registerTodoCommented: (onTodoCommented = () => {}) => {},
+    unregisterTodoCommented: () => {},
     // emitters
     emitJoin: (data = { projectCode: '', id: '', name: '' }, callback = (error, data) => {}) => {},
     emitLeave: (projectCode = '', callback = (error, data) => {}) => {},
@@ -46,6 +48,7 @@ const CtxApi = React.createContext({
     emitTodoDescriptionEditing: (data = { projectCode: '', todo: {}, activity: {} }, callback = (error, data) => {}) => {},
     emitTodoDetailEditing: (data = { projectCode: '', todo: {}, activity: {} }, callback) => {},
     emitTodoPriorityEditing: (data = { projectCode: '', todo: {}, activity: {} }, callback = (error, data) => {}) => {},
+    emitTodoCommenting: (data = { projectCode: '', comment: {}, activity: {} }, callback = (error, data) => {}) => {},
   },
 });
 

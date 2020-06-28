@@ -1,4 +1,4 @@
 .bf-container > .bf-content {
-  height: 200px;
+  height: 30vh;
   overflow-y: auto;
 }

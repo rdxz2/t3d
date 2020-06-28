@@ -1,14 +1,14 @@
+import './selectedTodoDetail.css';
 import 'braft-editor/dist/index.css';
 
+import { SaveOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import BraftEditor from 'braft-editor';
 import React from 'react';
 
 import COLOR from '../../../constants/COLOR';
-import './selectedTodoDetail.css';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
-import { Space, Button } from 'antd';
-import { SaveOutlined } from '@ant-design/icons';
 
 const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
   // START -- CONTEXTS
@@ -25,7 +25,7 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
   // START -- STATES
 
   // braft editor state
-  const [braftEditorState, braftEditorStateSet] = React.useState([]);
+  const [braftEditorState, braftEditorStateSet] = React.useState();
   const [isChangingDetailFromProp, isChangingDetailFromPropSet] = React.useState(true);
 
   // saving state
@@ -40,17 +40,21 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
 
   // submit: save detail
   const handleSubmit = async () => {
-    // submitting...
-    isSubmittingSet(true);
+    // do nothing if content is empty
+    if (!braftEditorState) return;
 
     // convert editor content to html string
     const htmlString = braftEditorState.toHTML();
 
+    // do nothing if content is empty
+    if (htmlString === '<p></p>') return;
+
+    // submitting...
+    isSubmittingSet(true);
+
     try {
       // send request
       const response = await svsT3dapi.sendRequest(`api/todo/detail/${todo.id}`, HTTPMETHOD.POST, { detail: htmlString });
-
-      console.log('response got', response);
 
       // run callback
       handleDetailEdited(response);
@@ -84,11 +88,9 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
     <>
       {/* rich text editor */}
       <BraftEditor
-        language={'en'}
+        language='en'
+        placeholder='To do detail ...'
         controls={[
-          'undo',
-          'redo',
-          'separator',
           'font-family',
           'font-size',
           'text-color',
@@ -115,7 +117,6 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
           'separator',
           'media',
         ]}
-        placeholder='To do detail ...'
         readOnly={isSubmitting}
         value={braftEditorState}
         onChange={handleChange}
