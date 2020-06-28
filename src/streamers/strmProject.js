@@ -33,11 +33,15 @@ class StrmProject {
   registerTodoTagDeleted = (onTodoTagDeleted) => this.socket.on('todotag_deleted', onTodoTagDeleted);
   unregisterTodoTagDeleted = () => this.socket.off('todotag_deleted');
 
-  // other user edited tag
+  // other user edited description
   registerTodoDescriptionEdited = (onTodoDescriptionEdited) => this.socket.on('tododesc_edited', onTodoDescriptionEdited);
   unregisterTodoDescriptionEdited = () => this.socket.off('tododesc_edited');
 
-  // other user edited tag
+  // other user edited detail
+  registerTodoDetailEdited = (onTodoDetailEdited) => this.socket.on('tododetail_edited', onTodoDetailEdited);
+  unregisterTodoDetailEdited = () => this.socket.off('tododetail_edited');
+
+  // other user edited priority
   registerTodoPriorityEdited = (onTodoPriorityEdited) => this.socket.on('todoprio_edited', onTodoPriorityEdited);
   unregisterTodoPriorityEdited = () => this.socket.off('todoprio_edited');
 
@@ -60,11 +64,14 @@ class StrmProject {
   // this user deleted to do tag
   emitTodoTagDeleted = (data = { projectCode: '', tag: '', activity: {} }, callback) => this.socket.emit('todotag_creating', data, callback);
 
-  // this user edited to dodescription
-  emitTodoDescriptionEditing = (data = { projectCode: '', description: '', activity: {} }, callback) => this.socket.emit('tododesc_editing', data, callback);
+  // this user edited to do description
+  emitTodoDescriptionEditing = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('tododesc_editing', data, callback);
+
+  // this user edited to do detail
+  emitTodoDetailEditing = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('tododetail_editing', data, callback);
 
   // this user edited to do priority
-  emitTodoPriorityEditing = (data = { projectCode: '', priority: 0, activity: {} }, callback) => this.socket.emit('todoprio_editing', data, callback);
+  emitTodoPriorityEditing = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('todoprio_editing', data, callback);
 
   // END -- EMITTERS
 }

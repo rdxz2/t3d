@@ -1,11 +1,11 @@
-import { Select } from 'antd';
+import { Select, Typography } from 'antd';
 import React from 'react';
 
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import SELECTOPTIONS from '../../../constants/SELECTOPTIONS';
 import CtxApi from '../../../contexts/ctxApi';
 
-const SelectedTodoPriority = ({ todo, todoSet, handlePriorityChanged }) => {
+const SelectedTodoPriority = ({ todo = {}, todoSet, handlePriorityChanged }) => {
   // START -- CONTEXTS
 
   // api
@@ -36,8 +36,8 @@ const SelectedTodoPriority = ({ todo, todoSet, handlePriorityChanged }) => {
       // trigger changed priority to caller
       handlePriorityChanged(response);
 
-      // set to dos
-      todoSet((_todo) => ({ ..._todo, priority: response.data.priority }));
+      // // set to dos
+      // todoSet((_todo) => ({ ..._todo, priority: response.data.priority }));
 
       // set this state
       prioritySet(priorityLevel);
@@ -60,13 +60,18 @@ const SelectedTodoPriority = ({ todo, todoSet, handlePriorityChanged }) => {
   // END -- EFFECTS
 
   return (
-    <Select name='priority' value={priority} onChange={handleChangePriority} style={{ minWidth: 100 }}>
-      {SELECTOPTIONS.TODO_PRIORITY.map((priority, priorityIndex) => (
-        <Select.Option key={priorityIndex} value={priority.value}>
-          {priority.text}
-        </Select.Option>
-      ))}
-    </Select>
+    <>
+      {/* title */}
+      <Typography.Title level={4}>Priority</Typography.Title>
+      {/* select list */}
+      <Select name='priority' value={priority} onChange={handleChangePriority} style={{ minWidth: 100 }}>
+        {SELECTOPTIONS.TODO_PRIORITY.map((priority, priorityIndex) => (
+          <Select.Option key={priorityIndex} value={priority.value}>
+            {priority.text}
+          </Select.Option>
+        ))}
+      </Select>
+    </>
   );
 };
 

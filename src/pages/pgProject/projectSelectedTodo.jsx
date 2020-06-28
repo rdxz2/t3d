@@ -7,8 +7,9 @@ import { convertIsoDateToMoment } from '../../utilities/utlType';
 import SelectedTodoDescription from './projectSelectedTodo/selectedTodoDescription';
 import SelectedTodoPriority from './projectSelectedTodo/selectedTodoPriority';
 import SelectedTodoTags from './projectSelectedTodo/selectedTodoTags';
+import SelectedTodoDetail from './projectSelectedTodo/selectedTodoDetail';
 
-const ProjectSelectedTodo = ({ match, history, handleDescriptionEdited, handlePriorityChanged, handleTagCreated, handleTagDeleted }) => {
+const ProjectSelectedTodo = ({ match, history, handleDescriptionEdited, handleDetailEdited, handlePriorityChanged, handleTagCreated, handleTagDeleted }) => {
   // START -- CONTEXTS
 
   // api
@@ -63,19 +64,18 @@ const ProjectSelectedTodo = ({ match, history, handleDescriptionEdited, handlePr
   // END -- EFFECTS
 
   return (
-    <Modal destroyOnClose footer={null} visible={isModalVisible} onCancel={handleCloseModal} afterClose={handleRedirectToBefore}>
+    <Modal destroyOnClose width='70vw' footer={null} visible={isModalVisible} onCancel={handleCloseModal} afterClose={handleRedirectToBefore}>
       {/* spinner */}
       <Spin spinning={isLoading}>
-        <Space direction='vertical'>
-          {/* main to do informations */}
-          <Space>
-            {/* completed checkbox */}
-            {/* <Checkbox defaultChecked={todo.is_completed} onChange={handleToggleTodoCompleted}></Checkbox> */}
-            {/* important flag */}
-            {/* <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleTodoImportant}></StarTwoTone> */}
-            {/* description */}
-            <SelectedTodoDescription todo={todo} handleDescriptionEdited={handleDescriptionEdited}></SelectedTodoDescription>
-          </Space>
+        <Space direction='vertical' style={{ width: '100%' }}>
+          {/* completed checkbox */}
+          {/* <Checkbox defaultChecked={todo.is_completed} onChange={handleToggleTodoCompleted}></Checkbox> */}
+          {/* important flag */}
+          {/* <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleTodoImportant}></StarTwoTone> */}
+          {/* description */}
+          <SelectedTodoDescription todo={todo} handleDescriptionEdited={handleDescriptionEdited}></SelectedTodoDescription>
+          {/* detail */}
+          <SelectedTodoDetail todo={todo} handleDetailEdited={handleDetailEdited}></SelectedTodoDetail>
           {/* tags */}
           <SelectedTodoTags todo={todo} handleTagCreated={handleTagCreated} handleTagDeleted={handleTagDeleted}></SelectedTodoTags>
           {/* priority */}

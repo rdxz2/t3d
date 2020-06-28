@@ -1,4 +1,5 @@
 import { EllipsisOutlined } from '@ant-design/icons';
+import './cmpActivities.css';
 import { Button, Tag, Timeline, Typography } from 'antd';
 import React from 'react';
 // import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -90,7 +91,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
             <>
               <Typography.Link strong>{activity.actor.name}</Typography.Link>
               <Typography.Text> tagged </Typography.Text>
-              <Tag style={{ marginRight: 0 }}>{activity.todo_tag}</Tag>
+              <Tag>{activity.todo_tag}</Tag>
               <Typography.Text> to </Typography.Text>
               <Typography.Link strong>{activity.todo_description}</Typography.Link>
             </>
@@ -101,7 +102,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
             <>
               <Typography.Link strong>{activity.actor.name}</Typography.Link>
               <Typography.Text> untagged </Typography.Text>
-              <Tag style={{ marginRight: 0 }}>{activity.todo_tag}</Tag>
+              <Tag>{activity.todo_tag}</Tag>
               <Typography.Text> from </Typography.Text>
               <Typography.Link strong>{activity.todo_description}</Typography.Link>
             </>
@@ -115,6 +116,15 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
               <Typography.Link strong>{activity.todo_description}</Typography.Link>
               <Typography.Text> to </Typography.Text>
               <Typography.Link strong>{activity.todo_description_new}</Typography.Link>
+            </>
+          );
+        // edit detail
+        case ACTIVITY.ACTION.EDIT_DETAIL:
+          return (
+            <>
+              <Typography.Link strong>{activity.actor.name}</Typography.Link>
+              <Typography.Text> changed detail for </Typography.Text>
+              <Typography.Link strong>{activity.todo_description}</Typography.Link>
             </>
           );
         // edit priority -- {actor} changed {old_priority} to {new_priority}
@@ -197,7 +207,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
 
   return (
     <div style={{ height: 'calc(50vh - 89px)', paddingTop: 10, overflowY: 'scroll' }}>
-      <Timeline mode={mode}>
+      <Timeline id='timeline-project-activities' mode={mode}>
         {activitiesMapped.map((activity, activityIndex) => (
           <Timeline.Item key={activityIndex} color={activity.color} /* dot={activity.icon} */>
             {/* {date}: {description} */}

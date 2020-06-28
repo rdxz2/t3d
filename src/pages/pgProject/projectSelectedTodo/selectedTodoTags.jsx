@@ -3,8 +3,9 @@ import React from 'react';
 import CmpTags from '../../../components/cmpTags';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
+import { Typography } from 'antd';
 
-const SelectedTodoTags = ({ todo, handleTagCreated: handleCallerTagCreated, handleTagDeleted: handleCallerTagDeleted }) => {
+const SelectedTodoTags = ({ todo = {}, handleTagCreated: handleCallerTagCreated, handleTagDeleted: handleCallerTagDeleted }) => {
   // START -- CONTEXTS
 
   // api
@@ -49,7 +50,14 @@ const SelectedTodoTags = ({ todo, handleTagCreated: handleCallerTagCreated, hand
 
   // END -- EFFECTS
 
-  return <CmpTags initialValue={todo.tags} onCreated={handleTagCreated} onDeleted={handleTagDeleted}></CmpTags>;
+  return (
+    <>
+      {/* title */}
+      <Typography.Title level={4}>Tags</Typography.Title>
+      {/* tags */}
+      <CmpTags initialValue={todo.tags} onCreated={handleTagCreated} onDeleted={handleTagDeleted}></CmpTags>
+    </>
+  );
 };
 
 export default SelectedTodoTags;

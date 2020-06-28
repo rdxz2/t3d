@@ -33,6 +33,8 @@ const CtxApi = React.createContext({
     unregisterTodoTagDeleted: () => {},
     registerTodoDescriptionEdited: (onTodoDescriptionEdited = () => {}) => {},
     unregisterTodoDescriptionEdited: () => {},
+    registerTodoDetailEdited: (onTodoDetailEdite = () => {}) => {},
+    unregisterTodoDetailEdited: () => {},
     registerTodoPriorityEdited: (onTodoPriorityEdited = () => {}) => {},
     unregisterTodoPriorityEdited: () => {},
     // emitters
@@ -41,8 +43,9 @@ const CtxApi = React.createContext({
     emitTodoCreating: (data = { projectCode: '', todo: {}, activity: {} }, callback = (error, data) => {}) => {},
     emitTodoTagCreating: (data = { projectCode: '', tag: '', activity: {} }, callback = (error, data) => {}) => {},
     emitTodoTagDeleted: (data = { projectCode: '', tag: '', activity: {} }, callback = (error, data) => {}) => {},
-    emitTodoDescriptionEditing: (data = { projectCode: '', description: '', activity: {} }, callback = (error, data) => {}) => {},
-    emitTodoPriorityEditing: (data = { projectCode: '', priority: 0, activity: {} }, callback = (error, data) => {}) => {},
+    emitTodoDescriptionEditing: (data = { projectCode: '', todo: {}, activity: {} }, callback = (error, data) => {}) => {},
+    emitTodoDetailEditing: (data = { projectCode: '', todo: {}, activity: {} }, callback) => {},
+    emitTodoPriorityEditing: (data = { projectCode: '', todo: {}, activity: {} }, callback = (error, data) => {}) => {},
   },
 });
 

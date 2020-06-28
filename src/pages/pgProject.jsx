@@ -322,6 +322,29 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     [mutateTodos, unshiftActivities]
   );
 
+  // to do detail changed in modal
+  const handleDetailEdited = (response) => {
+    const { todo: newTodo, activity: newActivity } = response.data;
+
+    console.log('emitting', response);
+
+    // broadcast: to do detail changed
+    strmProject.emitTodoDetailEditing({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
+  };
+
+  // to do detail changed (socket)
+  const handleDetailEditedEmit = React.useCallback(
+    (response) => {
+      const { activity: newActivity } = response;
+
+      console.log('detail edited emit', response);
+
+      // append activity
+      unshiftActivities(newActivity);
+    },
+    [unshiftActivities]
+  );
+
   // to do tag created in modal
   const handleTodoTagCreated = (response) => {
     const { tag: newTag, activity: newActivity } = response.data;
@@ -401,6 +424,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     strmProject.registerTodoTagCreated(handleTodoTagCreatedEmit);
     strmProject.registerTodoTagDeleted(handleTodoTagDeletedEmit);
     strmProject.registerTodoDescriptionEdited(handleDescriptionEditedEmit);
+    strmProject.registerTodoDetailEdited(handleDetailEditedEmit);
     strmProject.registerTodoPriorityEdited(handlePriorityChangedEmit);
 
     return () => {
@@ -411,12 +435,13 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       strmProject.unregisterTodoTagCreated();
       strmProject.unregisterTodoTagDeleted();
       strmProject.unregisterTodoDescriptionEdited();
+      strmProject.unregisterTodoDetailEdited();
       strmProject.unregisterTodoPriorityEdited();
 
       // broadcast: leaving the project room
       strmProject.emitLeave(match.params.projectCode, () => {});
     };
-  }, [handleDescriptionEditedEmit, handlePriorityChangedEmit, handleTodoCreatedEmit, handleTodoTagCreatedEmit, handleTodoTagDeletedEmit, match.params.projectCode, strmProject, svsT3dapi]);
+  }, [handleDescriptionEditedEmit, handleDetailEditedEmit, handlePriorityChangedEmit, handleTodoCreatedEmit, handleTodoTagCreatedEmit, handleTodoTagDeletedEmit, match.params.projectCode, strmProject, svsT3dapi]);
 
   // END -- EFFECTS
 
@@ -462,6 +487,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
             match={_match}
             history={history}
             handleDescriptionEdited={handleDescriptionEdited}
+            handleDetailEdited={handleDetailEdited}
             handlePriorityChanged={handlePriorityChanged}
             handleTagCreated={handleTodoTagCreated}
             handleTagDeleted={handleTodoTagDeleted}></ProjectSelectedTodo>

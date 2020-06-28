@@ -72,16 +72,23 @@ const SelectedTodoDescription = ({ todo = {}, handleDescriptionEdited }) => {
 
   // END -- EFFECTS
 
-  return (
-    <>
-      {isEditingDescription ? (
-        <Input autoFocus autoComplete='off' name='description' value={description} onChange={handleChangeDescription} onPressEnter={handleSubmitEditDescription} onBlur={handleEditDescriptionClose} onKeyDown={handleDescriptionKeyDown}></Input>
-      ) : (
-        <Typography.Text strong>
-          {description} <Button type='link' icon={<EditOutlined></EditOutlined>} onClick={handleEditDescriptionOpen}></Button>
-        </Typography.Text>
-      )}
-    </>
+  return isEditingDescription ? (
+    <Input
+      autoFocus
+      size='large'
+      autoComplete='off'
+      name='description'
+      maxLength={100}
+      value={description}
+      onChange={handleChangeDescription}
+      onPressEnter={handleSubmitEditDescription}
+      onBlur={handleEditDescriptionClose}
+      onKeyDown={handleDescriptionKeyDown}
+      style={{ width: '98%' }}></Input>
+  ) : (
+    <Typography.Title strong level={4}>
+      {description} <Button type='link' icon={<EditOutlined></EditOutlined>} onClick={handleEditDescriptionOpen}></Button>
+    </Typography.Title>
   );
 };
 
