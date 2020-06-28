@@ -51,7 +51,7 @@ const TodoComment = ({ comment = {}, handleReply, children }) => {
   );
 };
 
-const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities }) => {
+const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodoActivities }) => {
   // START -- CONTEXTS
 
   // api
@@ -156,10 +156,13 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities }) => {
         return [..._comments];
       });
 
-      // append activity
+      // append activity (project)
       unshiftProjectActivities(newActivity);
+
+      // append activity (to do)
+      unshiftTodoActivities(newActivity);
     },
-    [unshiftProjectActivities]
+    [unshiftProjectActivities, unshiftTodoActivities]
   );
 
   // END -- FUNCTIONS

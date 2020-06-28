@@ -57,7 +57,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
   // generate activity description
   const generateActivityDescription = (activity) => {
     // ellipsize actor name
-    const actorName = makeEllipsis(activity.actor.name, 10);
+    const actorName = makeEllipsis(activity.actor?.name, 10);
 
     // ellipsize description
     const todoDescription = makeEllipsis(activity.todo_description);
@@ -154,7 +154,8 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
           return (
             <>
               <Typography.Link strong>{actorName}</Typography.Link>
-              <Typography.Text> asd </Typography.Text>
+              <Typography.Text> completed </Typography.Text>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
         // edit priority -- {actor} opened {description}
@@ -162,7 +163,8 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
           return (
             <>
               <Typography.Link strong>{actorName}</Typography.Link>
-              <Typography.Text> asd </Typography.Text>
+              <Typography.Text> opened </Typography.Text>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
         // edit priority -- {actor} marked {description} as important
@@ -170,7 +172,9 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
           return (
             <>
               <Typography.Link strong>{actorName}</Typography.Link>
-              <Typography.Text> asd </Typography.Text>
+              <Typography.Text> marked </Typography.Text>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
+              <Typography.Text> as important </Typography.Text>
             </>
           );
         // edit priority -- {actor} marked {description} as unimportant
@@ -178,7 +182,9 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
           return (
             <>
               <Typography.Link strong>{actorName}</Typography.Link>
-              <Typography.Text> asd </Typography.Text>
+              <Typography.Text> marked </Typography.Text>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
+              <Typography.Text> as unimportant </Typography.Text>
             </>
           );
         // comment -- {actor} commented on {description}

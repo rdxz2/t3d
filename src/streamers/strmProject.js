@@ -29,6 +29,14 @@ class StrmProject {
   registerTodoTagCreated = (onTodoTagCreated) => this.socket.on('todotag_created', onTodoTagCreated);
   unregisterTodoTagCreated = () => this.socket.off('todotag_created');
 
+  // other user toggled to do complete tag
+  registerTodoCompleteToggled = (onTodoCompleteToggled) => this.socket.on('todocomp_toggled', onTodoCompleteToggled);
+  unregisterTodoCompleteToggled = () => this.socket.off('todocomp_toggled');
+
+  // other user toggled to do important tag
+  registerTodoImportantToggled = (onTodoImportantToggled) => this.socket.on('todoimp_toggled', onTodoImportantToggled);
+  unregisterTodoImportantToggled = () => this.socket.off('todoimp_toggled');
+
   // other user deleted tag
   registerTodoTagDeleted = (onTodoTagDeleted) => this.socket.on('todotag_deleted', onTodoTagDeleted);
   unregisterTodoTagDeleted = () => this.socket.off('todotag_deleted');
@@ -61,6 +69,12 @@ class StrmProject {
 
   // this user created to do
   emitTodoCreating = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('todo_creating', data, callback);
+
+  // this user toggled to do complete
+  emitTodoCompleteToggling = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('todocomp_toggling', data, callback);
+
+  // this user toggled to do important
+  emitTodoImportantToggling = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('todoimp_toggling', data, callback);
 
   // this user created to do tag
   emitTodoTagCreating = (data = { projectCode: '', tag: '', activity: {} }, callback) => this.socket.emit('todotag_creating', data, callback);

@@ -11,7 +11,7 @@ import CtxApi from '../../contexts/ctxApi';
 import TodoCreate from './projectTodos/todoCreate';
 import TodoLine from './projectTodos/todoLine';
 
-const ProjectTodos = ({ todos, todosSet, projectCode, handleTodoCreated, handleModalTodoOpen }) => {
+const ProjectTodos = ({ todos, todosSet, projectCode, handleTodoCreated, handleTodoCompleteToggled, handleTodoImportantToggled, handleModalTodoOpen }) => {
   // START -- CONTEXTS
 
   // api
@@ -85,7 +85,7 @@ const ProjectTodos = ({ todos, todosSet, projectCode, handleTodoCreated, handleM
         <Spin spinning={isSearching} tip='searching todos..'>
           <Space direction='vertical'>
             {todos.map((todo, todoIndex) => (
-              <TodoLine key={todoIndex} todo={todo} handleModalTodoOpen={handleModalTodoOpen}></TodoLine>
+              <TodoLine key={todoIndex} todo={todo} handleTodoCompleteToggled={handleTodoCompleteToggled} handleTodoImportantToggled={handleTodoImportantToggled} handleModalTodoOpen={handleModalTodoOpen}></TodoLine>
             ))}
           </Space>
         </Spin>

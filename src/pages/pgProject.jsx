@@ -69,6 +69,10 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       // change to do properties (only if changed)
       if (newTodo.description) editedTodo.description = newTodo.description;
       if (newTodo.priority) editedTodo.priority = newTodo.priority;
+      if (typeof newTodo.is_completed === 'boolean') editedTodo.is_completed = newTodo.is_completed;
+      if (typeof newTodo.is_important === 'boolean') editedTodo.is_important = newTodo.is_important;
+
+      console.log('mutating', newTodo);
 
       // set state
       return [..._todos];
@@ -247,6 +251,50 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     [unshiftProjectActivities, unshiftTodos]
   );
 
+  // to do completed toggled
+  const handleTodoCompleteToggled = (response) => {
+    const { todo: newTodo, activity: newActivity } = response.data;
+
+    // broadcast: to do complete toggled
+    strmProject.emitTodoCompleteToggling({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
+  };
+
+  // to do completed toggled (socket)
+  const handleTodoCompleteToggledEmit = React.useCallback(
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response;
+
+      // mutate todo
+      mutateTodos(newTodo);
+
+      // append activity
+      unshiftProjectActivities(newActivity);
+    },
+    [mutateTodos, unshiftProjectActivities]
+  );
+
+  // to do important toggled
+  const handleTodoImportantToggled = (response) => {
+    const { todo: newTodo, activity: newActivity } = response.data;
+
+    // broadcast: to do important toggled
+    strmProject.emitTodoImportantToggling({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
+  };
+
+  // to do important toggled (socket)
+  const handleTodoImportantToggledEmit = React.useCallback(
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response;
+
+      // mutate todo
+      mutateTodos(newTodo);
+
+      // append activity
+      unshiftProjectActivities(newActivity);
+    },
+    [mutateTodos, unshiftProjectActivities]
+  );
+
   // END -- TODO FUNCTIONALITY
 
   // START -- MODAL FUNCTIONALITY
@@ -385,6 +433,8 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     strmProject.registerJoined(handleCollaboratorJoined);
     strmProject.registerLeaved(handleCollaboratorLeaved);
     strmProject.registerTodoCreated(handleTodoCreatedEmit);
+    strmProject.registerTodoCompleteToggled(handleTodoCompleteToggledEmit);
+    strmProject.registerTodoImportantToggled(handleTodoImportantToggledEmit);
     strmProject.registerTodoTagCreated(handleTodoTagCreatedEmit);
     strmProject.registerTodoTagDeleted(handleTodoTagDeletedEmit);
     strmProject.registerTodoDescriptionEdited(handleDescriptionEditedEmit);
@@ -396,6 +446,8 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       strmProject.unregisterJoined();
       strmProject.unregisterLeaved();
       strmProject.unregisterTodoCreated();
+      strmProject.unregisterTodoCompleteToggled();
+      strmProject.unregisterTodoImportantToggled();
       strmProject.unregisterTodoTagCreated();
       strmProject.unregisterTodoTagDeleted();
       strmProject.unregisterTodoDescriptionEdited();
@@ -405,7 +457,19 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       // broadcast: leaving the project room
       strmProject.emitLeave(match.params.projectCode, () => {});
     };
-  }, [handleDescriptionEditedEmit, handleDetailEditedEmit, handlePriorityEditedEmit, handleTodoCreatedEmit, handleTodoTagCreatedEmit, handleTodoTagDeletedEmit, match.params.projectCode, strmProject, svsT3dapi]);
+  }, [
+    handleDescriptionEditedEmit,
+    handleDetailEditedEmit,
+    handlePriorityEditedEmit,
+    handleTodoCompleteToggledEmit,
+    handleTodoCreatedEmit,
+    handleTodoImportantToggledEmit,
+    handleTodoTagCreatedEmit,
+    handleTodoTagDeletedEmit,
+    match.params.projectCode,
+    strmProject,
+    svsT3dapi,
+  ]);
 
   // END -- EFFECTS
 
@@ -421,7 +485,14 @@ const PgProject = ({ match, handleChangeActivePage }) => {
         <Row gutter={16}>
           {/* to do list */}
           <Col span={14}>
-            <ProjectTodos todos={todos} todosSet={todosSet} projectCode={match.params.projectCode} handleTodoCreated={handleTodoCreated} handleModalTodoOpen={handleModalTodoOpen}></ProjectTodos>
+            <ProjectTodos
+              todos={todos}
+              todosSet={todosSet}
+              projectCode={match.params.projectCode}
+              handleTodoCreated={handleTodoCreated}
+              handleTodoCompleteToggled={handleTodoCompleteToggled}
+              handleTodoImportantToggled={handleTodoImportantToggled}
+              handleModalTodoOpen={handleModalTodoOpen}></ProjectTodos>
           </Col>
           {/* others */}
           <Col span={10}>

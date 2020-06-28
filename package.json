@@ -2,7 +2,7 @@
   "name": "t3d",
   "description": "to do driven development",
   "author": "rd",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.2.1",

@@ -164,7 +164,7 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
             {/* detail */}
             <SelectedTodoDetail todo={todo} handleDetailEdited={handleDetailEditedModal}></SelectedTodoDetail>
             {/* comments */}
-            <SelectedTodoComments todo={todo} unshiftProjectActivities={unshiftProjectActivities}></SelectedTodoComments>
+            <SelectedTodoComments todo={todo} unshiftProjectActivities={unshiftProjectActivities} unshiftTodoActivities={unshiftTodoActivities}></SelectedTodoComments>
           </Space>
         </Col>
         {/* column 2 */}

@@ -10,7 +10,7 @@ import CtxApi from '../../../contexts/ctxApi';
 import { makeEllipsis } from '../../../utilities/utlType';
 import { SELECTOPTION } from '../../../constants/SELECTOPTIONS';
 
-const TodoLine = ({ todo, handleModalTodoOpen }) => {
+const TodoLine = ({ todo, handleTodoCompleteToggled, handleTodoImportantToggled, handleModalTodoOpen }) => {
   // START -- CONTEXTS
 
   // api
@@ -38,14 +38,17 @@ const TodoLine = ({ todo, handleModalTodoOpen }) => {
       const response = await svsT3dapi.sendRequest(`api/todo/complete/${todo.id}?is_completed=${event.target.checked}`, HTTPMETHOD.GET);
 
       // show error message if response is not the same as expected important state
-      if (event.target.checked !== response.data.is_completed) return message.error('data error');
+      if (event.target.checked !== response.data.todo.is_completed) return message.error('data error');
 
       // make ellipsis description
       const todoDescription = makeEllipsis(todo.description);
 
       // show message
-      if (response.data.is_completed) message.success(`'${todoDescription}' completed`);
+      if (response.data.todo.is_completed) message.success(`'${todoDescription}' completed`);
       else message.info(`'${todoDescription}' is opened again`);
+
+      // run callback
+      handleTodoCompleteToggled(response);
     } catch (error) {}
   };
 
@@ -65,14 +68,17 @@ const TodoLine = ({ todo, handleModalTodoOpen }) => {
       const response = await svsT3dapi.sendRequest(`api/todo/important/${todo.id}?is_important=${isImportantToggled}`, HTTPMETHOD.GET);
 
       // show error message if response is not the same as expected important state
-      if (isImportantToggled !== response.data.is_important) return message.error('data error');
+      if (isImportantToggled !== response.data.todo.is_important) return message.error('data error');
 
       // make ellipsis description
       const todoDescription = makeEllipsis(todo.description);
 
       // show message
-      if (response.data.is_important) message.success(`'${todoDescription}' is marked important`);
+      if (response.data.todo.is_important) message.success(`'${todoDescription}' is marked important`);
       else message.info(`'${todoDescription}' is marked not important`);
+
+      // run callback
+      handleTodoImportantToggled(response);
     } catch (error) {}
   };
 
