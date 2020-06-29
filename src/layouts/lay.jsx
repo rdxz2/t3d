@@ -83,7 +83,6 @@ const Lay = () => {
   const handleLogOut = () => {
     // remove jwt from local storage
     svsT3dapi.removeApiJwt();
-    alert('remove api jwt logout');
 
     // remove refresh token from local storage
     svsT3dapi.removeApiRefreshToken();

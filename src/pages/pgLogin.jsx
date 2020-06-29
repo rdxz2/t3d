@@ -39,19 +39,23 @@ const PgLogin = () => {
   // START -- EFFECTS
 
   React.useEffect(() => {
+    // redirect to home if jwt is exist
+    if (svsT3dapi.getApiJwt()) history.replace('/home');
+
     // remove jwt
     svsT3dapi.removeApiJwt();
-    alert('remove api jwt pg login');
 
     // remove refresh token
     svsT3dapi.removeApiRefreshToken();
+
+    // unsubscribe from push notification if exist
 
     // change document title
     setDocumentTitle('Log in');
 
     // show warning message if user got to this page by unauthorized
     if (queryString.get('reason') === 'Unauthorized') message.warning('your session has ended, please log in again');
-  }, [queryString, svsT3dapi]);
+  }, [history, queryString, svsT3dapi]);
 
   // END -- EFFECTS
 

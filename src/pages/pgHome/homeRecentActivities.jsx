@@ -1,8 +1,8 @@
 import { UserOutlined } from '@ant-design/icons';
 import { Timeline, Typography } from 'antd';
 import React from 'react';
-
-const HomeRecentActivities = ({ recentActivities, recentActivitiesSet }) => {
+import CmpActivities from '../../components/cmpActivities';
+const HomeRecentActivities = ({ recentActivities, handleLoadMoreActivities }) => {
   // START -- CONTEXTS
 
   // END -- CONTEXTS
@@ -25,21 +25,10 @@ const HomeRecentActivities = ({ recentActivities, recentActivitiesSet }) => {
 
   return (
     <>
+      {/* title */}
       <Typography.Title level={3}>Recent Activities</Typography.Title>
-      <Timeline mode='left'>
-        <Timeline.Item color='green'>a</Timeline.Item>
-        <Timeline.Item color='green'>b</Timeline.Item>
-        <Timeline.Item>
-          <p>1</p>
-          <p>2</p>
-          <p>3</p>
-        </Timeline.Item>
-        <Timeline.Item color='red' dot={<UserOutlined></UserOutlined>}>
-          Content
-        </Timeline.Item>
-        <Timeline.Item>Content</Timeline.Item>
-        <Timeline.Item color='gray'>Content</Timeline.Item>
-      </Timeline>
+      {/* activity timeline */}
+      <CmpActivities activities={recentActivities} onLoadMore={handleLoadMoreActivities}></CmpActivities>
     </>
   );
 };

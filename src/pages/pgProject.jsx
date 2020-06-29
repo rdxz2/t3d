@@ -72,14 +72,12 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       if (typeof newTodo.is_completed === 'boolean') editedTodo.is_completed = newTodo.is_completed;
       if (typeof newTodo.is_important === 'boolean') editedTodo.is_important = newTodo.is_important;
 
-      console.log('mutating', newTodo);
-
       // set state
       return [..._todos];
     });
   }, []);
 
-  // add created activity (to do) to the first element (in activity list)
+  // add new activity (to do) to the first element (in activity list)
   const unshiftProjectActivities = React.useCallback((newActivity) => {
     return activitiesSet((_activities) => {
       return {

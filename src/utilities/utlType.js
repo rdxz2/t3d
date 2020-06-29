@@ -106,6 +106,18 @@ export const makeEllipsis = (input, maxLength = 20) => (input?.length > maxLengt
 // convert iso date to readable format
 export const convertIsoDateToMoment = (input, format = TIMEFORMAT.DDMMMMYYYYHHMMSS) => (input ? moment(input).format(format) : '-');
 
+// convert base 64 to unit8array (for vapid key encoding)
+export const convertUrlBase64ToUint8Array = (base64String) => {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+};
+
 // END -- STRING
 
 // START  -- NUMBER

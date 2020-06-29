@@ -2,7 +2,7 @@
   "name": "t3d",
   "description": "to do driven development",
   "author": "rd",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^7.1.2",
     "antd": "^4.3.3",
     "braft-editor": "^2.3.9",
+    "cra-append-sw": "^2.7.0",
     "craco-less": "^1.17.0",
     "dotenv": "^8.2.0",
     "jwt-decode": "^2.2.0",
@@ -28,7 +29,7 @@
     "uuid": "^8.1.0"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "craco start && cra-append-sw --mode dev ./public/custom-service-worker.js",
     "build": "craco build",
     "test": "craco test"
   },

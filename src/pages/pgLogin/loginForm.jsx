@@ -5,7 +5,9 @@ import { useHistory } from 'react-router';
 
 import COLOR from '../../constants/COLOR';
 import FORMLAYOUT from '../../constants/FORMLAYOUT';
+import HTTPMETHOD from '../../constants/HTTPMETHOD';
 import CtxApi from '../../contexts/ctxApi';
+import { convertUrlBase64ToUint8Array } from '../../utilities/utlType';
 
 const LoginForm = () => {
   // START -- CONTEXTS
@@ -38,7 +40,7 @@ const LoginForm = () => {
 
     try {
       // send log in request
-      const response = await svsT3dapi.sendRequest('api/authentication/login', 'post', values, { isLoggingIn: true });
+      const response = await svsT3dapi.sendRequest('api/authentication/login', HTTPMETHOD.POST, values, { isLoggingIn: true });
 
       // set jwt to local storage
       svsT3dapi.setApiJwt(response.data.token);
@@ -46,12 +48,43 @@ const LoginForm = () => {
       // set refresh token to local storage
       svsT3dapi.setApiRefreshToken(response.data.refreshToken);
 
+      // subscribe to push notification if available in browser
+      if (navigator.serviceWorker) {
+        // wait for service worker initialization
+        navigator.serviceWorker.ready.then((registration) => {
+          return registration.pushManager
+            .getSubscription()
+            .then(async (subscription) => {
+              // return current subscription if exist
+              if (subscription) return subscription;
+
+              // send request
+              const responseVapidKeyPublic = await svsT3dapi.sendRequest('api/pushnotification/vapid', HTTPMETHOD.GET);
+              if (!responseVapidKeyPublic.data.vapid_key_public) return message.error('cannot subscribe to ');
+
+              // subscribe to local push manager
+              return registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: convertUrlBase64ToUint8Array(responseVapidKeyPublic.data.vapid_key_public),
+              });
+            })
+            .then(async (subscription) => {
+              try {
+                // subscribe to push notification
+                const responseSubscription = await svsT3dapi.sendRequest('api/pushnotification/subscribe', HTTPMETHOD.POST, { subscription });
+
+                return responseSubscription;
+              } catch (error) {}
+            });
+        });
+      }
+
       // display message
       message.success(`log in success, welcome ${response.data.name}`);
 
       // redirect to home
       history.replace('/');
-    } catch {
+    } catch (error) {
       // not submitting...
       isSubmittingSet(false);
     }

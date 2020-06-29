@@ -9,6 +9,7 @@ import HomeRecentActivities from './pgHome/homeRecentActivities';
 import PADDING from '../constants/PADDING';
 import CtxApi from '../contexts/ctxApi';
 import HTTPMETHOD from '../constants/HTTPMETHOD';
+import ACTIVITY from '../constants/ACTIVITY';
 
 const PgHome = ({ match, handleChangeActivePage }) => {
   // START -- CONTEXTS
@@ -28,7 +29,7 @@ const PgHome = ({ match, handleChangeActivePage }) => {
   const [recentProjects, recentProjectsSet] = React.useState([]);
 
   // recent activities
-  const [recentActivities, recentActivitiesSet] = React.useState([]);
+  const [recentActivities, recentActivitiesSet] = React.useState({ projectActivitiesTotalData: 0, projectActivities: [] });
 
   // schedules
   const [schedules, schedulesSet] = React.useState([]);
@@ -46,7 +47,7 @@ const PgHome = ({ match, handleChangeActivePage }) => {
     recentProjectsSet(responseRecentProjects.data);
 
     // send request (recent activities)
-    const responseRecentActivities = await svsT3dapi.sendRequest('api/user/recentactivities', HTTPMETHOD.GET);
+    const responseRecentActivities = await svsT3dapi.sendRequest(`api/user/recentactivities?pageSize=${ACTIVITY.PAGESIZE}&currentPage=1`, HTTPMETHOD.GET);
 
     // set recent activities
     recentActivitiesSet(responseRecentActivities.data);
@@ -75,6 +76,17 @@ const PgHome = ({ match, handleChangeActivePage }) => {
       return [..._recentProjects];
     });
 
+  // load more recent activities
+  const handleLoadMoreActivities = async (currentPage) => {
+    try {
+      // send request
+      const response = await svsT3dapi.sendRequest(`api/user/recentactivities?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
+
+      // set activities
+      recentActivitiesSet((_activities) => ({ projectActivitiesTotalData: response.data.projectActivitiesTotalData, projectActivities: [..._activities.projectActivities, ...response.data.projectActivities] }));
+    } catch (error) {}
+  };
+
   // END -- FUNCTIONS
 
   // START -- EFFECTS
@@ -99,7 +111,7 @@ const PgHome = ({ match, handleChangeActivePage }) => {
         <Row gutter={16}>
           {/* recent activities */}
           <Col span={8}>
-            <HomeRecentActivities recentActivities={recentActivities} recentActivitiesSet={recentActivitiesSet}></HomeRecentActivities>
+            <HomeRecentActivities recentActivities={recentActivities} handleLoadMoreActivities={handleLoadMoreActivities}></HomeRecentActivities>
           </Col>
           {/* calendar */}
           <Col span={16}>

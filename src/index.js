@@ -14,5 +14,5 @@ dotenv.config();
 // render the rest of application in root element
 ReactDOM.render(<App></App>, document.getElementById('root'));
 
-// do not user service worker
-serviceWorker.unregister();
+// use service worker
+serviceWorker.register();
