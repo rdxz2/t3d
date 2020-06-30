@@ -1,14 +1,16 @@
 import './selectedTodoDetail.css';
 import 'braft-editor/dist/index.css';
 
-import { SaveOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { Button, Skeleton, Row, Col, Space } from 'antd';
 import BraftEditor from 'braft-editor';
 import React from 'react';
 
 import COLOR from '../../../constants/COLOR';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
+import { isEmptyObject } from '../../../utilities/utlType';
+import { Markup } from 'interweave';
 
 const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
   // START -- CONTEXTS
@@ -28,6 +30,9 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
   const [braftEditorState, braftEditorStateSet] = React.useState();
   const [isChangingDetailFromProp, isChangingDetailFromPropSet] = React.useState(true);
 
+  // editing state
+  const [isEditingDetail, isEditingDetailSet] = React.useState(false);
+
   // saving state
   const [isSubmitting, isSubmittingSet] = React.useState(false);
 
@@ -37,6 +42,10 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
 
   // content change
   const handleChange = (_braftEditorState) => braftEditorStateSet(_braftEditorState);
+
+  // toggle editing state
+  const handleToggleEditingOn = () => isEditingDetailSet(true);
+  const handleToggleEditingOff = () => isEditingDetailSet(false);
 
   // submit: save detail
   const handleSubmit = async () => {
@@ -58,11 +67,27 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
 
       // run callback
       handleDetailEdited(response);
+
+      // toggle editing off
+      handleToggleEditingOff();
     } catch (error) {
     } finally {
       // not submitting...
       isSubmittingSet(false);
     }
+  };
+
+  // render detail as jsx
+  const renderDetailAsJsx = (_braftEditorState) => {
+    // don't render anything if detail state is null
+    if (!_braftEditorState) return null;
+
+    // convert braft editor state to html string, then force render it in a div
+    return (
+      <div id='todo-detail' onClick={handleToggleEditingOn}>
+        <Markup content={_braftEditorState.toHTML()}></Markup>
+      </div>
+    );
   };
 
   // END -- FUNCTIONS
@@ -84,9 +109,8 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
 
   // END -- EFFECTS
 
-  return (
-    <>
-      {/* rich text editor */}
+  return isEditingDetail ? (
+    <Space direction='vertical' style={{ width: '100%' }}>
       <BraftEditor
         language='en'
         placeholder='To do detail ...'
@@ -122,8 +146,26 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
         onChange={handleChange}
         onSave={handleSubmit}
         style={{ border: 1, borderRadius: 2, borderStyle: 'solid', borderColor: COLOR.GREY_LIGHT }}></BraftEditor>
-      {/* save button */}
-      <Button block type='primary' loading={isSubmitting} icon={<SaveOutlined></SaveOutlined>} onClick={handleSubmit}></Button>
+      {/* action button */}
+      <Row gutter={8}>
+        {/* cancel button */}
+        <Col span={12}>
+          <Button block icon={<ArrowLeftOutlined></ArrowLeftOutlined>} onClick={handleToggleEditingOff}></Button>
+        </Col>
+        {/* save button */}
+        <Col span={12}>
+          <Button block type='primary' loading={isSubmitting} icon={<SaveOutlined></SaveOutlined>} onClick={handleSubmit}></Button>
+        </Col>
+      </Row>
+    </Space>
+  ) : (
+    <>
+      {/* html content */}
+      {isEmptyObject(todo) ? <Skeleton active></Skeleton> : renderDetailAsJsx(braftEditorState)}
+      {/* toggle edit button */}
+      {/* <Button type='primary' onClick={handleToggleEditingOn}>
+        Edit detail
+      </Button> */}
     </>
   );
 };

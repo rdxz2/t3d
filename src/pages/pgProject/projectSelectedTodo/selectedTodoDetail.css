@@ -1,4 +1,26 @@
+/* to do detail */
+#todo-detail {
+  padding: 8px;
+  transition: 0.3s;
+}
+
+/* to do detail hovered */
+#todo-detail:hover {
+  background-color: #e8e8e8;
+  cursor: pointer;
+}
+
+/* to do detail clicked */
+#todo-detail:active {
+  background-color: #c4c4c4;
+}
+
+/* set max width of all image in detail to 100% */
+#todo-detail img {
+  max-width: 100%;
+}
+
 .bf-container > .bf-content {
-  height: 30vh;
+  height: 50vh;
   overflow-y: auto;
 }

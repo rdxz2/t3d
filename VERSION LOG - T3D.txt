@@ -1,0 +1,95 @@
+v0.1.14
+	+ push notification subscription
+
+v0.1.13
+	+ broadcast on to do complete toggled
+	+ broadcast on to do important toggled
+	^ unshift to do activities on commenting
+
+v0.1.12
+	+ to do comments
+	+ broadcast to do comments
+	^ relayouting selected to do modal
+	+ to do activity in selected to do modal
+	^ selected to do can append its own activities when there are emits from server
+
+v0.1.11
+	+ rich text editor for to do detail
+	+ broadcast on to do detail changed
+
+v0.1.10
+	^ changing to do priority will trigger broadcast
+	^ receive to do priority changed broadcast
+
+v0.1.9
+	^ changing to do description will trigger broadcast
+
+v0.1.8
+	+ added home's recent projects refresh button
+	^ added scrollbar to project to do list
+
+v0.1.7
+	^ broadcast on create/delete to do tag
+	+ append to activity on receiving to do create/delete broadcast
+
+v0.1.6
+	^ collaborators now have online/offline state and will be changed when it is joining/leaving project room
+	+ creating to do will trigger activities append in all collaborators
+
+v0.1.5
+	+ project activity with its pagination
+	^ rename [tT]oDo -> [tT]odo
+	+ activity constant for easier project activity data mapping
+	^ joining project room is now sending user id
+	^ createing & deleting tag is two different action (each sending single tag)
+
+v0.1.4
+	^ send user id and name when subscribing to project room
+	^ send user id when requesting minimal profile
+	^ can see collaborators minimal profile
+
+v0.1.3
+	+ to do description edit
+	^ separate selected to do components per file to prevent unnecessary rendering
+
+v0.1.2
+	^ using id instead of _id for all objects
+	f prevent auto sending refresh token before login request
+	+ to do created listener & emitter
+	f exception thrown when to do priority is undefined
+
+v0.1.0
+	+ project collaborator joining & leaving broadcast
+
+v0.0.5
+	+ change to do priority
+	+ selected to do modal spinner
+	+ selected to do meta
+	+ function to convert object to value-key pairs
+	+ display to do priority badge
+
+v0.0.4
+	^ if token is expired then just request refresh token before sending the real request
+	^ to do line hover color to primary
+
+v0.0.3
+	^ requesting new token with refresh token will not reassign the refresh token
+	1/4 to do detail modal
+	+ to do important
+	+ to do change priority
+	+ to do tags
+
+v0.0.2
+	^ optimize all simultaneous http request to minimalize server load on token refresh
+	^ login page can display unauthorized message if redirected because of previous unauthorized request
+	^ reload-redirect to login page if request is unauthorized after several attempts
+
+v0.0.1
+	+ init
+	+ login
+	+ register
+	+ main layout
+	+ base http request service
+	+ t3dapi services + refresh token logic on unauthorized
+	+ project create/edit
+	+ todo create/complete

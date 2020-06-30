@@ -1,7 +1,8 @@
-import { UserOutlined } from '@ant-design/icons';
-import { Timeline, Typography } from 'antd';
+import { Typography } from 'antd';
 import React from 'react';
+
 import CmpActivities from '../../components/cmpActivities';
+
 const HomeRecentActivities = ({ recentActivities, handleLoadMoreActivities }) => {
   // START -- CONTEXTS
 

@@ -221,18 +221,21 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   // START -- TODO FUNCTIONALITY
 
   // to do created
-  const handleTodoCreated = (response) => {
-    const { todo: newTodo, activity: newActivity } = response.data;
+  const handleTodoCreated = React.useCallback(
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response.data;
 
-    // send streamer message
-    strmProject.emitTodoCreating({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity }, () => {});
+      // send streamer message
+      strmProject.emitTodoCreating({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity }, () => {});
 
-    // // unshift to do
-    // unshiftTodos(newTodo);
+      // // unshift to do
+      // unshiftTodos(newTodo);
 
-    // // append activity
-    // unshiftProjectActivities(newActivity);
-  };
+      // // append activity
+      // unshiftProjectActivities(newActivity);
+    },
+    [match.params.projectCode, strmProject]
+  );
 
   // to do created (socket)
   const handleTodoCreatedEmit = React.useCallback(
@@ -250,12 +253,15 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   );
 
   // to do completed toggled
-  const handleTodoCompleteToggled = (response) => {
-    const { todo: newTodo, activity: newActivity } = response.data;
+  const handleTodoCompleteToggled = React.useCallback(
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response.data;
 
-    // broadcast: to do complete toggled
-    strmProject.emitTodoCompleteToggling({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
-  };
+      // broadcast: to do complete toggled
+      strmProject.emitTodoCompleteToggling({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
+    },
+    [match.params.projectCode, strmProject]
+  );
 
   // to do completed toggled (socket)
   const handleTodoCompleteToggledEmit = React.useCallback(
@@ -272,12 +278,15 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   );
 
   // to do important toggled
-  const handleTodoImportantToggled = (response) => {
-    const { todo: newTodo, activity: newActivity } = response.data;
+  const handleTodoImportantToggled = React.useCallback(
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response.data;
 
-    // broadcast: to do important toggled
-    strmProject.emitTodoImportantToggling({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
-  };
+      // broadcast: to do important toggled
+      strmProject.emitTodoImportantToggling({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
+    },
+    [match.params.projectCode, strmProject]
+  );
 
   // to do important toggled (socket)
   const handleTodoImportantToggledEmit = React.useCallback(
@@ -298,15 +307,23 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   // START -- MODAL FUNCTIONALITY
 
   // open to do detail modal
-  const handleModalTodoOpen = (todoId) => history.push(`${match.url}/todo/${todoId}`);
+  const handleModalTodoOpen = React.useCallback(
+    (todoId) => {
+      history.push(`${match.url}/todo/${todoId}`);
+    },
+    [history, match.url]
+  );
 
   // to do priority changed in modal
-  const handlePriorityEdited = (response) => {
-    const { todo: newTodo, activity: newActivity } = response.data;
+  const handlePriorityEdited = React.useCallback(
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response.data;
 
-    // broadcast: changing priority
-    strmProject.emitTodoPriorityEditing({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
-  };
+      // broadcast: changing priority
+      strmProject.emitTodoPriorityEditing({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
+    },
+    [match.params.projectCode, strmProject]
+  );
 
   // to do priority changed (socket)
   const handlePriorityEditedEmit = React.useCallback(
@@ -323,12 +340,15 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   );
 
   // to do description changed in modal
-  const handleDescriptionEdited = (response) => {
-    const { todo: newTodo, activity: newActivity } = response.data;
+  const handleDescriptionEdited = React.useCallback(
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response.data;
 
-    // broadcast: to do changed
-    strmProject.emitTodoDescriptionEditing({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
-  };
+      // broadcast: to do changed
+      strmProject.emitTodoDescriptionEditing({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
+    },
+    [match.params.projectCode, strmProject]
+  );
 
   // to do description changed (socket)
   const handleDescriptionEditedEmit = React.useCallback(
@@ -345,12 +365,15 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   );
 
   // to do detail changed in modal
-  const handleDetailEdited = (response) => {
-    const { todo: newTodo, activity: newActivity } = response.data;
+  const handleDetailEdited = React.useCallback(
+    (response) => {
+      const { todo: newTodo, activity: newActivity } = response.data;
 
-    // broadcast: to do detail changed
-    strmProject.emitTodoDetailEditing({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
-  };
+      // broadcast: to do detail changed
+      strmProject.emitTodoDetailEditing({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity });
+    },
+    [match.params.projectCode, strmProject]
+  );
 
   // to do detail changed (socket)
   const handleDetailEditedEmit = React.useCallback(

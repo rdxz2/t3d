@@ -80,62 +80,80 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
   const handleRedirectToBefore = () => history.goBack();
 
   // load more to do activities
-  const handleLoadMoreActivities = async (currentPage) => {
-    try {
-      // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/activities/${match.params.id}?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
+  const handleLoadMoreActivities = React.useCallback(
+    async (currentPage) => {
+      try {
+        // send request
+        const response = await svsT3dapi.sendRequest(`api/todo/activities/${match.params.id}?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
 
-      // set activities
-      todoActivitiesSet((_activities) => ({ projectActivitiesTotalData: response.data.projectActivitiesTotalData, projectActivities: [..._activities.projectActivities, ...response.data.projectActivities] }));
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  // edited
-  const handleDescriptionEditedModal = (response) => {
-    // append activity
-    unshiftTodoActivities(response.data.activity);
-
-    // run callback
-    handleDescriptionEdited(response);
-  };
+        // set activities
+        todoActivitiesSet((_activities) => ({ projectActivitiesTotalData: response.data.projectActivitiesTotalData, projectActivities: [..._activities.projectActivities, ...response.data.projectActivities] }));
+      } catch (error) {
+        throw error;
+      }
+    },
+    [match.params.id, svsT3dapi]
+  );
 
   // edited
-  const handleDetailEditedModal = (response) => {
-    // append activity
-    unshiftTodoActivities(response.data.activity);
+  const handleDescriptionEditedModal = React.useCallback(
+    (response) => {
+      // append activity
+      unshiftTodoActivities(response.data.activity);
 
-    // run callback
-    handleDetailEdited(response);
-  };
-
-  // edited
-  const handleTagCreatedModal = (response) => {
-    // append activity
-    unshiftTodoActivities(response.data.activity);
-
-    // run callback
-    handleTagCreated(response);
-  };
+      // run callback
+      handleDescriptionEdited(response);
+    },
+    [handleDescriptionEdited]
+  );
 
   // edited
-  const handleTagDeletedModal = (response) => {
-    // append activity
-    unshiftTodoActivities(response.data.activity);
+  const handleDetailEditedModal = React.useCallback(
+    (response) => {
+      // append activity
+      unshiftTodoActivities(response.data.activity);
 
-    // run callback
-    handleTagDeleted(response);
-  };
+      // run callback
+      handleDetailEdited(response);
+    },
+    [handleDetailEdited]
+  );
+
+  // edited
+  const handleTagCreatedModal = React.useCallback(
+    (response) => {
+      // append activity
+      unshiftTodoActivities(response.data.activity);
+
+      // run callback
+      handleTagCreated(response);
+    },
+    [handleTagCreated]
+  );
+
+  // edited
+  const handleTagDeletedModal = React.useCallback(
+    (response) => {
+      // append activity
+      unshiftTodoActivities(response.data.activity);
+
+      // run callback
+      handleTagDeleted(response);
+    },
+    [handleTagDeleted]
+  );
 
   // priority edited
-  const handlePriorityEditedModal = (response) => {
-    // append activity
-    unshiftTodoActivities(response.data.activity);
+  const handlePriorityEditedModal = React.useCallback(
+    (response) => {
+      // append activity
+      unshiftTodoActivities(response.data.activity);
 
-    // run callback
-    handlePriorityEdited(response);
-  };
+      // run callback
+      handlePriorityEdited(response);
+    },
+    [handlePriorityEdited]
+  );
 
   // END -- FUNCTIONS
 
@@ -149,7 +167,7 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
   // END -- EFFECTS
 
   return (
-    <Modal destroyOnClose width='85vw' footer={null} visible={isModalVisible} onCancel={handleCloseModal} afterClose={handleRedirectToBefore} style={{ top: 20 }}>
+    <Modal destroyOnClose width='65vw' footer={null} visible={isModalVisible} onCancel={handleCloseModal} afterClose={handleRedirectToBefore} style={{ top: 20 }}>
       {/* completed checkbox */}
       {/* <Checkbox defaultChecked={todo.is_completed} onChange={handleToggleTodoCompleted}></Checkbox> */}
       {/* important flag */}

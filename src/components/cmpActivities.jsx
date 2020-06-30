@@ -227,7 +227,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
   const isAllActivitiesLoaded = activities.projectActivities.length >= activities.projectActivitiesTotalData;
 
   return (
-    <div style={{ height: 'calc(50vh - 89px)', paddingTop: 10, overflowY: 'scroll' }}>
+    <div style={{ maxHeight: 'calc(50vh - 89px)', paddingTop: 10, overflowY: 'auto' }}>
       <Timeline id='timeline-project-activities' mode={mode}>
         {activitiesMapped.map((activity, activityIndex) => (
           <Timeline.Item key={activityIndex} color={activity.color} /* dot={activity.icon} */>

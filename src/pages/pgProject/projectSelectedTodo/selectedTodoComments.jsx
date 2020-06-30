@@ -1,4 +1,4 @@
-import { Comment, Tooltip, Typography, Input, Space, Button } from 'antd';
+import { Comment, Tooltip, Typography, Input, Space, Button, Mentions, message } from 'antd';
 import moment from 'moment';
 import React from 'react';
 import './selectedTodoComments.css';
@@ -72,9 +72,26 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
   // user comment value
   const [commentValue, commentValueSet] = React.useState('');
 
+  // available user to be mentioned
+  const [mentionsUser, mentionsUserSet] = React.useState({ isLoading: true, data: [] });
+
   // END -- STATES
 
   // START -- FUNCTIONS
+
+  // prepare initial data
+  const prepareInitialData = React.useCallback(async () => {
+    // do nothing if project code is empty
+    if (!todo.projectCode) return;
+
+    try {
+      // populate mentions list: user
+      const responseMentionsUser = await svsT3dapi.sendRequestSelectList(`projectuser/${todo.projectCode}`);
+
+      // set mentions
+      mentionsUserSet((_mentions) => ({ isLoading: false, data: responseMentionsUser.data }));
+    } catch (error) {}
+  }, [svsT3dapi, todo.projectCode]);
 
   // render comments
   const renderComments = (_comments = []) => {
@@ -91,11 +108,35 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
   };
 
   // comment input changed
-  const handleCommentChange = (event) => commentValueSet(event.target.value);
+  const handleCommentChange = (value) => {
+    console.log('comment change', value);
+
+    // set comment
+    commentValueSet(value);
+  };
+
+  // mention changed
+  const handleMentionSelected = (mentioned) => {
+    // search for user to be mentioned
+    const mentionedUser = mentionsUser.data.find((user) => user.name === mentioned.value);
+    if (!mentionsUser) return message.error(`user ${mentioned.value} not found`);
+
+    // append mentioned users
+  };
 
   // submit: comment/reply
   const handleSubmit = async (description, parent) => {
+    // get all mentioned users
+    const mentionedUsers = description.match(/__@([^__]*)__/gi).map((mentionedUser) => mentionedUser.replace(/__@|__/g, ''));
+    const mentionedUsersId = mentionedUsers.map((mentionedUser) => mentionsUser.data.find((mentionUser) => mentionUser.name === mentionedUser)?.id);
+
+    console.log('submitting', mentionedUsersId);
+
+    return;
     try {
+      // reset comment
+      commentValueSet('');
+
       // send request
       const response = await svsT3dapi.sendRequest(`api/todo/comment/${todo.id}`, HTTPMETHOD.POST, { description, parent });
 
@@ -110,16 +151,13 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
   };
 
   // submit: comment
-  const handleComment = async (event) => {
+  const handleComment = async () => {
     // don't do anything if value is empty
-    if (!event.target.value) return;
+    if (!commentValue) return;
 
     try {
       // send request
-      await handleSubmit(event.target.value);
-
-      // reset comment
-      commentValueSet('');
+      await handleSubmit(commentValue);
     } catch (error) {}
   };
 
@@ -169,6 +207,11 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
 
   // START -- EFFECTS
 
+  // prepare initial data
+  React.useEffect(() => {
+    prepareInitialData();
+  }, [prepareInitialData]);
+
   React.useEffect(() => {
     // only change comments from prop on initialization
     if (isChangingCommentsFromProp && todo.comments) {
@@ -195,13 +238,24 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
     <>
       {/* title */}
       <Typography.Title level={4}>Comments</Typography.Title>
+      {/* comments */}
       <Space direction='vertical' style={{ width: '100%' }}>
+        {/* comments */}
         <div id='todo-comments' style={{ maxHeight: '30vh', overflowY: 'scroll' }}>
-          {/* comments */}
           {renderComments(comments)}
         </div>
         {/* create a comment */}
-        <Input placeholder='Comment this to do...' value={commentValue} onChange={handleCommentChange} onPressEnter={handleComment}></Input>
+        <Mentions rows={1} split='__' placeholder='Say something...' value={commentValue} onChange={handleCommentChange} onSelect={handleMentionSelected}>
+          {mentionsUser.data.map((user, userIndex) => (
+            <Mentions.Option key={userIndex} value={user.name}>
+              {user.name}
+            </Mentions.Option>
+          ))}
+        </Mentions>
+        {/* comment button */}
+        <Button type='primary' disabled={!commentValue} onClick={handleComment}>
+          Add comment
+        </Button>
       </Space>
     </>
   );
