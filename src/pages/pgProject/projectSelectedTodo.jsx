@@ -12,6 +12,7 @@ import SelectedTodoDetail from './projectSelectedTodo/selectedTodoDetail';
 import SelectedTodoPriority from './projectSelectedTodo/selectedTodoPriority';
 import SelectedTodoTags from './projectSelectedTodo/selectedTodoTags';
 import SelectedTodoReminder from './projectSelectedTodo/selectedTodoReminder';
+import SelectedTodoWorkDate from './projectSelectedTodo/selectedTodoWorkDate';
 
 const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleDescriptionEdited, handleDetailEdited, handlePriorityEdited, handleTagCreated, handleTagDeleted }) => {
   // START -- CONTEXTS
@@ -195,6 +196,8 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
             <SelectedTodoPriority todo={todo} todoSet={todoSet} handlePriorityEdited={handlePriorityEditedModal}></SelectedTodoPriority>
             {/* reminder */}
             <SelectedTodoReminder todo={todo}></SelectedTodoReminder>
+            {/* work date */}
+            <SelectedTodoWorkDate todo={todo}></SelectedTodoWorkDate>
             {/* to do activities */}
             <SelectedTodoActivities activities={todoActivities} onLoadMore={handleLoadMoreActivities}></SelectedTodoActivities>
             {/* meta */}
