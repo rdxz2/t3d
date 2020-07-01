@@ -57,6 +57,10 @@ class StrmProject {
   registerTodoCommented = (onTodoCommented) => this.socket.on('todo_commented', onTodoCommented);
   unregisterTodoCommented = () => this.socket.off('todo_commented');
 
+  // other user edited to do work date
+  registerTodoWorkDateEdited = (onTodoWorkDateEdited) => this.socket.on('todoworkdate_edited', onTodoWorkDateEdited);
+  unregisterTodoWorkDateEdited = () => this.socket.off('todoworkdate_edited');
+
   // END -- LISTENERS REGISTRATION
 
   // START -- EMITTERS
@@ -93,6 +97,9 @@ class StrmProject {
 
   // this user is commenting a to do
   emitTodoCommenting = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('todo_commenting', data, callback);
+
+  // this user is editing to do work date
+  emitTodoWorkDateEditing = (data = { projectCode: '', todo: {}, activity: {} }, callback) => this.socket.emit('todoworkdate_editing', data, callback);
 
   // END -- EMITTERS
 }

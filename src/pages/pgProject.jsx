@@ -69,8 +69,8 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       // change to do properties (only if changed)
       if (newTodo.description) editedTodo.description = newTodo.description;
       if (newTodo.priority) editedTodo.priority = newTodo.priority;
-      if (typeof newTodo.is_completed === 'boolean') editedTodo.is_completed = newTodo.is_completed;
-      if (typeof newTodo.is_important === 'boolean') editedTodo.is_important = newTodo.is_important;
+      if (typeof newTodo.isCompleted === 'boolean') editedTodo.isCompleted = newTodo.isCompleted;
+      if (typeof newTodo.isImportant === 'boolean') editedTodo.isImportant = newTodo.isImportant;
 
       // set state
       return [..._todos];
@@ -121,17 +121,18 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       const responseCollaborators = await svsT3dapi.sendRequest(`api/project/collaborators/${projectCode}`, HTTPMETHOD.GET);
 
       // set collaborators
-      collaboratorsSet(responseCollaborators.data.map((collaborator) => ({ ...collaborator, isOnline: false })));
+      const allCollaborators = responseCollaborators.data.map((collaborator) => ({ ...collaborator, isOnline: false }));
+      collaboratorsSet(allCollaborators);
 
       // get user name from jwt
       const userInfo = svsT3dapi.getApiJwtInfo();
 
       // broadcast: joining project room
       strmProject.emitJoin({ projectCode: match.params.projectCode, id: userInfo.id, name: userInfo.name }, (error, data) => {
-        if (error) message.error(`error joining project room: ${error}`);
+        if (error) message.error(`failed joining project room: ${error}`);
 
         // combine collaborators from sending request with online collaborators from this broadcast callback
-        const _collaborators = responseCollaborators.data;
+        const _collaborators = allCollaborators;
 
         // set existing collaborators to online
         data.forEach((_data) => {
@@ -144,7 +145,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
         });
 
         // set collaborators
-        collaboratorsSet(_collaborators);
+        collaboratorsSet([..._collaborators]);
       });
     } catch (error) {}
   }, [handleChangeActivePage, match.params.projectCode, strmProject, svsT3dapi]);
@@ -420,11 +421,38 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     [unshiftProjectActivities]
   );
 
+  // to do commented on modal
+  const handleTodoCommented = (response) => {
+    const { comment: newComment, activity: newActivity } = response.data;
+
+    // broadcast: comment created
+    strmProject.emitTodoCommenting({ projectCode: match.params.projectCode, comment: newComment, activity: newActivity }, () => {});
+  };
+
   // to do commented (socket)
   const handleCommentedEmit = React.useCallback(
     (response) => {
       // append activity
       unshiftProjectActivities(response.activity);
+    },
+    [unshiftProjectActivities]
+  );
+
+  // to do work date edited on modal
+  const handleTodoWorkDateEdited = (response) => {
+    const { todo: newTodo, activity: newActivity } = response.data;
+
+    // broadcast: to do workdate edited
+    strmProject.emitTodoWorkDateEditing({ projectCode: match.params.projectCode, todo: newTodo, activity: newActivity }, () => {});
+  };
+
+  // to do work date edited (socket)
+  const handleTodoWorkdateEditedEmit = React.useCallback(
+    (response) => {
+      const { activity: newActivity } = response;
+
+      // append activity
+      unshiftProjectActivities(newActivity);
     },
     [unshiftProjectActivities]
   );
@@ -471,6 +499,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     strmProject.registerTodoDetailEdited(handleDetailEditedEmit);
     strmProject.registerTodoPriorityEdited(handlePriorityEditedEmit);
     strmProject.registerTodoCommented(handleCommentedEmit);
+    strmProject.registerTodoWorkDateEdited(handleTodoWorkdateEditedEmit);
 
     return () => {
       // unsubscribe from server emits
@@ -485,10 +514,12 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       strmProject.unregisterTodoDetailEdited();
       strmProject.unregisterTodoPriorityEdited();
       strmProject.unregisterTodoCommented();
+      strmProject.unregisterTodoWorkDateEdited();
 
       // broadcast: leaving the project room
       strmProject.emitLeave(match.params.projectCode, () => {});
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     handleCommentedEmit,
     handleDescriptionEditedEmit,
@@ -554,12 +585,13 @@ const PgProject = ({ match, handleChangeActivePage }) => {
           <ProjectSelectedTodo
             match={_match}
             history={history}
-            unshiftProjectActivities={unshiftProjectActivities}
             handleTagCreated={handleTodoTagCreated}
             handleTagDeleted={handleTodoTagDeleted}
             handleDescriptionEdited={handleDescriptionEdited}
             handleDetailEdited={handleDetailEdited}
-            handlePriorityEdited={handlePriorityEdited}></ProjectSelectedTodo>
+            handlePriorityEdited={handlePriorityEdited}
+            handleTodoCommented={handleTodoCommented}
+            handleTodoWorkDateEdited={handleTodoWorkDateEdited}></ProjectSelectedTodo>
         )}></Route>
     </>
   );

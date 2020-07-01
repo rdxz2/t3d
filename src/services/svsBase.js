@@ -1,5 +1,5 @@
 import CONTENTTYPE from '../constants/CONTENTTYPE';
-import { HTTPMETHOD_WITHOUTBODY } from '../constants/HTTPMETHOD';
+import { HTTPMETHODS_WITHOUTBODY } from '../constants/HTTPMETHOD';
 import JWTKEY from '../constants/JWTKEY';
 import { getJwt } from '../utilities/utlJwt';
 
@@ -19,7 +19,7 @@ export const sendHttpRequest = async (url, method, body = {}, { additionalHeader
     // send request
     const response = await fetch(url, {
       method: method,
-      body: HTTPMETHOD_WITHOUTBODY.includes(method) ? undefined : JSON.stringify(body),
+      body: HTTPMETHODS_WITHOUTBODY.includes(method) ? undefined : JSON.stringify(body),
       headers: headers,
     });
 

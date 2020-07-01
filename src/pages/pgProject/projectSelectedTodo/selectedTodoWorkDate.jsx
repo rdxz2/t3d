@@ -27,7 +27,7 @@ const DATE_RANGE = {
   'Nx. Month (full)': [NEXT_MONTH_START, NEXT_MONTH_END],
 };
 
-const SelectedTodoWorkDate = ({ todo = {} }) => {
+const SelectedTodoWorkDate = ({ todo = {}, handleTodoWorkDateEdited }) => {
   // START -- CONTEXTS
 
   // api
@@ -59,7 +59,10 @@ const SelectedTodoWorkDate = ({ todo = {} }) => {
       const dateEnd = dateRange[1];
 
       // send request
-      await svsT3dapi.sendRequest(`api/todo/workdate/${todo.id}?&dateStart=${(dateStart && encodeURIComponent(dateStart.format())) || ''}&dateEnd=${(dateEnd && encodeURIComponent(dateEnd.format())) || ''}`, HTTPMETHOD.GET);
+      const response = await svsT3dapi.sendRequest(`api/todo/workdate/${todo.id}`, HTTPMETHOD.PUT, { dateStart, dateEnd });
+
+      // run callback
+      handleTodoWorkDateEdited(response);
     } catch (error) {}
   };
 
@@ -83,7 +86,7 @@ const SelectedTodoWorkDate = ({ todo = {} }) => {
       {/* title */}
       <Typography.Title level={4}>Work Date</Typography.Title>
       {/* date range */}
-      <DatePicker.RangePicker value={workDate} format={TIMEFORMAT.DDMMMYY} ranges={DATE_RANGE} onChange={handleChangeWorkDate}></DatePicker.RangePicker>
+      <DatePicker.RangePicker value={workDate} format={TIMEFORMAT.DDMMMMYYYY} ranges={DATE_RANGE} onChange={handleChangeWorkDate}></DatePicker.RangePicker>
     </>
   );
 };

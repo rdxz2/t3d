@@ -5,7 +5,7 @@ import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import SELECTOPTIONS from '../../../constants/SELECTOPTIONS';
 import CtxApi from '../../../contexts/ctxApi';
 
-const SelectedTodoPriority = ({ todo = {}, todoSet, handlePriorityEdited }) => {
+const SelectedTodoPriority = ({ todo = {}, handlePriorityEdited }) => {
   // START -- CONTEXTS
 
   // api
