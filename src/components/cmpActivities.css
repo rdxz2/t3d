@@ -1,3 +1,9 @@
+/* tags margin */
 #timeline-project-activities .ant-tag {
   margin-right: 0;
+}
+
+/* word break */
+#timeline-project-activities .ant-timeline-item-content {
+  word-break: break-all;
 }

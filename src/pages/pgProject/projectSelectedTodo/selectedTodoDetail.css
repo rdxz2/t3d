@@ -2,6 +2,7 @@
 #todo-detail {
   padding: 8px;
   transition: 0.3s;
+  border-radius: 4px;
 }
 
 /* to do detail hovered */

@@ -1,11 +1,15 @@
-import { Comment, Tooltip, Typography, Input, Space, Button, Mentions, message } from 'antd';
+import './selectedTodoComments.css';
+
+import { Button, Comment, Mentions, Space, Tooltip, Typography } from 'antd';
 import moment from 'moment';
 import React from 'react';
-import './selectedTodoComments.css';
+
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import TIMEFORMAT from '../../../constants/TIMEFORMAT';
 import CtxApi from '../../../contexts/ctxApi';
 import { isEmptyArray, makeNameInitials } from '../../../utilities/utlType';
+
+const REGEX_MENTIONEDUSER_SPLITTER = /__@([^__]*)__/gi;
 
 const TodoComment = ({ comment = {}, handleReply, children }) => {
   // START -- CONTEXTS
@@ -34,13 +38,22 @@ const TodoComment = ({ comment = {}, handleReply, children }) => {
   // make commenter name initials
   const commenterNameInitials = makeNameInitials(comment.commenter.name);
 
+  // render mentioned user as a link
+  const descriptionSplitted = comment.description.split(REGEX_MENTIONEDUSER_SPLITTER);
+  for (let count = 1; count < descriptionSplitted.length; count += 2)
+    descriptionSplitted[count] = (
+      <Typography.Link key={count} strong>
+        {descriptionSplitted[count]}
+      </Typography.Link>
+    );
+
   return (
     <Comment
       className='todo-comment'
       // actions={[<span>Reply</span>]}
       author={comment.commenter.name}
       avatar={<Button shape='circle'>{commenterNameInitials}</Button>}
-      content={comment.description}
+      content={descriptionSplitted}
       datetime={
         <Tooltip title={createDate.format(TIMEFORMAT.DDMMMMYYYYHHMMSS)}>
           <span>{createDate.fromNow()}</span>
@@ -74,6 +87,9 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
 
   // available user to be mentioned
   const [mentionsUser, mentionsUserSet] = React.useState({ isLoading: true, data: [] });
+
+  // submitting state
+  const [isSubmitting, isSubmittingSet] = React.useState(false);
 
   // END -- STATES
 
@@ -109,36 +125,25 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
 
   // comment input changed
   const handleCommentChange = (value) => {
-    console.log('comment change', value);
-
     // set comment
     commentValueSet(value);
-  };
-
-  // mention changed
-  const handleMentionSelected = (mentioned) => {
-    // search for user to be mentioned
-    const mentionedUser = mentionsUser.data.find((user) => user.name === mentioned.value);
-    if (!mentionsUser) return message.error(`user ${mentioned.value} not found`);
-
-    // append mentioned users
   };
 
   // submit: comment/reply
   const handleSubmit = async (description, parent) => {
     // get all mentioned users
-    const mentionedUsers = description.match(/__@([^__]*)__/gi).map((mentionedUser) => mentionedUser.replace(/__@|__/g, ''));
-    const mentionedUsersId = mentionedUsers.map((mentionedUser) => mentionsUser.data.find((mentionUser) => mentionUser.name === mentionedUser)?.id);
+    const mentionedUsers = description.match(REGEX_MENTIONEDUSER_SPLITTER)?.map((mentionedUser) => mentionedUser.replace(/__@|__/g, ''));
+    const mentionedUsersId = mentionedUsers?.map((mentionedUser) => mentionsUser.data.find((mentionUser) => mentionUser.name === mentionedUser)?.id);
 
-    console.log('submitting', mentionedUsersId);
-
-    return;
     try {
+      // submitting...
+      isSubmittingSet(true);
+
       // reset comment
       commentValueSet('');
 
       // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/comment/${todo.id}`, HTTPMETHOD.POST, { description, parent });
+      const response = await svsT3dapi.sendRequest(`api/todo/comment/${todo.id}`, HTTPMETHOD.POST, { description, parent, mentionedUsers: mentionedUsersId });
 
       // destructure response data
       const { comment: newComment, activity: newActivity } = response.data;
@@ -147,6 +152,9 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
       strmProject.emitTodoCommenting({ projectCode: todo.projectCode, comment: newComment, activity: newActivity }, () => {});
     } catch (error) {
       throw error;
+    } finally {
+      // not submitting...
+      isSubmittingSet(false);
     }
   };
 
@@ -245,7 +253,7 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
           {renderComments(comments)}
         </div>
         {/* create a comment */}
-        <Mentions rows={1} split='__' placeholder='Say something...' value={commentValue} onChange={handleCommentChange} onSelect={handleMentionSelected}>
+        <Mentions rows={1} split='__' placeholder='Say something...' value={commentValue} onChange={handleCommentChange}>
           {mentionsUser.data.map((user, userIndex) => (
             <Mentions.Option key={userIndex} value={user.name}>
               {user.name}
@@ -253,7 +261,7 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
           ))}
         </Mentions>
         {/* comment button */}
-        <Button type='primary' disabled={!commentValue} onClick={handleComment}>
+        <Button type='primary' loading={isSubmitting} disabled={!commentValue} onClick={handleComment}>
           Add comment
         </Button>
       </Space>

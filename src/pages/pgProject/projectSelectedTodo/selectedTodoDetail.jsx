@@ -1,16 +1,16 @@
 import './selectedTodoDetail.css';
 import 'braft-editor/dist/index.css';
 
-import { SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, Skeleton, Row, Col, Space } from 'antd';
+import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
+import { Button, Col, Row, Skeleton, Space } from 'antd';
 import BraftEditor from 'braft-editor';
+import { Markup } from 'interweave';
 import React from 'react';
 
 import COLOR from '../../../constants/COLOR';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
 import CtxApi from '../../../contexts/ctxApi';
 import { isEmptyObject } from '../../../utilities/utlType';
-import { Markup } from 'interweave';
 
 const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
   // START -- CONTEXTS
@@ -150,7 +150,7 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
       <Row gutter={8}>
         {/* cancel button */}
         <Col span={12}>
-          <Button block icon={<ArrowLeftOutlined></ArrowLeftOutlined>} onClick={handleToggleEditingOff}></Button>
+          <Button block icon={<CloseOutlined></CloseOutlined>} onClick={handleToggleEditingOff}></Button>
         </Col>
         {/* save button */}
         <Col span={12}>
