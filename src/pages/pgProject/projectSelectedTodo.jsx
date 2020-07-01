@@ -11,6 +11,7 @@ import SelectedTodoDescription from './projectSelectedTodo/selectedTodoDescripti
 import SelectedTodoDetail from './projectSelectedTodo/selectedTodoDetail';
 import SelectedTodoPriority from './projectSelectedTodo/selectedTodoPriority';
 import SelectedTodoTags from './projectSelectedTodo/selectedTodoTags';
+import SelectedTodoReminder from './projectSelectedTodo/selectedTodoReminder';
 
 const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleDescriptionEdited, handleDetailEdited, handlePriorityEdited, handleTagCreated, handleTagDeleted }) => {
   // START -- CONTEXTS
@@ -32,7 +33,7 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
   // to do comments
 
   // to do activities
-  const [todoActivities, todoActivitiesSet] = React.useState({ projectActivitiesTotalData: 0, projectActivities: [] });
+  const [todoActivities, todoActivitiesSet] = React.useState({ totalDataFiltered: 0, data: [] });
 
   // modal visible state
   const [isModalVisible, isModalVisibleSet] = React.useState(true);
@@ -48,8 +49,8 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
     return todoActivitiesSet((_activities) => {
       return {
         ..._activities,
-        projectActivitiesTotalData: _activities.projectActivitiesTotalData + 1,
-        projectActivities: [newActivity, ..._activities.projectActivities],
+        totalDataFiltered: _activities.totalDataFiltered + 1,
+        data: [newActivity, ..._activities.data],
       };
     });
   };
@@ -87,7 +88,7 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
         const response = await svsT3dapi.sendRequest(`api/todo/activities/${match.params.id}?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
 
         // set activities
-        todoActivitiesSet((_activities) => ({ projectActivitiesTotalData: response.data.projectActivitiesTotalData, projectActivities: [..._activities.projectActivities, ...response.data.projectActivities] }));
+        todoActivitiesSet((_activities) => ({ totalDataFiltered: response.data.totalDataFiltered, data: [..._activities.data, ...response.data.data] }));
       } catch (error) {
         throw error;
       }
@@ -192,6 +193,8 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
             <SelectedTodoTags todo={todo} handleTagCreated={handleTagCreatedModal} handleTagDeleted={handleTagDeletedModal}></SelectedTodoTags>
             {/* priority */}
             <SelectedTodoPriority todo={todo} todoSet={todoSet} handlePriorityEdited={handlePriorityEditedModal}></SelectedTodoPriority>
+            {/* reminder */}
+            <SelectedTodoReminder todo={todo}></SelectedTodoReminder>
             {/* to do activities */}
             <SelectedTodoActivities activities={todoActivities} onLoadMore={handleLoadMoreActivities}></SelectedTodoActivities>
             {/* meta */}

@@ -1,3 +1,8 @@
+v0.1.16
+	f project activities not appending on other user comments
+	+ reminder input & remove for to do
+	f CmpTags infinite rendering if to do is empty
+
 v0.1.15
 	+ to do comments can mention other people
 

@@ -15,6 +15,7 @@ const CmpTags = ({ initialValue = [], onCreated, onDeleted }) => {
 
   // tags
   const [tags, tagsSet] = React.useState(initialValue);
+  const [isChangingTagsFromProp, isChangingTagsFromPropSet] = React.useState(true);
 
   // creating state
   const [isCreating, isCreatingSet] = React.useState(false);
@@ -73,10 +74,14 @@ const CmpTags = ({ initialValue = [], onCreated, onDeleted }) => {
 
   // START -- EFFECTS
 
-  // initial value changed
   React.useEffect(() => {
-    tagsSet(initialValue);
-  }, [initialValue]);
+    // only change tags from prop on initialization
+    if (isChangingTagsFromProp && initialValue) {
+      tagsSet(initialValue);
+
+      isChangingTagsFromPropSet(false);
+    }
+  }, [initialValue, isChangingTagsFromProp]);
 
   // END -- EFFECTS
 

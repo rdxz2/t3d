@@ -29,7 +29,7 @@ const PgHome = ({ match, handleChangeActivePage }) => {
   const [recentProjects, recentProjectsSet] = React.useState([]);
 
   // recent activities
-  const [recentActivities, recentActivitiesSet] = React.useState({ projectActivitiesTotalData: 0, projectActivities: [] });
+  const [recentActivities, recentActivitiesSet] = React.useState({ totalDataFiltered: 0, data: [] });
 
   // schedules
   const [schedules, schedulesSet] = React.useState([]);
@@ -83,7 +83,7 @@ const PgHome = ({ match, handleChangeActivePage }) => {
       const response = await svsT3dapi.sendRequest(`api/user/recentactivities?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
 
       // set activities
-      recentActivitiesSet((_activities) => ({ projectActivitiesTotalData: response.data.projectActivitiesTotalData, projectActivities: [..._activities.projectActivities, ...response.data.projectActivities] }));
+      recentActivitiesSet((_activities) => ({ totalDataFiltered: response.data.totalDataFiltered, data: [..._activities.data, ...response.data.data] }));
     } catch (error) {}
   };
 

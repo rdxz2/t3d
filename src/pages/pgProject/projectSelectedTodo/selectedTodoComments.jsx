@@ -202,13 +202,13 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
         return [..._comments];
       });
 
-      // append activity (project)
-      unshiftProjectActivities(newActivity);
+      // // append activity (project)
+      // unshiftProjectActivities(newActivity);
 
       // append activity (to do)
       unshiftTodoActivities(newActivity);
     },
-    [unshiftProjectActivities, unshiftTodoActivities]
+    [unshiftTodoActivities]
   );
 
   // END -- FUNCTIONS

@@ -208,7 +208,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
   // END -- EFFECTS
 
   // map activities
-  const activitiesMapped = activities.projectActivities.map((activity) => {
+  const activitiesMapped = activities.data.map((activity) => {
     // get action name
     const activityAction = activity.project_action || activity.todo_action;
 
@@ -224,7 +224,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
   });
 
   // check if all activities from server are loaded
-  const isAllActivitiesLoaded = activities.projectActivities.length >= activities.projectActivitiesTotalData;
+  const isAllActivitiesLoaded = activities.data.length >= activities.totalDataFiltered;
 
   return (
     <div style={{ maxHeight: 'calc(50vh - 89px)', paddingTop: 10, overflowY: 'auto' }}>

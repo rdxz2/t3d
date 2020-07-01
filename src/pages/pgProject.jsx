@@ -38,7 +38,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
   const [todos, todosSet] = React.useState([]);
 
   // activities
-  const [activities, activitiesSet] = React.useState({ projectActivitiesTotalData: 0, projectActivities: [] });
+  const [activities, activitiesSet] = React.useState({ totalDataFiltered: 0, data: [] });
 
   // online collaborators
   const [collaborators, collaboratorsSet] = React.useState([]);
@@ -82,8 +82,8 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     return activitiesSet((_activities) => {
       return {
         ..._activities,
-        projectActivitiesTotalData: _activities.projectActivitiesTotalData + 1,
-        projectActivities: [newActivity, ..._activities.projectActivities],
+        totalDataFiltered: _activities.totalDataFiltered + 1,
+        data: [newActivity, ..._activities.data],
       };
     });
   }, []);
@@ -420,6 +420,15 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     [unshiftProjectActivities]
   );
 
+  // to do commented (socket)
+  const handleCommentedEmit = React.useCallback(
+    (response) => {
+      // append activity
+      unshiftProjectActivities(response.activity);
+    },
+    [unshiftProjectActivities]
+  );
+
   // END -- MODAL FUNCTIONALITY
 
   // START -- ACTIVITIES FUNCTIONALITY
@@ -430,7 +439,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       const response = await svsT3dapi.sendRequest(`api/project/activities/${match.params.projectCode}?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
 
       // set activities
-      activitiesSet((_activities) => ({ projectActivitiesTotalData: response.data.projectActivitiesTotalData, projectActivities: [..._activities.projectActivities, ...response.data.projectActivities] }));
+      activitiesSet((_activities) => ({ totalDataFiltered: response.data.totalDataFiltered, data: [..._activities.data, ...response.data.data] }));
     } catch (error) {
       throw error;
     }
@@ -461,6 +470,7 @@ const PgProject = ({ match, handleChangeActivePage }) => {
     strmProject.registerTodoDescriptionEdited(handleDescriptionEditedEmit);
     strmProject.registerTodoDetailEdited(handleDetailEditedEmit);
     strmProject.registerTodoPriorityEdited(handlePriorityEditedEmit);
+    strmProject.registerTodoCommented(handleCommentedEmit);
 
     return () => {
       // unsubscribe from server emits
@@ -474,11 +484,13 @@ const PgProject = ({ match, handleChangeActivePage }) => {
       strmProject.unregisterTodoDescriptionEdited();
       strmProject.unregisterTodoDetailEdited();
       strmProject.unregisterTodoPriorityEdited();
+      strmProject.unregisterTodoCommented();
 
       // broadcast: leaving the project room
       strmProject.emitLeave(match.params.projectCode, () => {});
     };
   }, [
+    handleCommentedEmit,
     handleDescriptionEditedEmit,
     handleDetailEditedEmit,
     handlePriorityEditedEmit,

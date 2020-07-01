@@ -50,7 +50,7 @@ class SvsT3dapi {
           // // remove refresh token from local storage
           // this.removeApiRefreshToken();
 
-          alert('REDIRECTING');
+          // alert('REDIRECTING');
 
           // redirect to login page
           window.location.replace('/login?reason=Unauthorized');

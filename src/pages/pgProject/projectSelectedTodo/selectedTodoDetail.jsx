@@ -2,7 +2,7 @@ import './selectedTodoDetail.css';
 import 'braft-editor/dist/index.css';
 
 import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
-import { Button, Col, Row, Skeleton, Space } from 'antd';
+import { Button, Col, Row, Skeleton, Space, Typography } from 'antd';
 import BraftEditor from 'braft-editor';
 import { Markup } from 'interweave';
 import React from 'react';
@@ -79,13 +79,10 @@ const SelectedTodoDetail = ({ todo = {}, handleDetailEdited }) => {
 
   // render detail as jsx
   const renderDetailAsJsx = (_braftEditorState) => {
-    // don't render anything if detail state is null
-    if (!_braftEditorState) return null;
-
     // convert braft editor state to html string, then force render it in a div
     return (
       <div id='todo-detail' onClick={handleToggleEditingOn}>
-        <Markup content={_braftEditorState.toHTML()}></Markup>
+        {_braftEditorState ? <Markup content={_braftEditorState.toHTML()}></Markup> : <Typography.Text type='secondary'>Add some detail...</Typography.Text>}
       </div>
     );
   };
