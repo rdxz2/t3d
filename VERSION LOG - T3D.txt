@@ -1,3 +1,7 @@
+v0.1.17
+	+ to do work date w/ its broadcast
+	^ to do comment emit listener is now in page project
+
 v0.1.16
 	f project activities not appending on other user comments
 	+ reminder input & remove for to do

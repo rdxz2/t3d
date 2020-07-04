@@ -14,7 +14,7 @@ import SelectedTodoTags from './projectSelectedTodo/selectedTodoTags';
 import SelectedTodoReminder from './projectSelectedTodo/selectedTodoReminder';
 import SelectedTodoWorkDate from './projectSelectedTodo/selectedTodoWorkDate';
 
-const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleDescriptionEdited, handleDetailEdited, handlePriorityEdited, handleTagCreated, handleTagDeleted }) => {
+const ProjectSelectedTodo = ({ match, history, handleDescriptionEdited, handleDetailEdited, handlePriorityEdited, handleTagCreated, handleTagDeleted, handleTodoCommented, handleTodoWorkDateEdited }) => {
   // START -- CONTEXTS
 
   // api
@@ -157,6 +157,30 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
     [handlePriorityEdited]
   );
 
+  // commented
+  const handleTodoCommentedModal = React.useCallback(
+    (response) => {
+      // append activity
+      unshiftTodoActivities(response.data.activity);
+
+      // run callback
+      handleTodoCommented(response);
+    },
+    [handleTodoCommented]
+  );
+
+  // work date edited
+  const handleTodoWorkDateEditedModal = React.useCallback(
+    (response) => {
+      // append activity
+      unshiftTodoActivities(response.data.activity);
+
+      // run callback
+      handleTodoWorkDateEdited(response);
+    },
+    [handleTodoWorkDateEdited]
+  );
+
   // END -- FUNCTIONS
 
   // START -- EFFECTS
@@ -171,7 +195,7 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
   return (
     <Modal destroyOnClose width='65vw' footer={null} visible={isModalVisible} onCancel={handleCloseModal} afterClose={handleRedirectToBefore} style={{ top: 20 }}>
       {/* completed checkbox */}
-      {/* <Checkbox defaultChecked={todo.is_completed} onChange={handleToggleTodoCompleted}></Checkbox> */}
+      {/* <Checkbox defaultChecked={todo.isCompleted} onChange={handleToggleTodoCompleted}></Checkbox> */}
       {/* important flag */}
       {/* <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleTodoImportant}></StarTwoTone> */}
       {/* description */}
@@ -184,7 +208,7 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
             {/* detail */}
             <SelectedTodoDetail todo={todo} handleDetailEdited={handleDetailEditedModal}></SelectedTodoDetail>
             {/* comments */}
-            <SelectedTodoComments todo={todo} unshiftProjectActivities={unshiftProjectActivities} unshiftTodoActivities={unshiftTodoActivities}></SelectedTodoComments>
+            <SelectedTodoComments todo={todo} handleTodoCommented={handleTodoCommentedModal}></SelectedTodoComments>
           </Space>
         </Col>
         {/* column 2 */}
@@ -193,11 +217,11 @@ const ProjectSelectedTodo = ({ match, history, unshiftProjectActivities, handleD
             {/* tags */}
             <SelectedTodoTags todo={todo} handleTagCreated={handleTagCreatedModal} handleTagDeleted={handleTagDeletedModal}></SelectedTodoTags>
             {/* priority */}
-            <SelectedTodoPriority todo={todo} todoSet={todoSet} handlePriorityEdited={handlePriorityEditedModal}></SelectedTodoPriority>
+            <SelectedTodoPriority todo={todo} handlePriorityEdited={handlePriorityEditedModal}></SelectedTodoPriority>
+            {/* work date */}
+            <SelectedTodoWorkDate todo={todo} handleTodoWorkDateEdited={handleTodoWorkDateEditedModal}></SelectedTodoWorkDate>
             {/* reminder */}
             <SelectedTodoReminder todo={todo}></SelectedTodoReminder>
-            {/* work date */}
-            <SelectedTodoWorkDate todo={todo}></SelectedTodoWorkDate>
             {/* to do activities */}
             <SelectedTodoActivities activities={todoActivities} onLoadMore={handleLoadMoreActivities}></SelectedTodoActivities>
             {/* meta */}

@@ -29,7 +29,7 @@ const ProjectCollaborators = ({ collaborators = [] }) => {
   // END -- EFFECTS
 
   // sort collaborator by online state
-  const collaboratorsSorted = _.sortBy(collaborators, ['isOnline']);
+  const collaboratorsSorted = _.orderBy(collaborators, ['isOnline'], ['desc']);
 
   return (
     <Space direction='vertical'>

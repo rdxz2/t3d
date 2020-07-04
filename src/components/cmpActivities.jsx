@@ -149,7 +149,21 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
               <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
-        // edit priority -- {actor} completed {description}
+        // edit work date -- {actor} changed {description} work date to {date_start} - {date_end}
+        case ACTIVITY.ACTION.EDIT_WORKDATE:
+          return (
+            <>
+              <Typography.Link strong>{actorName}</Typography.Link>
+              <Typography.Text> changed </Typography.Text>
+              <Typography.Link strong>{todoDescription}</Typography.Link>
+              <Typography.Text> work date to </Typography.Text>
+              <Typography.Text strong>{convertIsoDateToMoment(activity.todo_date_start, TIMEFORMAT.DDMMMYY)}</Typography.Text>
+              <Typography.Text> - </Typography.Text>
+              <Typography.Text strong>{convertIsoDateToMoment(activity.todo_date_end, TIMEFORMAT.DDMMMYY)}</Typography.Text>
+            </>
+          );
+
+        // mark completed -- {actor} completed {description}
         case ACTIVITY.ACTION.MARK_COMPLETED:
           return (
             <>
@@ -158,7 +172,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
               <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
-        // edit priority -- {actor} opened {description}
+        // unmark completed -- {actor} opened {description}
         case ACTIVITY.ACTION.UNMARK_COMPLETED:
           return (
             <>
@@ -167,7 +181,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
               <Typography.Link strong>{todoDescription}</Typography.Link>
             </>
           );
-        // edit priority -- {actor} marked {description} as important
+        // mark important -- {actor} marked {description} as important
         case ACTIVITY.ACTION.MARK_IMPORTANT:
           return (
             <>
@@ -177,7 +191,7 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
               <Typography.Text> as important </Typography.Text>
             </>
           );
-        // edit priority -- {actor} marked {description} as unimportant
+        // unmark important -- {actor} marked {description} as unimportant
         case ACTIVITY.ACTION.UNMARK_IMPORTANT:
           return (
             <>

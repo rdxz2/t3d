@@ -16,6 +16,7 @@ const ACTIVITY = {
     EDIT_DESCRIPTION: 'edit_desc',
     EDIT_DETAIL: 'edit_detail',
     EDIT_PRIORITY: 'edit_prio',
+    EDIT_WORKDATE: 'edit_workdate',
     MARK_COMPLETED: 'mark_complete',
     UNMARK_COMPLETED: 'unmark_complete',
     MARK_IMPORTANT: 'mark_important',

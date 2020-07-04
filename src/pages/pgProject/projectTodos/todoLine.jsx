@@ -25,7 +25,7 @@ const TodoLine = ({ todo, handleTodoCompleteToggled, handleTodoImportantToggled,
   // START -- STATES
 
   // important stat
-  const [isImportant, isImportantSet] = React.useState(todo.is_important ?? false);
+  const [isImportant, isImportantSet] = React.useState(todo.isImportant ?? false);
 
   // END -- STATES
 
@@ -35,16 +35,16 @@ const TodoLine = ({ todo, handleTodoCompleteToggled, handleTodoImportantToggled,
   const handleToggleTodoCompleted = async (event) => {
     try {
       // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/complete/${todo.id}?is_completed=${event.target.checked}`, HTTPMETHOD.GET);
+      const response = await svsT3dapi.sendRequest(`api/todo/complete/${todo.id}?isCompleted=${event.target.checked}`, HTTPMETHOD.GET);
 
       // show error message if response is not the same as expected important state
-      if (event.target.checked !== response.data.todo.is_completed) return message.error('data error');
+      if (event.target.checked !== response.data.todo.isCompleted) return message.error('data error');
 
       // make ellipsis description
       const todoDescription = makeEllipsis(todo.description);
 
       // show message
-      if (response.data.todo.is_completed) message.success(`'${todoDescription}' completed`);
+      if (response.data.todo.isCompleted) message.success(`'${todoDescription}' completed`);
       else message.info(`'${todoDescription}' is opened again`);
 
       // run callback
@@ -65,16 +65,16 @@ const TodoLine = ({ todo, handleTodoCompleteToggled, handleTodoImportantToggled,
 
     try {
       // send request
-      const response = await svsT3dapi.sendRequest(`api/todo/important/${todo.id}?is_important=${isImportantToggled}`, HTTPMETHOD.GET);
+      const response = await svsT3dapi.sendRequest(`api/todo/important/${todo.id}?isImportant=${isImportantToggled}`, HTTPMETHOD.GET);
 
       // show error message if response is not the same as expected important state
-      if (isImportantToggled !== response.data.todo.is_important) return message.error('data error');
+      if (isImportantToggled !== response.data.todo.isImportant) return message.error('data error');
 
       // make ellipsis description
       const todoDescription = makeEllipsis(todo.description);
 
       // show message
-      if (response.data.todo.is_important) message.success(`'${todoDescription}' is marked important`);
+      if (response.data.todo.isImportant) message.success(`'${todoDescription}' is marked important`);
       else message.info(`'${todoDescription}' is marked not important`);
 
       // run callback
@@ -93,7 +93,7 @@ const TodoLine = ({ todo, handleTodoCompleteToggled, handleTodoImportantToggled,
   return (
     <Space style={{ width: '100%' }}>
       {/* completed checkbox */}
-      <Checkbox defaultChecked={todo.is_completed} onChange={handleToggleTodoCompleted}></Checkbox>
+      <Checkbox defaultChecked={todo.isCompleted} onChange={handleToggleTodoCompleted}></Checkbox>
       {/* important flag */}
       <StarTwoTone className='star' twoToneColor={isImportant ? COLOR.YELLOW : COLOR.GREY} onClick={handleToggleTodoImportant}></StarTwoTone>
       {/* priority tag (only if priority is not normal (4)) */}

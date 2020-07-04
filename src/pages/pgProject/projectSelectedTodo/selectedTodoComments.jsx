@@ -64,11 +64,11 @@ const TodoComment = ({ comment = {}, handleReply, children }) => {
   );
 };
 
-const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodoActivities }) => {
+const SelectedTodoComments = ({ todo = {}, handleTodoCommented }) => {
   // START -- CONTEXTS
 
   // api
-  const { svsT3dapi, strmProject } = React.useContext(CtxApi);
+  const { svsT3dapi } = React.useContext(CtxApi);
 
   // END -- CONTEXTS
 
@@ -145,11 +145,28 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
       // send request
       const response = await svsT3dapi.sendRequest(`api/todo/comment/${todo.id}`, HTTPMETHOD.POST, { description, parent, mentionedUsers: mentionedUsersId });
 
-      // destructure response data
-      const { comment: newComment, activity: newActivity } = response.data;
+      // get response comment
+      const { comment: newComment } = response.data;
 
-      // broadcast: comment
-      strmProject.emitTodoCommenting({ projectCode: todo.projectCode, comment: newComment, activity: newActivity }, () => {});
+      // set comment
+      // search parent if exist
+      commentsSet((_comments) => {
+        // if this comment is not a reply then just push to the end
+        if (!newComment.parent) _comments.push(newComment);
+        // if this comment is a reply then add to the replied comment
+        else {
+          // // search for parent comment
+          // const parentComment = _comments;
+          // // append to parent comment
+          // parentComment.children.push(newComment);
+        }
+
+        // set state
+        return [..._comments];
+      });
+
+      // run callback
+      handleTodoCommented(response);
     } catch (error) {
       throw error;
     } finally {
@@ -180,37 +197,6 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
     } catch (error) {}
   };
 
-  // other user commented (socket)
-  const handleCommentedEmit = React.useCallback(
-    (response) => {
-      const { comment: newComment, activity: newActivity } = response;
-
-      // set comment
-      // search parent if exist
-      commentsSet((_comments) => {
-        // if this comment is not a reply then just push to the end
-        if (!newComment.parent) _comments.push(newComment);
-        // if this comment is a reply then add to the replied comment
-        else {
-          // // search for parent comment
-          // const parentComment = _comments;
-          // // append to parent comment
-          // parentComment.children.push(newComment);
-        }
-
-        // set state
-        return [..._comments];
-      });
-
-      // // append activity (project)
-      // unshiftProjectActivities(newActivity);
-
-      // append activity (to do)
-      unshiftTodoActivities(newActivity);
-    },
-    [unshiftTodoActivities]
-  );
-
   // END -- FUNCTIONS
 
   // START -- EFFECTS
@@ -229,16 +215,6 @@ const SelectedTodoComments = ({ todo = {}, unshiftProjectActivities, unshiftTodo
       isChangingCommentsFromPropSet(false);
     }
   }, [isChangingCommentsFromProp, todo.comments]);
-
-  React.useEffect(() => {
-    // subscribe to server emits
-    strmProject.registerTodoCommented(handleCommentedEmit);
-
-    return () => {
-      // unsubscribe from server emits
-      strmProject.unregisterTodoCommented();
-    };
-  }, [handleCommentedEmit, strmProject]);
 
   // END -- EFFECTS
 
