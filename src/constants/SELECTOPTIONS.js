@@ -3,7 +3,7 @@ import { convertCollectionToObject } from '../utilities/utlType';
 
 const SELECTOPTIONS = {
   // unredered to do priority: normal
-  UNRENDERED_TODO_PRIORIT: 4,
+  UNRENDERED_TODO_PRIORITY: 4,
   // to do filter in to do list
   TODO_FILTER: [
     {

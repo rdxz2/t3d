@@ -7,7 +7,7 @@ const COLOR = {
   GREY_LIGHT: '#e8e8e8',
   GREY_DARK: '#787878',
   RED: '#f50',
-  ORANGE: '#f29e0c',
+  ORANGE: '#fc6f03',
   BLACK: '#000',
   GREEN: '#5ee82c',
 };

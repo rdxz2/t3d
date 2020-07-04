@@ -1,10 +1,15 @@
-import { Calendar, Typography, Tag, Badge } from 'antd';
-import React from 'react';
-import moment from 'moment';
-import SELECTOPTIONS, { SELECTOPTION } from '../../constants/SELECTOPTIONS';
-import { StarTwoTone } from '@ant-design/icons';
 import './homeSchedule.css';
+
+import { ClockCircleOutlined, ExclamationCircleTwoTone, StarTwoTone, WarningTwoTone } from '@ant-design/icons';
+import { Calendar, Tag, Typography } from 'antd';
+import moment from 'moment';
+import React from 'react';
+
 import COLOR from '../../constants/COLOR';
+import SCHEDULE_TYPE from '../../constants/SCHEDULE_TYPE';
+import SELECTOPTIONS, { SELECTOPTION } from '../../constants/SELECTOPTIONS';
+import TIMEFORMAT from '../../constants/TIMEFORMAT';
+import { makeEllipsis } from '../../utilities/utlType';
 
 const HomeSchedule = ({ schedules = [], onMonthChanged }) => {
   // START -- CONTEXTS
@@ -21,10 +26,43 @@ const HomeSchedule = ({ schedules = [], onMonthChanged }) => {
 
   // START -- FUNCTIONS
 
+  // render schedule type
+  const renderScheduleType = React.useCallback((schedule) => {
+    // render nothing if empty
+    if (!schedule.type) return null;
+
+    switch (schedule.type) {
+      // to do reminder
+      case SCHEDULE_TYPE.TODO_REMINDER:
+        return (
+          <>
+            <ClockCircleOutlined></ClockCircleOutlined> {moment(schedule.date).format(TIMEFORMAT.HHMM)}{' '}
+          </>
+        );
+      // to do end date
+      case SCHEDULE_TYPE.TODO_DATEEND:
+        return (
+          <>
+            <ExclamationCircleTwoTone twoToneColor={COLOR.ORANGE}></ExclamationCircleTwoTone>{' '}
+          </>
+        );
+      // project deadline
+      case SCHEDULE_TYPE.PROJECT_DEADLINE:
+        return (
+          <>
+            <WarningTwoTone twoToneColor={COLOR.RED}></WarningTwoTone>{' '}
+          </>
+        );
+      // not recognized
+      default:
+        return null;
+    }
+  }, []);
+
   // render date cell
   const renderDateCell = (date) => {
     // get schedule for this date
-    const currentDateSchedules = schedules.filter((schedule) => moment(schedule.date).date() === date.date());
+    const currentDateSchedules = schedules.filter((schedule) => moment(schedule.date).isSame(date, 'date'));
 
     // render the schedules
     return (
@@ -36,14 +74,13 @@ const HomeSchedule = ({ schedules = [], onMonthChanged }) => {
           // render
           return (
             <li key={scheduleIndex}>
-              <Badge
-                status='warning'
-                text={
-                  <>
-                    {schedule.is_important && <StarTwoTone twoToneColor={COLOR.YELLOW}></StarTwoTone>}{' '}
-                    {schedule.priority !== SELECTOPTIONS.UNRENDERED_TODO_PRIORIT && selectOptionTodoPriority && <Tag color={selectOptionTodoPriority.todoColor}>{selectOptionTodoPriority.text}</Tag>} {schedule.description}
-                  </>
-                }></Badge>
+              {renderScheduleType(schedule)}
+              {/* important flag */}
+              {schedule.isImportant && <StarTwoTone twoToneColor={COLOR.YELLOW}></StarTwoTone>}
+              {/* priority */}
+              {schedule.priority !== SELECTOPTIONS.UNRENDERED_TODO_PRIORITY && selectOptionTodoPriority && <Tag color={selectOptionTodoPriority.todoColor}>{selectOptionTodoPriority.text}</Tag>}
+              {/* description (ellipsized) */}
+              {makeEllipsis(schedule.description)}
             </li>
           );
         })}
@@ -65,4 +102,4 @@ const HomeSchedule = ({ schedules = [], onMonthChanged }) => {
   );
 };
 
-export default HomeSchedule;
+export default React.memo(HomeSchedule);

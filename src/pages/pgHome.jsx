@@ -63,32 +63,50 @@ const PgHome = ({ match, handleChangeActivePage }) => {
   }, [svsT3dapi]);
 
   // project created
-  const handleProjectCreated = (response) =>
-    recentProjectsSet((_recentProjects) => {
-      // add created project to the first element
-      _recentProjects.unshift({
-        name: response.data.name,
-        code: response.data.code,
-        author: response.data.author,
-        description: response.data.description,
-        last_accessed: response.data.last_accessed,
-        is_owning: response.data.is_owning,
-      });
+  const handleProjectCreated = React.useCallback(
+    (response) =>
+      recentProjectsSet((_recentProjects) => {
+        // add created project to the first element
+        _recentProjects.unshift({
+          name: response.data.name,
+          code: response.data.code,
+          author: response.data.author,
+          description: response.data.description,
+          last_accessed: response.data.last_accessed,
+          is_owning: response.data.is_owning,
+        });
 
-      // set state
-      return [..._recentProjects];
-    });
+        // set state
+        return [..._recentProjects];
+      }),
+    []
+  );
 
   // load more recent activities
-  const handleLoadMoreActivities = async (currentPage) => {
-    try {
-      // send request
-      const response = await svsT3dapi.sendRequest(`api/user/recentactivities?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
+  const handleLoadMoreActivities = React.useCallback(
+    async (currentPage) => {
+      try {
+        // send request
+        const response = await svsT3dapi.sendRequest(`api/user/recentactivities?pageSize=${ACTIVITY.PAGESIZE}&currentPage=${currentPage}`, HTTPMETHOD.GET);
 
-      // set activities
-      recentActivitiesSet((_activities) => ({ totalDataFiltered: response.data.totalDataFiltered, data: [..._activities.data, ...response.data.data] }));
-    } catch (error) {}
-  };
+        // set activities
+        recentActivitiesSet((_activities) => ({ totalDataFiltered: response.data.totalDataFiltered, data: [..._activities.data, ...response.data.data] }));
+      } catch (error) {}
+    },
+    [svsT3dapi]
+  );
+
+  // schedule's month changed
+  const handleScheduleMonthChanged = React.useCallback(
+    async (date) => {
+      // send request
+      const responseSchedule = await svsT3dapi.sendRequest(`api/user/schedule?date=${encodeURIComponent(date.format())}`, HTTPMETHOD.GET);
+
+      // set schedule
+      schedulesSet(responseSchedule.data);
+    },
+    [svsT3dapi]
+  );
 
   // END -- FUNCTIONS
 
@@ -118,7 +136,7 @@ const PgHome = ({ match, handleChangeActivePage }) => {
           </Col>
           {/* schedule */}
           <Col span={16}>
-            <HomeSchedule schedules={schedules} schedulesSet={schedulesSet}></HomeSchedule>
+            <HomeSchedule schedules={schedules} onMonthChanged={handleScheduleMonthChanged}></HomeSchedule>
           </Col>
         </Row>
       </section>

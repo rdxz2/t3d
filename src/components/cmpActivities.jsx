@@ -13,6 +13,8 @@ import { SELECTOPTION } from '../constants/SELECTOPTIONS';
 const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
   // START -- CONTEXTS
 
+  console.log('act');
+
   // END -- CONTEXTS
 
   // START -- OTHERS
@@ -260,4 +262,4 @@ const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
   );
 };
 
-export default CmpActivities;
+export default React.memo(CmpActivities);

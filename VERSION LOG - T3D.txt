@@ -1,3 +1,6 @@
+v0.1.18
+	+ user's schedule
+
 v0.1.17
 	+ to do work date w/ its broadcast
 	^ to do comment emit listener is now in page project

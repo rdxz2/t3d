@@ -5,6 +5,7 @@ const TIMEFORMAT = {
   DDMMMMYYYY: 'DD MMMM YYYY',
   DDMMMYYHHMM: 'DD MMM YY HH.mm',
   DDMMMYY: 'DD MMM YY',
+  HHMM: 'HH.mm',
 };
 
 export default TIMEFORMAT;

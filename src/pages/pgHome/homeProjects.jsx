@@ -109,6 +109,8 @@ const HomeProjects = ({ recentProjects, recentProjectsSet, handleProjectCreated,
 
   // END -- EFFECTS
 
+  console.log('pr');
+
   return (
     <Spin spinning={isSearching} tip='searching projects..'>
       <Space direction='vertical' style={{ width: '100%' }}>
@@ -168,4 +170,4 @@ const HomeProjects = ({ recentProjects, recentProjectsSet, handleProjectCreated,
   );
 };
 
-export default HomeProjects;
+export default React.memo(HomeProjects);

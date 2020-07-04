@@ -2,6 +2,10 @@
   list-style: none;
 }
 
+.schedule-calendar-list > li > .ant-badge-status {
+  word-break: break-all;
+}
+
 .ant-picker-calendar-date-content > ul {
   padding-left: 0;
 }
