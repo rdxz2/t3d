@@ -3,13 +3,16 @@ import './pgHome.css';
 import { Col, Row, Space } from 'antd';
 import React from 'react';
 
-import HomeCalendar from './pgHome/homeCalendar';
-import HomeProjects from './pgHome/homeProjects';
-import HomeRecentActivities from './pgHome/homeRecentActivities';
+import ACTIVITY from '../constants/ACTIVITY';
+import HTTPMETHOD from '../constants/HTTPMETHOD';
 import PADDING from '../constants/PADDING';
 import CtxApi from '../contexts/ctxApi';
-import HTTPMETHOD from '../constants/HTTPMETHOD';
-import ACTIVITY from '../constants/ACTIVITY';
+import HomeProjects from './pgHome/homeProjects';
+import HomeRecentActivities from './pgHome/homeRecentActivities';
+import moment from 'moment';
+import HomeSchedule from './pgHome/homeSchedule';
+
+const now = moment();
 
 const PgHome = ({ match, handleChangeActivePage }) => {
   // START -- CONTEXTS
@@ -53,7 +56,7 @@ const PgHome = ({ match, handleChangeActivePage }) => {
     recentActivitiesSet(responseRecentActivities.data);
 
     // send request (schedule)
-    const responseSchedule = await svsT3dapi.sendRequest('api/user/schedule', HTTPMETHOD.GET);
+    const responseSchedule = await svsT3dapi.sendRequest(`api/user/schedule?date=${encodeURIComponent(now.format())}`, HTTPMETHOD.GET);
 
     // set schedule
     schedulesSet(responseSchedule.data);
@@ -106,16 +109,16 @@ const PgHome = ({ match, handleChangeActivePage }) => {
     <Space direction='vertical' style={{ width: '100%' }}>
       {/* project */}
       <HomeProjects recentProjects={recentProjects} recentProjectsSet={recentProjectsSet} handleProjectCreated={handleProjectCreated} match={match}></HomeProjects>
-      {/* calendar & activities */}
+      {/* recent activities & schedule */}
       <section style={{ ...PADDING.LEFT_RIGHT() }}>
         <Row gutter={16}>
           {/* recent activities */}
           <Col span={8}>
             <HomeRecentActivities recentActivities={recentActivities} handleLoadMoreActivities={handleLoadMoreActivities}></HomeRecentActivities>
           </Col>
-          {/* calendar */}
+          {/* schedule */}
           <Col span={16}>
-            <HomeCalendar schedules={schedules} schedulesSet={schedulesSet}></HomeCalendar>
+            <HomeSchedule schedules={schedules} schedulesSet={schedulesSet}></HomeSchedule>
           </Col>
         </Row>
       </section>

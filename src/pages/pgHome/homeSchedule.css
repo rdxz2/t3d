@@ -1,0 +1,7 @@
+.schedule-calendar-list {
+  list-style: none;
+}
+
+.ant-picker-calendar-date-content > ul {
+  padding-left: 0;
+}

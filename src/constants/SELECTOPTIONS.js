@@ -2,6 +2,8 @@ import COLOR from './COLOR';
 import { convertCollectionToObject } from '../utilities/utlType';
 
 const SELECTOPTIONS = {
+  // unredered to do priority: normal
+  UNRENDERED_TODO_PRIORIT: 4,
   // to do filter in to do list
   TODO_FILTER: [
     {
