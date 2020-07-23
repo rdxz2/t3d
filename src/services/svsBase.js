@@ -1,25 +1,10 @@
-import CONTENTTYPE from '../constants/CONTENTTYPE';
-import { HTTPMETHODS_WITHOUTBODY } from '../constants/HTTPMETHOD';
-import JWTKEY from '../constants/JWTKEY';
-import { getJwt } from '../utilities/utlJwt';
-
 // send http request (fetch)
-export const sendHttpRequest = async (url, method, body = {}, { additionalHeaders = {}, jwtKey = JWTKEY.T3DAPI } = {}) => {
-  // construct request headers
-  let headers = {
-    'Content-Type': CONTENTTYPE.JSON,
-    ...additionalHeaders,
-  };
-
-  // add authorization header
-  const jwt = getJwt(jwtKey);
-  if (jwt) headers.Authorization = `Bearer ${jwt}`;
-
+export const sendHttpRequest = async (url, method, body, headers = {}) => {
   try {
     // send request
     const response = await fetch(url, {
       method: method,
-      body: HTTPMETHODS_WITHOUTBODY.includes(method) ? undefined : JSON.stringify(body),
+      body: body,
       headers: headers,
     });
 

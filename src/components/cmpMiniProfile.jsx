@@ -1,9 +1,9 @@
-import { Avatar } from 'antd';
 import React from 'react';
 
 import CmpDetail from './cmpDetail';
+import CmpUserAvatar from './cmpUserAvatar';
 
-const CmpMiniProfile = ({ profile, nameInitials = '' }) => {
+const CmpMiniProfile = ({ profile, urlProfilePicture }) => {
   // START -- CONTEXTS
 
   // END -- CONTEXTS
@@ -28,7 +28,7 @@ const CmpMiniProfile = ({ profile, nameInitials = '' }) => {
     <div style={{ width: 300 }}>
       {/* user's avatar */}
       <div style={{ textAlign: 'center' }}>
-        <Avatar size={64}>{nameInitials}</Avatar>
+        <CmpUserAvatar size={64} urlProfilePicture={urlProfilePicture} profile={profile}></CmpUserAvatar>
       </div>
       {/* username */}
       <CmpDetail label='Username' value={profile.username}></CmpDetail>

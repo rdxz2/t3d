@@ -1,4 +1,43 @@
-#user-avatar {
-  width: 96px;
-  height: 96px;
+/* empty profile picture */
+#upload-profile-picture-empty {
+  width: 100%;
+  padding-top: 100%;
+  transition: 0.3s;
+  border-radius: 2px;
+}
+#upload-profile-picture-empty:hover {
+  cursor: pointer;
+  background-color: #e8e8e8;
+}
+#upload-profile-picture-empty:active {
+  cursor: pointer;
+  background-color: #c4c4c4;
+}
+
+/* empty profile picture text */
+#upload-profile-picture-text {
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  bottom: 50%;
+  left: 0;
+  right: 0;
+}
+
+/* preview profile picture */
+#upload-profile-picture-preview {
+  opacity: 1;
+  width: 100%;
+  transition: 0.3s;
+  border-radius: 2px;
+}
+#upload-profile-picture-preview:hover {
+  opacity: 0.6;
+}
+#upload-profile-picture-preview:active {
+  opacity: 0.3;
+}
+#upload-profile-picture-preview:hover,
+#upload-profile-picture-preview:active {
+  cursor: pointer;
 }

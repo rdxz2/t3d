@@ -1,9 +1,11 @@
-import HTTPMETHOD from '../constants/HTTPMETHOD';
+import { message } from 'antd';
+
+import CONTENTTYPE from '../constants/CONTENTTYPE';
+import HTTPMETHOD, { HTTPMETHODS_WITHOUTBODY } from '../constants/HTTPMETHOD';
 import HTTPSTATUS from '../constants/HTTPSTATUS';
 import JWTKEY from '../constants/JWTKEY';
 import { getJwt, getJwtInfo, isJwtExpired, removeJwt, setJwt } from '../utilities/utlJwt';
 import { sendHttpRequest } from './svsBase';
-import { message } from 'antd';
 
 class SvsT3dapi {
   // constructor
@@ -14,6 +16,36 @@ class SvsT3dapi {
 
   // main request sender
   sendRequest = async (endpoint, method, body = {}, { additionalHeaders = {}, jwtKey = JWTKEY.T3DAPI, isLoggingIn = false } = {}) => {
+    // START -- CREATE REQUEST HEADERS
+
+    // check if request is multipart form data
+    const isFormData = additionalHeaders['Content-Type'] === CONTENTTYPE.FORMDATA;
+
+    // construct request headers
+    const headers = { 'Content-Type': CONTENTTYPE.JSON, ...additionalHeaders };
+
+    // no need to specify content type for form data request
+    if (isFormData) delete headers['Content-Type'];
+
+    // add authorization header
+    const jwt = getJwt(jwtKey);
+    if (jwt) headers.Authorization = `Bearer ${jwt}`;
+
+    // END -- CREATE REQUEST HEADERS
+
+    // START -- CREATE REQUEST BODY
+
+    let bodyToSend;
+
+    // strip body for http methods without body (get, delete, etc.)
+    if (HTTPMETHODS_WITHOUTBODY.includes(method)) bodyToSend = undefined;
+    // just send the original specified body for form data
+    else if (isFormData) bodyToSend = body;
+    // make json for other request
+    else bodyToSend = JSON.stringify(body);
+
+    // END -- CREATE REQUEST BODY
+
     try {
       // if current jwt is expired then request for new jwt
       if (this.isApiJwtExpired() && !isLoggingIn) {
@@ -21,14 +53,14 @@ class SvsT3dapi {
         const refreshToken = this.getApiRefreshToken();
 
         // request for new token (via refresh token)
-        const responseNewToken = await sendHttpRequest(`${this._domain}/api/authentication/refresh`, HTTPMETHOD.POST, { refreshToken: refreshToken }, { jwtKey });
+        const responseNewToken = await sendHttpRequest(`${this._domain}/api/authentication/refresh`, HTTPMETHOD.POST, { refreshToken: refreshToken });
 
         // set the newly obtained jwt
         this.setApiJwt(responseNewToken.data.token);
       }
 
       // send request
-      const response = await sendHttpRequest(`${this._domain}/${endpoint}`, method, body, { additionalHeaders, jwtKey });
+      const response = await sendHttpRequest(`${this._domain}/${endpoint}`, method, bodyToSend, headers);
 
       // if ok then just pass the response
       if (response.status === HTTPSTATUS.OK) return response;

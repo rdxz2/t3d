@@ -1,13 +1,17 @@
-import React from 'react';
-import { Divider, Avatar, Spin, Button, Typography } from 'antd';
-import { SettingOutlined, RadarChartOutlined } from '@ant-design/icons';
-import CtxApi from '../contexts/ctxApi';
 import './pgAccount.css';
-import HTTPMETHOD from '../constants/HTTPMETHOD';
-import { makeNameInitials, convertIsoDateToMoment } from '../utilities/utlType';
-import CmpDetail from '../components/cmpDetail';
 
-const PgAccount = ({ handleChangeActivePage }) => {
+import { SettingOutlined } from '@ant-design/icons';
+import { Col, Divider, Row, Spin, Typography } from 'antd';
+import React from 'react';
+
+import CmpDetail from '../components/cmpDetail';
+import FORMLAYOUT from '../constants/FORMLAYOUT';
+import HTTPMETHOD from '../constants/HTTPMETHOD';
+import CtxApi from '../contexts/ctxApi';
+import { convertIsoDateToMoment } from '../utilities/utlType';
+import AccountChangeProfilePicture from './pgAccount/accountChangeProfilePicture';
+
+const PgAccount = ({ handleChangeActivePage, urlProfilePicture, handleChangeProfilePictureUrl }) => {
   // START -- CONTEXTS
 
   const { svsT3dapi } = React.useContext(CtxApi);
@@ -67,33 +71,59 @@ const PgAccount = ({ handleChangeActivePage }) => {
 
   // END -- EFFECTS
   return (
-    <>
-      {/* user information */}
-      <Spin spinning={isProfileLoading}>
-        {/* main */}
-        <div style={{ textAlign: 'center' }}>
-          {/* avatar */}
-          <Button id='user-avatar' shape='circle'>
-            {makeNameInitials(profile.name)}
-          </Button>
-          {/* username // name */}
-          <Typography.Text strong>{`${profile.username} // ${profile.name}`}</Typography.Text>
-        </div>
-        {/* department */}
-        <CmpDetail label='Department' value={profile.department?.name} labelSpan={12} valueSpan={12}></CmpDetail>
-        {/* position */}
-        <CmpDetail label='Position' value={profile.position?.name} labelSpan={12} valueSpan={12}></CmpDetail>
-        {/* joined on */}
-        <CmpDetail label='Joined on' value={convertIsoDateToMoment(profile.create_date)} labelSpan={12} valueSpan={12}></CmpDetail>
-      </Spin>
-      {/* user preferences */}
-      <Divider>
-        <SettingOutlined></SettingOutlined> Preferences
-      </Divider>
-      <Spin spinning={isPreferencesLoading}></Spin>
-      {/* about this application */}
-      {/* (this project is inspired by ...) */}
-    </>
+    <Row gutter={[8]}>
+      {/* profile */}
+      <Col span={8}>
+        {/* user information */}
+        <Spin spinning={isProfileLoading}>
+          {/* profile picture */}
+          <Row gutter={[8]}>
+            {/* col 1 */}
+            <Col span={FORMLAYOUT.sameRow.body.labelCol.lg.span}>
+              {/* profile picture */}
+              <div style={{ textAlign: 'right' }}>
+                <AccountChangeProfilePicture profile={profile} urlProfilePicture={urlProfilePicture} handleChangeProfilePictureUrl={handleChangeProfilePictureUrl}></AccountChangeProfilePicture>
+              </div>
+            </Col>
+            {/* col 2 */}
+            <Col span={FORMLAYOUT.sameRow.body.wrapperCol.lg.span}>
+              {/* username */}
+              <div>
+                <Typography.Text style={{ fontSize: 24 }}>
+                  <em>{profile.username}</em>
+                </Typography.Text>
+              </div>
+              {/* name */}
+              <div>
+                <Typography.Text strong style={{ fontSize: 18 }}>
+                  {profile.name}
+                </Typography.Text>
+              </div>
+            </Col>
+          </Row>
+          {/* space */}
+          <br></br>
+          {/* department */}
+          <CmpDetail label='Department' value={profile.department?.name}></CmpDetail>
+          {/* position */}
+          <CmpDetail label='Position' value={profile.position?.name}></CmpDetail>
+          {/* joined on */}
+          <CmpDetail label='Joined on' value={convertIsoDateToMoment(profile.create_date)}></CmpDetail>
+          {/* project list */}
+          <Divider>My Project</Divider>
+        </Spin>
+      </Col>
+      {/* preferences */}
+      <Col span={14}>
+        {/* user preferences */}
+        <Divider>
+          <SettingOutlined></SettingOutlined> Preferences
+        </Divider>
+        <Spin spinning={isPreferencesLoading}></Spin>
+        {/* about this application */}
+        {/* (this project is inspired by ...) */}
+      </Col>
+    </Row>
   );
 };
 

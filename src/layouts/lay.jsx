@@ -1,19 +1,19 @@
 import './lay.css';
 
-import { LogoutOutlined, NotificationOutlined, UserOutlined } from '@ant-design/icons';
-import { Badge, Button, Divider, Drawer, Layout, PageHeader, Popover } from 'antd';
+import { LogoutOutlined, NotificationOutlined } from '@ant-design/icons';
+import { Avatar, Badge, Button, Divider, Drawer, Layout, PageHeader, Popover, Typography } from 'antd';
 import React from 'react';
 import { Redirect, useHistory } from 'react-router';
 
+import CmpMiniProfile from '../components/cmpMiniProfile';
 import CmpPrivateRoute from '../components/cmpPrivateRoute';
 import CmpRunningTime from '../components/cmpRunningTime';
 import HTTPMETHOD from '../constants/HTTPMETHOD';
 import PAGE from '../constants/PAGE';
 import CtxApi from '../contexts/ctxApi';
+import { makeNameInitials } from '../utilities/utlType';
 import { setDocumentTitle } from '../utilities/utlWindow';
 import LayDrawerNotification from './layDrawerNotification';
-import CmpMiniProfile from '../components/cmpMiniProfile';
-import { makeNameInitials } from '../utilities/utlType';
 
 const Lay = () => {
   // START -- CONTEXTS
@@ -37,6 +37,7 @@ const Lay = () => {
 
   // user profile
   const [profile, profileSet] = React.useState({});
+  const [urlProfilePicture, urlProfilePictureSet] = React.useState('');
 
   // notifications
   const [notifications, notificationsSet] = React.useState([]);
@@ -47,6 +48,9 @@ const Lay = () => {
   // END -- STATES
 
   // START -- FUNCTIONS
+
+  // change profile picture url
+  const handleChangeProfilePictureUrl = React.useCallback((newUrl) => urlProfilePictureSet(newUrl), []);
 
   // prepare initial data
   const prepareInitiaData = React.useCallback(async () => {
@@ -59,12 +63,15 @@ const Lay = () => {
     // set minimal profile
     profileSet(responseMinimalProfile.data);
 
+    // set profile picture url
+    handleChangeProfilePictureUrl(responseMinimalProfile.data.url_profile_picture);
+
     // send request (notifications)
     const responseNotifications = await svsT3dapi.sendRequest('api/user/notifications', HTTPMETHOD.GET);
 
     // set notifications
     notificationsSet(responseNotifications.data);
-  }, [svsT3dapi]);
+  }, [handleChangeProfilePictureUrl, svsT3dapi]);
 
   // handle open/close drawer notification
   const handleDrawerNotificationOpen = () => isDrawerNotificationOpenSet(true);
@@ -102,9 +109,6 @@ const Lay = () => {
 
   // END -- EFFECTS
 
-  // make user name initials
-  const userNameInitials = makeNameInitials(profile.name);
-
   return (
     <Layout>
       {/* notification drawer */}
@@ -115,7 +119,11 @@ const Lay = () => {
       <PageHeader
         ghost={false}
         onBack={() => history.goBack()}
-        title={`${currentActivePage} - t3d${process.env.REACT_APP_ENVIRONMENT}`}
+        title={
+          <span>
+            {currentActivePage} - <Typography.Link onClick={() => history.push('/home')}>t3d{process.env.REACT_APP_ENVIRONMENT}</Typography.Link>
+          </span>
+        }
         className='page-header'
         extra={[
           // running time
@@ -123,10 +131,10 @@ const Lay = () => {
           // divider
           <Divider key='page-header-divider1' type='vertical' style={{ marginRight: 0 }}></Divider>,
           // user's account
-          <Popover key='page-header-miniprofile' placement='bottomRight' title='Your profile' content={<CmpMiniProfile profile={profile} nameInitials={userNameInitials}></CmpMiniProfile>} style={{ width: 400 }}>
-            <Button shape='circle' onClick={() => history.push('account')}>
-              {userNameInitials || <UserOutlined></UserOutlined>}
-            </Button>
+          <Popover mouseEnterDelay={1} key='page-header-miniprofile' placement='bottomRight' title='Your profile' content={<CmpMiniProfile profile={profile} urlProfilePicture={urlProfilePicture}></CmpMiniProfile>} style={{ width: 400 }}>
+            <Avatar size={37} src={urlProfilePicture && urlProfilePicture} className='user-avatar' shape='circle' onClick={() => history.push('/account')} style={{ marginRight: 0 }}>
+              {!urlProfilePicture && makeNameInitials(profile.name)}
+            </Avatar>
           </Popover>,
           // notification
           <Badge key='page-header-badge-notification' count={notifications.length}>
@@ -143,7 +151,13 @@ const Lay = () => {
         <CmpPrivateRoute exact path={'/'} component={() => <Redirect to='/home'></Redirect>} handleChangeActivePage={handleChangeActivePage}></CmpPrivateRoute>
         {/* routing (private routes) */}
         {PAGE.map((page, pageIndex) => (
-          <CmpPrivateRoute key={pageIndex} path={page.path} component={page.component} handleChangeActivePage={handleChangeActivePage}></CmpPrivateRoute>
+          <CmpPrivateRoute
+            key={pageIndex}
+            path={page.path}
+            component={page.component}
+            handleChangeActivePage={handleChangeActivePage}
+            urlProfilePicture={urlProfilePicture}
+            handleChangeProfilePictureUrl={handleChangeProfilePictureUrl}></CmpPrivateRoute>
         ))}
       </Layout.Content>
     </Layout>

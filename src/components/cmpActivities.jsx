@@ -13,8 +13,6 @@ import { SELECTOPTION } from '../constants/SELECTOPTIONS';
 const CmpActivities = ({ activities = {}, onLoadMore, mode = 'left' }) => {
   // START -- CONTEXTS
 
-  console.log('act');
-
   // END -- CONTEXTS
 
   // START -- OTHERS

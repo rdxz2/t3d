@@ -19,7 +19,7 @@ const CmpPrivateRoute = ({ component: Component, ...otherParameters }) => {
 
   // END -- FUNCTIONS
 
-  return <Route {...otherParameters} render={(props) => (isJwtExpired() ? <Component handleChangeActivePage={otherParameters.handleChangeActivePage} {...props} /> : <Redirect to='/login' />)} />;
+  return <Route {...otherParameters} render={(props) => (isJwtExpired() ? <Component {...props} {...otherParameters} /> : <Redirect to='/login' />)} />;
 };
 
 export default CmpPrivateRoute;
