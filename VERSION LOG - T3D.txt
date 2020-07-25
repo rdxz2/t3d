@@ -1,3 +1,7 @@
+v0.2.0
+	+ light/dark theme toggle
+	+ list of user's project in account page
+
 v0.1.20
 	+ change & display user profile picture
 

@@ -1,5 +1,5 @@
 /* recent projects wrapper */
-#recent-projects {
+.recent-projects {
   width: 100%;
   overflow-x: scroll;
   display: flex;
@@ -8,12 +8,12 @@
 }
 
 /* perfect scrollbar always visible */
-#recent-projects > .ps__rail-x {
+.recent-projects > .ps__rail-x {
   opacity: 0.6;
 }
 
 /* project create card */
-#recent-project-card-create > .ant-card-body {
+.recent-project-card-create > .ant-card-body {
   height: 100%;
   padding: 0;
 }
@@ -28,8 +28,13 @@
 
 /* hover animation on project card */
 .recent-project-card:hover {
-  background-color: #f8f0ff;
+  background-color: #d9d9d940;
   cursor: pointer;
+}
+
+/* recent project card: onclick */
+.recent-project-card:active {
+  background-color: #d9d9d980;
 }
 
 /* recent project card (leftmost card) */
@@ -40,11 +45,6 @@
 /* recet project card: desription */
 .recent-project-card p {
   margin-bottom: 0;
-}
-
-/* recent project card: onclick */
-.recent-project-card:active {
-  background-color: #e7cffc;
 }
 
 .recent-project-card > .ant-card-actions > li {

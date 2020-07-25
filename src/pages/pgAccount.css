@@ -4,14 +4,17 @@
   padding-top: 100%;
   transition: 0.3s;
   border-radius: 2px;
+  border-width: 1px;
+  border-color: #d9d9d9;
+  border-style: solid;
 }
 #upload-profile-picture-empty:hover {
   cursor: pointer;
-  background-color: #e8e8e8;
+  background-color: #d9d9d940;
 }
 #upload-profile-picture-empty:active {
   cursor: pointer;
-  background-color: #c4c4c4;
+  background-color: #d9d9d980;
 }
 
 /* empty profile picture text */

@@ -1,6 +1,5 @@
-import './homeProjects.css';
-
 import { ClockCircleOutlined, EllipsisOutlined, PlusOutlined, ReloadOutlined, UserOutlined } from '@ant-design/icons';
+import './homeProjects.css';
 import { Button, Card, Input, Space, Spin, Typography } from 'antd';
 import _ from 'lodash';
 import React from 'react';
@@ -94,7 +93,7 @@ const HomeProjects = ({ recentProjects, recentProjectsSet, handleProjectCreated,
   // // horizontal mouse scroll on a container
   // const handleHorizontalScroll = (event) => {
   //   event.preventDefault();
-  //   const elementRow = event.target.closest('#recent-projects');
+  //   const elementRow = event.target.closest('.recent-projects');
   //   const elementRowScrollPosition = elementRow.scrollLeft;
   //   elementRow.scrollTo({
   //     top: 0,
@@ -126,9 +125,9 @@ const HomeProjects = ({ recentProjects, recentProjectsSet, handleProjectCreated,
           <Button type='primary' icon={<ReloadOutlined></ReloadOutlined>} onClick={handleRefreshProjects}></Button>
         </Space>
         {/* project list */}
-        <PerfectScrollbar id='recent-projects' /**onWheel={handleHorizontalScroll} */>
+        <PerfectScrollbar className='recent-projects' /**onWheel={handleHorizontalScroll} */>
           {/* render create project card */}
-          <Card id='recent-project-card-create' className='recent-project-card' bordered={false}>
+          <Card className='recent-project-card recent-project-card-create' bordered={false}>
             <Button type='primary' size='large' icon={<PlusOutlined></PlusOutlined>} onClick={handleOpenDrawerProjectCreate} style={{ width: '100%', height: '100%' }}></Button>
           </Card>
           {/* render other projects */}

@@ -17,16 +17,12 @@
   line-height: 48px;
 }
 
-/* .content {
-  background: #fff;
-  padding: 12px;
-} */
-
 /* main content */
 .content-main {
-  background: #fff;
   padding: 24px 0 0 0;
-  /* min-height: 380px; */
+}
+.content-main:not(.dark) {
+  background: #fff;
 }
 
 /* dummy drawer */

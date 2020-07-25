@@ -37,7 +37,7 @@ const ProjectCollaborators = ({ collaborators = [] }) => {
       <Typography.Title level={3}>Collaborators</Typography.Title>
       {/* collaborator list */}
       {collaboratorsSorted.map((collaborator, collaboratorIndex) => (
-        <Popover key={collaboratorIndex} mouseEnterDelay={0.3} placement='top' content={<CmpMiniProfileAsync userId={collaborator.id}></CmpMiniProfileAsync>} style={{ width: 400 }}>
+        <Popover key={collaboratorIndex} mouseEnterDelay={0.5} placement='top' content={<CmpMiniProfileAsync userId={collaborator.id}></CmpMiniProfileAsync>} style={{ width: 400 }}>
           <Typography.Text className='collaborator-name' strong>
             <SmileTwoTone twoToneColor={collaborator.isOnline ? COLOR.GREEN : COLOR.RED}></SmileTwoTone> {collaborator.name}
           </Typography.Text>

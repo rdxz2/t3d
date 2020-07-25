@@ -39,7 +39,7 @@ const LoginForm = () => {
     isSubmittingSet(true);
 
     try {
-      // send log in request
+      // send request (log in)
       const response = await svsT3dapi.sendRequest('api/authentication/login', HTTPMETHOD.POST, values, { isLoggingIn: true });
 
       // set jwt to local storage
