@@ -4,7 +4,6 @@ import _ from 'lodash';
 import React from 'react';
 import { useHistory } from 'react-router';
 
-import COLOR from '../../constants/COLOR';
 import FORMLAYOUT from '../../constants/FORMLAYOUT';
 import INPUTSELECT from '../../constants/INPUTSELECT';
 import CtxApi from '../../contexts/ctxApi';
@@ -85,11 +84,11 @@ const RegisterForm = () => {
     <Form {...FORMLAYOUT.sameRow.body} onFinish={handleSubmit}>
       {/* username */}
       <Form.Item hasFeedback label='Username' name='username' rules={[{ required: true, whitespace: true, message: 'username is required' }]}>
-        <Input autoFocus placeholder='your username' prefix={<UserOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></UserOutlined>}></Input>
+        <Input autoFocus placeholder='your username' prefix={<UserOutlined></UserOutlined>}></Input>
       </Form.Item>
       {/* name */}
       <Form.Item hasFeedback label='Name' name='name' rules={[{ required: true, whitespace: true, message: 'name is required' }]}>
-        <Input autoFocus placeholder='your real name' prefix={<EllipsisOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></EllipsisOutlined>}></Input>
+        <Input autoFocus placeholder='your real name' prefix={<EllipsisOutlined></EllipsisOutlined>}></Input>
       </Form.Item>
       {/* email */}
       <Form.Item
@@ -100,7 +99,7 @@ const RegisterForm = () => {
           { required: true, message: 'email is required' },
           { type: 'email', message: 'email format is invalid' },
         ]}>
-        <Input autoFocus placeholder='your email' prefix={<MailOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></MailOutlined>}></Input>
+        <Input autoFocus placeholder='your email' prefix={<MailOutlined></MailOutlined>}></Input>
       </Form.Item>
       {/* password */}
       <Form.Item
@@ -112,7 +111,7 @@ const RegisterForm = () => {
           { min: 5, message: 'min. password length is 5 character' },
           { max: 100, message: 'max. password length is 100 character' },
         ]}>
-        <Input.Password autoFocus placeholder='your password' prefix={<LockOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></LockOutlined>}></Input.Password>
+        <Input.Password autoFocus placeholder='your password' prefix={<LockOutlined></LockOutlined>}></Input.Password>
       </Form.Item>
       {/* confirm password */}
       <Form.Item
@@ -129,7 +128,7 @@ const RegisterForm = () => {
             },
           }),
         ]}>
-        <Input.Password autoFocus placeholder='confirm your password' prefix={<LockOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></LockOutlined>}></Input.Password>
+        <Input.Password autoFocus placeholder='confirm your password' prefix={<LockOutlined></LockOutlined>}></Input.Password>
       </Form.Item>
       {/* department */}
       <Form.Item hasFeedback label='Department' name='department' rules={[{ required: true, whitespace: true, message: 'select department' }]}>

@@ -96,7 +96,7 @@ export const CtxPvdTheme = ({ children }) => {
 
     // set main content class
     const elMain = document.getElementsByClassName('content-main')[0];
-    newIsDarkTheme ? elMain.classList.add('dark') : elMain.classList.remove('dark');
+    if (elMain) newIsDarkTheme ? elMain.classList.add('dark') : elMain.classList.remove('dark');
 
     return newIsDarkTheme;
   }, []);

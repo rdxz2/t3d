@@ -3,7 +3,6 @@ import { Button, Form, Input, message } from 'antd';
 import React from 'react';
 import { useHistory } from 'react-router';
 
-import COLOR from '../../constants/COLOR';
 import FORMLAYOUT from '../../constants/FORMLAYOUT';
 import HTTPMETHOD from '../../constants/HTTPMETHOD';
 import CtxApi from '../../contexts/ctxApi';
@@ -105,11 +104,11 @@ const LoginForm = () => {
     <Form {...FORMLAYOUT.separateRow.body} onFinish={handleSubmit}>
       {/* username */}
       <Form.Item hasFeedback label='Username' name='username' rules={[{ required: true, whitespace: true, message: 'username is required' }]}>
-        <Input autoFocus placeholder='your username' prefix={<UserOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></UserOutlined>}></Input>
+        <Input autoFocus placeholder='your username' prefix={<UserOutlined></UserOutlined>}></Input>
       </Form.Item>
       {/* password */}
       <Form.Item hasFeedback label='Password' name='password' rules={[{ required: true, whitespace: true, message: 'password is required' }]}>
-        <Input.Password placeholder='your password' prefix={<LockOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></LockOutlined>}></Input.Password>
+        <Input.Password placeholder='your password' prefix={<LockOutlined></LockOutlined>}></Input.Password>
       </Form.Item>
       {/* submit */}
       <Button block type='primary' htmlType='submit' loading={isSubmitting} icon={<LoginOutlined></LoginOutlined>}></Button>

@@ -1,12 +1,12 @@
-import { EditOutlined, EllipsisOutlined, BarcodeOutlined, TeamOutlined } from '@ant-design/icons';
-import { Button, Input, Select, Form } from 'antd';
-import React from 'react';
+import { BarcodeOutlined, EditOutlined, EllipsisOutlined, TeamOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Select } from 'antd';
 import _ from 'lodash';
-import COLOR from '../../../constants/COLOR';
+import React from 'react';
+
 import FORMLAYOUT from '../../../constants/FORMLAYOUT';
 import HTTPMETHOD from '../../../constants/HTTPMETHOD';
-import CtxApi from '../../../contexts/ctxApi';
 import INPUTSELECT from '../../../constants/INPUTSELECT';
+import CtxApi from '../../../contexts/ctxApi';
 
 const PROJECTCODE_MAXCHAR = 5;
 
@@ -86,7 +86,7 @@ const ProjectEdit = ({ match, handleCloseDrawerWithCallback }) => {
     <Form {...FORMLAYOUT.sameRow.body} form={form} onFinish={handleSubmit}>
       {/* name */}
       <Form.Item hasFeedback label='Name' name='name' rules={[{ required: true, whitespace: true, message: 'project name is required' }]}>
-        <Input autoFocus placeholder='project name' prefix={<EllipsisOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></EllipsisOutlined>}></Input>
+        <Input autoFocus placeholder='project name' prefix={<EllipsisOutlined></EllipsisOutlined>}></Input>
       </Form.Item>
       {/* code */}
       <Form.Item
@@ -97,11 +97,11 @@ const ProjectEdit = ({ match, handleCloseDrawerWithCallback }) => {
           { required: true, whitespace: true, message: 'code is required' },
           { max: PROJECTCODE_MAXCHAR, message: `max. code is ${PROJECTCODE_MAXCHAR} character` },
         ]}>
-        <Input autoFocus placeholder={`friendly project code (max. ${PROJECTCODE_MAXCHAR} character)`} onChange={handleConvertToUppercase} prefix={<BarcodeOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></BarcodeOutlined>}></Input>
+        <Input autoFocus placeholder={`friendly project code (max. ${PROJECTCODE_MAXCHAR} character)`} onChange={handleConvertToUppercase} prefix={<BarcodeOutlined></BarcodeOutlined>}></Input>
       </Form.Item>
       {/* description */}
       <Form.Item hasFeedback label='Description' name='description'>
-        <Input autoFocus placeholder='project description' prefix={<EllipsisOutlined style={{ color: COLOR.ICON_PLACEHOLDER }}></EllipsisOutlined>}></Input>
+        <Input autoFocus placeholder='project description' prefix={<EllipsisOutlined></EllipsisOutlined>}></Input>
       </Form.Item>
       {/* collaborators */}
       <Form.Item hasFeedback label='Collaborators' name='collaborators'>
