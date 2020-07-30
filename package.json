@@ -18,10 +18,9 @@
     "craco-less": "^1.17.0",
     "customize-cra": "^1.0.0",
     "dotenv": "^8.2.0",
+    "env-cmd": "^10.1.0",
     "interweave": "^12.5.0",
     "jwt-decode": "^2.2.0",
-    "less": "^3.12.2",
-    "less-loader": "^6.2.0",
     "lodash": "^4.17.19",
     "moment": "^2.26.0",
     "react": "^16.13.1",
@@ -40,7 +39,8 @@
   "scripts": {
     "start": "react-app-rewired start && cra-append-sw --mode dev ./public/custom-service-worker.js",
     "start:craco": "craco start && cra-append-sw --mode dev ./public/custom-service-worker.js",
-    "build": "craco build",
+    "build": "env-cmd -f .env.production react-app-rewired build && cra-append-sw --skip-compile ./public/custom-service-worker.js",
+    "build:staging": "env-cmd -f .env.staging react-app-rewired build && cra-append-sw --skip-compile ./public/custom-service-worker.js",
     "test": "craco test"
   },
   "eslintConfig": {
